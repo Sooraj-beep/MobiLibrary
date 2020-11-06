@@ -46,13 +46,9 @@ public class BookDetailsTest {
         solo = new Solo(InstrumentationRegistry.getInstrumentation(), rule.getActivity());
 
         // go to MyBooks and switch to addBookFragment
-<<<<<<< HEAD
-=======
-        // go to MyBooks and switch to addBookFragment
         solo.enterText((EditText) solo.getView(R.id.email_editText), "nrhassan@ualberta.ca");
         solo.enterText((EditText) solo.getView(R.id.password_editText), "PassWord15");
         solo.clickOnView(solo.getView(R.id.login_button));
->>>>>>> 442283f0165830125f78049cf092baa7f4c6d8de
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
         solo.clickOnMenuItem("My Books");
 
