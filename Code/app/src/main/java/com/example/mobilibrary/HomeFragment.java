@@ -17,7 +17,9 @@ import com.example.mobilibrary.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Homepage fragment that can be navigated to using navigation bar. Contains search bar, and access to the User profile.
+ * If possible, will also show a list of all available books as default (low priority)
+ * Can view book details by clicking on book
  */
 public class HomeFragment extends Fragment {
 

@@ -46,10 +46,14 @@ import java.util.concurrent.Executor;
 
 import static com.google.firebase.firestore.DocumentChange.Type.MODIFIED;
 import static com.google.firebase.firestore.DocumentChange.Type.REMOVED;
+/**
+* This class handles the database related tasks that are requested from other activities
+ */
 
 public class DatabaseHelper {
     private static final String TAG = "DatabaseHelper";
     static final String UsersCol = "Users";
+    //Firestore database object
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
     private FirebaseUser user;
@@ -64,7 +68,7 @@ public class DatabaseHelper {
 
     /**
      * https://stackoverflow.com/questions/52861391/firestore-checking-if-username-already-exists
-     * Checks to see if a user signing up is already registered in our Firebase User Auth database.
+     * Checks to see if a user signing up is already registered in our Firestore Cloud database.
      *
      * @param username new user username
      * @param password new user password
@@ -73,6 +77,10 @@ public class DatabaseHelper {
      * @param phoneNo  new user phone number
      */
     public void regCheck(final String username, final String password, final String name, final String email, final String phoneNo) {
+        /**
+        * Tries to fetch a document with the matching
+        * If the document does not exist, creates the account with parameters passed in
+         */
         db.collection(UsersCol)
                 .document(username)
                 .get()
@@ -95,7 +103,6 @@ public class DatabaseHelper {
     }
 
     /**
-     * https://stackoverflow.com/questions/46795817/how-to-efficiently-add-items-to-collection-with-firebase-firestore
      * https://stackoverflow.com/questions/50087616/firebase-transaction-read-and-update-multiple-documents
      * Registers a user with Firebase User Authentication, and adds their public information to the Firestore database
      *
@@ -166,7 +173,7 @@ public class DatabaseHelper {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            Toast.makeText(context, "Authentication succeeded.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, "Authentication Succeeded.", Toast.LENGTH_SHORT).show();
                             //log in to homepage
                             context.startActivity(new Intent(context, MainActivity.class));
                         } else {

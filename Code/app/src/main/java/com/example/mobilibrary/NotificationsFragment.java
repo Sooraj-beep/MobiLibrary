@@ -11,7 +11,13 @@ import android.view.ViewGroup;
 import com.example.mobilibrary.R;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Notifications fragment that is navigated to using the navigation bar. Shows the user's notifications they will receive when interacting
+ * with other users. Clicking on a notification will lead to another activity depending on the kind of notification:
+ * 1) Another user has requested your book -> lead to book details
+ * 2) User has declined your request
+ * 3) User has accepted your request -> lead to map with already-picked location to meet
+ * 4) Location the user/borrower has selected to meet with the user/borrower has been sent
+ * 5) The borrower is ready to return back User's book -> lead to map with already-picked location
  */
 public class NotificationsFragment extends Fragment {
 

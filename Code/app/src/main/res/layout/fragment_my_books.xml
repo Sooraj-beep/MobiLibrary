@@ -26,7 +26,6 @@
         android:layout_width="384dp"
         android:layout_height="61dp"
         android:layout_marginStart="16dp"
-        android:layout_marginBottom="8dp"
         android:background="#FFFFFF"
         android:backgroundTint="#FFFFFF"
         android:textAlignment="center"
@@ -51,11 +50,13 @@
 
     <ListView
         android:id="@+id/book_list"
-        android:layout_width="415dp"
-        android:layout_height="544dp"
+        android:layout_width="409dp"
+        android:layout_height="484dp"
+        android:layout_marginBottom="64dp"
         android:backgroundTint="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent">
 
     </ListView>

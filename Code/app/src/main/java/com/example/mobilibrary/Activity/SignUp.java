@@ -1,13 +1,9 @@
 package com.example.mobilibrary.Activity;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -16,7 +12,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.mobilibrary.DatabaseController.DatabaseHelper;
 import com.example.mobilibrary.R;
 
-import java.util.regex.Pattern;
+/**
+ * SignUp activity allows new user to create new account
+ * User can go back to LogIn screen by clicking on the back button on toolbar
+ */
 
 public class SignUp extends AppCompatActivity {
     private EditText inputUsername;
@@ -25,19 +24,22 @@ public class SignUp extends AppCompatActivity {
     private EditText inputPhone;
     private EditText inputPassword;
     private EditText inputConfirmPassword;
-    private ImageButton back;
     private Button signUp;
 
-
+    /**
+     * Defines UI and sets up listeners
+     * @param savedInstanceState: saved instance state
+     */
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_signup);
+        //Enables action bar to go back to home activity
         if (getSupportActionBar() != null)
         {
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
-
+        //gets ids of all layouts
         inputUsername = findViewById(R.id.edit_username);
         inputName = findViewById(R.id.edit_name);
         inputEmail = findViewById(R.id.edit_email);
@@ -50,29 +52,21 @@ public class SignUp extends AppCompatActivity {
         signUp.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
+                //initiates boolean value to failed to prevent registering process
                 boolean failed = false;
-                /*boolean boolUsername = false;
-                boolean boolName = false;
-                boolean boolEmail = false;
-                boolean boolPhone = false;
-                boolean boolPwd = false;
 
-                 */
-
-                //check Username
+                //checks Username using regex, must be at least 3 characters
                 if (inputUsername.getText().toString().trim().matches("^[a-zA-Z0-9._-]{3,}$")) {
                     inputUsername.setError(null);
-                    //boolUsername = true;
                 } else {
                     inputUsername.setError("Invalid input");
                     failed = true;
                 }
 
-                //check fullname
+                //checks fullname
                 if (!inputName.getText().toString().trim().isEmpty()) {
                     if (inputName.getText().toString().trim().matches("^([A-z\\'\\.-ᶜ]*(\\s))+[A-z\\'\\.-ᶜ]*$")) {
                         inputName.setError(null);
-                        //boolName = true;
                     }
                 } else {
                     inputName.setError("Invalid input");
@@ -81,7 +75,7 @@ public class SignUp extends AppCompatActivity {
 
 
 
-                //check Email
+                //checks Email
                 if (inputEmail.getText().toString().trim().matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
                     inputEmail.setError(null);
                     //boolEmail = true;
@@ -90,10 +84,9 @@ public class SignUp extends AppCompatActivity {
                     failed = true;
                 }
 
-                //check Phone
+                //checks Phone, must be at least 10 digits
                 if (inputPhone.getText().toString().trim().matches("^[0-9-]{10}$")) {
                     inputPhone.setError(null);
-                    //boolPhone = true;
                 } else {
                     inputPhone.setError("Invalid input");
                     failed = true;
@@ -119,10 +112,9 @@ public class SignUp extends AppCompatActivity {
                     //boolPwd = true;
                 }
 
+
                 if(failed) return;
-
-                //if ((boolUsername)&&(boolName)&&(boolEmail)&&(boolPhone)&&(boolPwd)){
-
+                //progresses to call DatabaseHelper to initiate registration if not failed
                 String username = inputUsername.getText().toString().trim();
                 String fullname = inputName.getText().toString().trim();
                 String email = inputEmail.getText().toString().trim();
@@ -138,138 +130,3 @@ public class SignUp extends AppCompatActivity {
 
     }
 }
-/*
-package com.example.mobilibrary.Activity;
-
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
-import com.example.mobilibrary.DatabaseController.DatabaseHelper;
-import com.example.mobilibrary.R;
-
-
-public class SignUp extends AppCompatActivity {
-    private EditText inputUsername;
-    private EditText inputName;
-    private EditText inputEmail;
-    private EditText inputPhone;
-    private EditText inputPassword;
-    private EditText inputConfirmPassword;
-    private Button signUp;
-
-
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.layout_signup);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        //find layouts
-        inputUsername = findViewById(R.id.edit_username);
-        inputName = findViewById(R.id.edit_name);
-        inputEmail = findViewById(R.id.edit_email);
-        inputPhone = findViewById(R.id.edit_phoneNo);
-        inputPassword = findViewById(R.id.edit_password);
-        inputConfirmPassword = findViewById(R.id.edit_password2);
-        signUp = findViewById(R.id.sign_up);
-
-        signUp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final String username = inputUsername.getText().toString().trim();
-                final String fullname = inputName.getText().toString().trim();
-                final String email = inputEmail.getText().toString().trim();
-                final String phoneNo = inputPhone.getText().toString().trim();
-                final String password = inputPassword.getText().toString().trim();
-                final String confirmpwd = inputConfirmPassword.getText().toString().trim();
-                Log.d("", Boolean.toString(validateInputs(username, fullname, email, phoneNo, password, confirmpwd)));
-                if (validateInputs(username, fullname, email, phoneNo, password, confirmpwd)) {
-                    signUp.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            {
-                                DatabaseHelper databaseHelper = new DatabaseHelper(SignUp.this);
-                                databaseHelper.regCheck(username, password, fullname, email, phoneNo);
-                            }
-                        }
-                    });
-                }
-            }
-        });
-
-
-    }
-    private boolean validateInputs(String username, String fullname, String email, String phoneNo, String password, String confirmpwd){
-        return(validateUsername(username) &
-                validateFname(fullname) &
-                validateEmail(email) &
-                validatePhone(phoneNo) &
-                validatePassword(password, confirmpwd));
-    }
-
-    private boolean validateUsername(String username){
-            if (username.isEmpty()) {
-                inputUsername.setError("Field cannot be empty");
-                return false;
-            } else {
-                inputUsername.setError(null);
-                return true;
-            }
-
-    }
-
-    private boolean validateFname(String fullname){
-        if (fullname.isEmpty()) {
-            inputName.setError("Field cannot be empty");
-            return false;
-        } else {
-            inputName.setError(null);
-            return true;
-        }
-    }
-
-    private boolean validateEmail(String email){
-        if (email.isEmpty()) {
-            inputEmail.setError("Field cannot be empty");
-            return false;
-        } else {
-            inputEmail.setError(null);
-            return true;
-        }
-    }
-
-    private boolean validatePhone(String phoneNo){
-        if (phoneNo.isEmpty()) {
-            inputPhone.setError("Field cannot be empty");
-            return false;
-        } else if (phoneNo.length() < 6){
-            inputPhone.setError("Please input at least 6 digits");
-            return false;
-        } else {
-            inputPhone.setError(null);
-            return true;
-        }
-    }
-
-    private boolean validatePassword(String password, String confirmpwd){
-        if (password.isEmpty()) {
-            inputPassword.setError("Field cannot be empty");
-            return false;
-        } else if (confirmpwd.isEmpty()){
-            inputConfirmPassword.setError("Field cannot be empty");
-            return false;
-        } else if (!password.equals(confirmpwd)){
-            inputConfirmPassword.setError("Passwords do not match");
-            return false;
-        } else {
-            inputName.setError(null);
-            return true;
-        }
-    }
-}  */

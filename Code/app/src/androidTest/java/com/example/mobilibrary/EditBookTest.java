@@ -6,6 +6,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 
+import android.app.Fragment;
 import android.net.Uri;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 
 import com.android.volley.Response;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.example.mobilibrary.Activity.LogIn;
 import com.robotium.solo.Solo;
 
 import org.json.JSONObject;
@@ -34,9 +36,9 @@ import android.app.Fragment;
 public class EditBookTest {
     private Solo solo;
 
-        @Rule
-    public ActivityTestRule<MainActivity> rule =
-            new ActivityTestRule<>(MainActivity.class, true, true);
+    @Rule
+    public ActivityTestRule<LogIn> rule =
+            new ActivityTestRule<>(LogIn.class, true, true);
 
     /**
      * Sets up list with at least one book to test one
@@ -48,6 +50,9 @@ public class EditBookTest {
         solo = new Solo(InstrumentationRegistry.getInstrumentation(), rule.getActivity());
 
         // go to MyBooks and switch to addBookFragment
+        solo.enterText((EditText) solo.getView(R.id.email_editText), "nrhassan@ualberta.ca");
+        solo.enterText((EditText) solo.getView(R.id.password_editText), "PassWord15");
+        solo.clickOnView(solo.getView(R.id.login_button));
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
         solo.clickOnMenuItem("My Books");
 
@@ -198,4 +203,5 @@ public class EditBookTest {
         solo.finishOpenedActivities();
     }
 }
+
 

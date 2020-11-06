@@ -9,11 +9,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
-import com.example.mobilibrary.R;
-
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class customBookAdapter extends ArrayAdapter<Book> {
@@ -43,20 +38,21 @@ public class customBookAdapter extends ArrayAdapter<Book> {
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
 
         View view = convertView;
+
         if(view == null){
             view = LayoutInflater.from(context).inflate(R.layout.content, parent,false);
         }
+
         Book book = books.get(position);
 
         TextView bookTitle = view.findViewById(R.id.my_book_title);
         TextView bookAuthor = view.findViewById(R.id.my_book_author);
         TextView bookISBN= view.findViewById(R.id.my_book_ISBN);
 
-        String ISBN = String.valueOf(book.getISBN());
-
         bookTitle.setText(book.getTitle());
         bookAuthor.setText(book.getAuthor());
-        bookISBN.setText(ISBN);
+        bookISBN.setText(book.getISBN());
+
         return view;
     }
 }

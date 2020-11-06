@@ -1,6 +1,7 @@
 package com.example.mobilibrary;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -12,7 +13,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -31,8 +31,11 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.mobilibrary.DatabaseController.BookService;
 import com.example.mobilibrary.DatabaseController.User;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -42,6 +45,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -49,27 +53,28 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
-import com.example.mobilibrary.Callback;
+
 
 public class AddBookFragment extends AppCompatActivity implements Serializable {
-    EditText newTitle;
-    EditText newAuthor;
-    EditText newIsbn;
-    ImageView newImage;
-
-    Button confirmButton;
-    FloatingActionButton backButton;
-    FloatingActionButton cameraButton;
+    private EditText newTitle;
+    private EditText newAuthor;
+    private EditText newIsbn;
+    private ImageView newImage;
+    private Uri imageUri = null;
+    private Button confirmButton;
+    private FloatingActionButton backButton;
+    private FloatingActionButton cameraButton;
 
     private RequestQueue mRequestQueue;
     private FirebaseFirestore db;
+    private BookService bookService;
+    private Context context;
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_add_book_fragment);
-
         newTitle = findViewById(R.id.book_title);
         newAuthor = findViewById(R.id.book_author);
         newIsbn = findViewById(R.id.book_isbn);
@@ -79,6 +84,9 @@ public class AddBookFragment extends AppCompatActivity implements Serializable {
         cameraButton = findViewById(R.id.camera_button);
 
         mRequestQueue = Volley.newRequestQueue(this);
+
+        bookService = BookService.getInstance();
+        context = getApplicationContext();
 
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA},
                 PackageManager.PERMISSION_GRANTED); //Request permission to use Camera
@@ -114,6 +122,20 @@ public class AddBookFragment extends AppCompatActivity implements Serializable {
                             String bookStatus = "available";
                             byte[] bookImage = convertBitmap();
                             Book newBook = new Book(bookTitle,bookISBN,bookAuthor,bookStatus,bookImage,bookOwner);
+                            bookService.addBook(context, newBook);
+                            if (getImageUri() != null){
+                                bookService.uploadImage(bookTitle, getImageUri(), new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Picasso.with(context).load(getImageUri()).into(newImage);
+                                    }
+                                }, new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Toast.makeText(AddBookFragment.this, "Failed to add image.", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
                             Intent returnIntent = new Intent();
                             returnIntent.putExtra("new book", newBook);
                             setResult(RESULT_OK, returnIntent);
@@ -175,8 +197,12 @@ public class AddBookFragment extends AppCompatActivity implements Serializable {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 2) {
-            Bitmap photo = (Bitmap) data.getExtras().get("data");
-            newImage.setImageBitmap(photo);
+            if(resultCode == Activity.RESULT_OK) {
+                imageUri = data.getData();
+                Bitmap photo = (Bitmap) data.getExtras().get("data");
+                newImage.setImageBitmap(photo);
+            }
+
         } else {
             IntentResult intentResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
             if (intentResult != null) { //scanner got a result
@@ -323,6 +349,10 @@ public class AddBookFragment extends AppCompatActivity implements Serializable {
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, outStream);
         byte[] byteImage = outStream.toByteArray();
         return byteImage;
+    }
+
+    public Uri getImageUri() {
+        return imageUri;
     }
 
     /**

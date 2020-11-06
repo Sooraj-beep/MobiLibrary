@@ -102,7 +102,6 @@ public class addBookTest{
         assertEquals("Harry Potter", book.getTitle());
         assertEquals("J.K Rowling", book.getAuthor());
         assertEquals("1234567890123", book.getISBN());
-        assertEquals("kim", book.getOwner().getUsername());
     }
 
     /**
