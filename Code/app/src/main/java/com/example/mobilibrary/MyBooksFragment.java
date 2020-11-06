@@ -51,7 +51,6 @@ public class MyBooksFragment extends Fragment {
     private ArrayList<Book> bookList;
     private FloatingActionButton addButton;
 
-    private ArrayList<Book> tempBookList;
     private Spinner statesSpin;
     private static final String[] states = new String[]{"Owned", "Requested", "Accepted", "Borrowed"};
     private FirebaseFirestore db;
@@ -84,7 +83,6 @@ public class MyBooksFragment extends Fragment {
             }
         });
 
-        tempBookList = new ArrayList<>();
 
         statesSpin = (Spinner) v.findViewById(R.id.spinner);
         ArrayAdapter<String> SpinAdapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, states);
@@ -145,7 +143,6 @@ public class MyBooksFragment extends Fragment {
             if (resultCode == RESULT_OK) {
                 Book new_book = (Book) Objects.requireNonNull(data.getExtras()).getSerializable("new book");
                 bookAdapter.add(new_book);
-                tempBookList.add(new_book);
                 bookAdapter.notifyDataSetChanged();
             }
         }
@@ -159,7 +156,6 @@ public class MyBooksFragment extends Fragment {
                 for (int i = 0; i < bookAdapter.getCount(); i++) {
                     Book currentBook = bookAdapter.getItem(i);
                     if (delete_book.compareTo(currentBook) == 0) {
-                        tempBookList.remove(currentBook);
                         bookAdapter.remove(currentBook);
                     }
                 }
@@ -219,47 +215,35 @@ public class MyBooksFragment extends Fragment {
      * @param bookUser
      */
     public void updateBookList(final User bookUser){
-        db.collection("Books").whereEqualTo("Owner", userInfo.getDisplayName()).orderBy("Title")
+        db.collection("Books").whereEqualTo("Owner", userInfo.getDisplayName())
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                            if(value != null) {
-                                bookList.clear();
-                                for (final QueryDocumentSnapshot doc : value) {
-                                    if (!(doc.getData().isEmpty())) {
-                                        Log.d(TAG, String.valueOf(doc.getData().get("Owner")));
-                                        String bookTitle = Objects.requireNonNull(doc.get("Title")).toString();
-                                        String bookAuthor = Objects.requireNonNull(doc.get("Author")).toString();
-                                        String bookISBN = Objects.requireNonNull(doc.get("ISBN")).toString();
-                                        String bookStatus = Objects.requireNonNull(doc.get("Status")).toString();
-                                        byte[] bookImage = null;
-                                        if ((Blob) doc.get("Image") != null) {
-                                            Blob imageBlob = (Blob) doc.get("Image");
-                                            bookImage = imageBlob.toBytes();
-                                        }
-                                        bookList.add(new Book(bookTitle, bookISBN, bookAuthor, bookStatus, bookImage, bookUser));
-                                    }
-                                }
-                                bookAdapter.notifyDataSetChanged(); // Notifying the adapter to render any new data fetched from the cloud
+                        bookList.clear();
+                        for (final QueryDocumentSnapshot doc : value) {
+                            Log.d(TAG, String.valueOf(doc.getData().get("Owner")));
+                            String bookTitle = doc.getId();
+                            String bookAuthor = doc.get("Author").toString();
+                            String bookISBN = doc.get("ISBN").toString();
+                            String bookStatus = doc.get("Status").toString();
+                            byte[] bookImage = null;
+                            if ((Blob) doc.get("Image") != null) {
+                                Blob imageBlob = (Blob) doc.get("Image");
+                                bookImage = imageBlob.toBytes();
                             }
 
                             String currState = statesSpin.getSelectedItem().toString().toLowerCase();
-                            Log.d("sooraj5",currState);
 
                             if (currState.equals("owned") == false) {
-                                Log.d("sooraj5","a test");
-                                if (currState.equals(bookStatus) == true){
+                                if (currState.equals(bookStatus) == true) {
                                     bookList.add(new Book(bookTitle, bookISBN, bookAuthor, bookStatus, bookImage, bookUser));
                                 }
-                            }
-                            else {
+                            } else {
                                 bookList.add(new Book(bookTitle, bookISBN, bookAuthor, bookStatus, bookImage, bookUser));
                             }
-
-                            tempBookList.add(new Book(bookTitle,bookISBN,bookAuthor,bookStatus,bookImage,bookUser));
                         }
                         bookAdapter.notifyDataSetChanged(); // Notifying the adapter to render any new data fetched from the cloud
-                }
+                    }
                 });
     }
 
