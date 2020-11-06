@@ -61,7 +61,6 @@ import java.io.ByteArrayOutputStream;
  */
 public class EditBookFragment extends AppCompatActivity {
     private EditText title;
-    private String oldTitle;
     private EditText author;
     private EditText ISBN;
     private ImageView photo;
@@ -103,6 +102,10 @@ public class EditBookFragment extends AppCompatActivity {
         mRequestQueue = Volley.newRequestQueue(this);
         ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.CAMERA},
                 PackageManager.PERMISSION_GRANTED); //Request permission to use Camera
+        
+        // set up firestore instance
+        bookService = BookService.getInstance();
+        context = getApplicationContext();
 
         // check that a book was passed to this activity, otherwise end the activity
         if (getIntent() == null) {
@@ -122,8 +125,6 @@ public class EditBookFragment extends AppCompatActivity {
             bitmap = null;
         }
         photo.setImageBitmap(bitmap);
-
-        oldTitle = book.getTitle();
 
         /**
          * If Back Button is pressed, return to BookDetailsFragment without changing anything about the book
@@ -157,6 +158,7 @@ public class EditBookFragment extends AppCompatActivity {
                             book.setTitle(bookTitle);
                             book.setAuthor(bookAuthor);
                             book.setISBN(stringISBN);
+                            byte[] emptyArray = new byte[0];
 
                             // if a book has a photo pass along the photo's bitmap
                             if (!nullPhoto()) {
@@ -165,8 +167,8 @@ public class EditBookFragment extends AppCompatActivity {
                                 bitmap.compress(Bitmap.CompressFormat.PNG, 100, outStream);
                                 byte[] editImage = outStream.toByteArray();
                                 book.setImage(editImage);
-                            } else {
-                                book.setImage(null);    // book has no photo so image bitmap is set to null
+                            }else {
+                                book.setImage(emptyArray);    // book has no photo so image bitmap is set to null
                             }
 
                             // edit book in firestore

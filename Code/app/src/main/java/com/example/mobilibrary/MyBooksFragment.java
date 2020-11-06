@@ -215,34 +215,37 @@ public class MyBooksFragment extends Fragment {
      * @param bookUser
      */
     public void updateBookList(final User bookUser){
-        db.collection("Books").whereEqualTo("Owner", userInfo.getDisplayName())
+        db.collection("Books").whereEqualTo("Owner", userInfo.getDisplayName()).orderBy("Title")
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                        bookList.clear();
-                        for (final QueryDocumentSnapshot doc : value) {
-                            Log.d(TAG, String.valueOf(doc.getData().get("Owner")));
-                            String bookTitle = doc.getId();
-                            String bookAuthor = doc.get("Author").toString();
-                            String bookISBN = doc.get("ISBN").toString();
-                            String bookStatus = doc.get("Status").toString();
-                            byte[] bookImage = null;
-                            if ((Blob) doc.get("Image") != null) {
-                                Blob imageBlob = (Blob) doc.get("Image");
-                                bookImage = imageBlob.toBytes();
-                            }
-
-                            String currState = statesSpin.getSelectedItem().toString().toLowerCase();
-
-                            if (currState.equals("owned") == false) {
-                                if (currState.equals(bookStatus) == true) {
-                                    bookList.add(new Book(bookTitle, bookISBN, bookAuthor, bookStatus, bookImage, bookUser));
+                        if (value != null) {
+                            bookList.clear();
+                            for (QueryDocumentSnapshot doc : value) {
+                                Log.d(TAG, String.valueOf(doc.getData().get("Owner")));
+                                String bookId = doc.getId();
+                                String bookTitle = Objects.requireNonNull(doc.get("Title")).toString();
+                                String bookAuthor = Objects.requireNonNull(doc.get("Author")).toString();
+                                String bookISBN = Objects.requireNonNull(doc.get("ISBN")).toString();
+                                String bookStatus = Objects.requireNonNull(doc.get("Status")).toString();
+                                byte[] bookImage = null;
+                                if ((Blob) doc.get("Image") != null) {
+                                    Blob imageBlob = (Blob) doc.get("Image");
+                                    bookImage = imageBlob.toBytes();
                                 }
-                            } else {
-                                bookList.add(new Book(bookTitle, bookISBN, bookAuthor, bookStatus, bookImage, bookUser));
+
+                                String currState = statesSpin.getSelectedItem().toString().toLowerCase();
+
+                                if (currState.equals("owned") == false) {
+                                    if (currState.equals(bookStatus) == true) {
+                                        bookList.add(new Book(bookId,bookTitle, bookISBN, bookAuthor, bookStatus, bookImage, bookUser));
+                                    }
+                                } else {
+                                    bookList.add(new Book(bookId,bookTitle, bookISBN, bookAuthor, bookStatus, bookImage, bookUser));
+                                }
                             }
+                            bookAdapter.notifyDataSetChanged(); // Notifying the adapter to render any new data fetched from the cloud
                         }
-                        bookAdapter.notifyDataSetChanged(); // Notifying the adapter to render any new data fetched from the cloud
                     }
                 });
     }
