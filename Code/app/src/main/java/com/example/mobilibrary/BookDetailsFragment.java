@@ -193,6 +193,15 @@ public class BookDetailsFragment extends AppCompatActivity {
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (!title.getText().toString().equals(viewBook.getTitle())) {
+                    viewBook.setTitle(title.getText().toString());
+                }
+                if (!ISBN.getText().toString().equals(viewBook.getISBN())) {
+                    viewBook.setISBN(ISBN.getText().toString());
+                }
+                if (!author.getText().toString().equals(viewBook.getAuthor())) {
+                    viewBook.setAuthor(author.getText().toString());
+                }
                 Intent editIntent = new Intent(BookDetailsFragment.this, EditBookFragment.class);
                 editIntent.putExtra("edit", viewBook);
                 startActivityForResult(editIntent, 2);
@@ -282,6 +291,7 @@ public class BookDetailsFragment extends AppCompatActivity {
                     bitmap = null;
                 }
                 photo.setImageBitmap(bitmap);
+
             }
         }
     }

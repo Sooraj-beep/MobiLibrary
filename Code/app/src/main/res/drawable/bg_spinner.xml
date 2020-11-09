@@ -4,7 +4,7 @@
     <item>
 
         <layer-list>
-            <item android:drawable="@drawable/rounded_searchbar" android:height="50dp"/>
+            <item android:drawable="@drawable/rounded_searchbar" android:height="40dp"/>
             <item android:gravity="center_vertical|right" android:right="10dp" android:drawable="@drawable/dropdown" android:height="20dp" android:width="20dp" />
         </layer-list>
 
