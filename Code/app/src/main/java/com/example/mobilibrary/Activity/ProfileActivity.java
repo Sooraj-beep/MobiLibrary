@@ -25,6 +25,11 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class displays a user's profile (username, email, and phone number), and if the viewer is also the currently
+ * logged in user, allows editing of the email and phone number (with re-authentication).
+ */
+
 public class ProfileActivity extends AppCompatActivity implements reAuthFragment.OnFragmentInteractionListener {
 
     private ImageButton editButton;
@@ -84,7 +89,7 @@ public class ProfileActivity extends AppCompatActivity implements reAuthFragment
     }
 
     /**
-     * Get user information from database: get profileUser's username from previous activity and then by searching database using databaseHelper
+     * Get user information from database: get profileUser's username from previous activity and then by searching database using databaseHelper.
      */
     private void getProfileInfo() {
         Intent intent = getIntent();
@@ -102,7 +107,7 @@ public class ProfileActivity extends AppCompatActivity implements reAuthFragment
     }
 
     /**
-     * Checks to see if the profile opened is the currently logged in user's own profile
+     * Checks to see if the profile opened is the currently logged in user's own profile.
      */
     private void checkIfOwnProfile() {
         String myUsername = databaseHelper.getUser().getDisplayName();
@@ -188,11 +193,12 @@ public class ProfileActivity extends AppCompatActivity implements reAuthFragment
             }
         });
 
+        // If the Sign Out button is clicked
         signOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 databaseHelper.signOut();
-                Intent intent = new Intent(ProfileActivity.this, LogIn.class);
+                Intent intent = new Intent(ProfileActivity.this, StartActivity.class);
                 startActivity(intent);
                 finish();
             }
@@ -217,7 +223,6 @@ public class ProfileActivity extends AppCompatActivity implements reAuthFragment
 
     /**
      * Checks if the provided editText email is valid.
-     * https://stackoverflow.com/questions/12947620/email-address-validation-in-android-on-edittext
      *
      * @param target - the email entered to be validated
      * @return true for valid email pattern, false otherwise
@@ -226,6 +231,10 @@ public class ProfileActivity extends AppCompatActivity implements reAuthFragment
         return (!TextUtils.isEmpty(target) && Patterns.EMAIL_ADDRESS.matcher(target).matches());
     }
 
+    /**
+     * onOkPressed is for what happens with the sign-in dialog fragment for re-authentication,
+     * once the sign-in is confirmed to be correct and the dialog closes.
+     */
     @Override
     public void onOkPressed() {
         toggleVisibility(toggleViews);

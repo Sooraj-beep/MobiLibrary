@@ -11,6 +11,7 @@ import android.util.Base64;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -19,6 +20,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.mobilibrary.Activity.ProfileActivity;
 import com.example.mobilibrary.DatabaseController.BookService;
 import com.example.mobilibrary.DatabaseController.User;
 
@@ -53,7 +55,7 @@ public class BookDetailsFragment extends AppCompatActivity {
     private TextView isbnTitle;
     private TextView statusTitle;
     private FloatingActionButton backButton;
-    private FloatingActionButton editButton;
+    private ImageButton editButton;
     private FloatingActionButton deleteButton;
     private String req_users [] = {"Natalia", "Chloe", "Kimberly", "Jill", "Nguyen", "Sooraj"}; // sort of a placeholder this one, need to replace with actual requesting users once we implement it
     private Button detailsBtn;
@@ -102,7 +104,7 @@ public class BookDetailsFragment extends AppCompatActivity {
         requestAssets = new TextView[]{title, author, owner, status, ownerTitle,ISBN, isbnTitle, statusTitle };
         reqDataList = new ArrayList<>();
         for (String user: req_users){
-            reqDataList.add(user + "has requested your book");
+            reqDataList.add(user + " has requested your book");
         }
         reqAdapter =  new ArrayAdapter<String>(this,R.layout.req_custom_list, R.id.textView, reqDataList);
         reqList.setAdapter(reqAdapter);
@@ -224,6 +226,16 @@ public class BookDetailsFragment extends AppCompatActivity {
                     asset.setVisibility(View.VISIBLE);
                 }
                 reqList.setVisibility(View.GONE);
+            }
+        });
+
+        //Opens the profile of the user who owns the book.
+        owner.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, ProfileActivity.class);
+                intent.putExtra("profile", owner.getText());
+                startActivity(intent);
             }
         });
     }

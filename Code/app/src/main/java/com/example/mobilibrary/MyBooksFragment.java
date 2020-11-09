@@ -208,7 +208,7 @@ public class MyBooksFragment extends Fragment {
 
     /**
      * Used to fill bookList with firestore items, will get the information from the current User
-     *Call back and use it to instantiate a new book object from the firesotre information and add
+     * Call back and use it to instantiate a new book object from the firestore information and add
      * it to the bookList (clears it in case we have new items and want to count them) and updates
      * adapter
      *

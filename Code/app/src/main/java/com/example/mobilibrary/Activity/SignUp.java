@@ -34,11 +34,13 @@ public class SignUp extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_signup);
+
         //Enables action bar to go back to home activity
         if (getSupportActionBar() != null)
         {
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
+
         //gets ids of all layouts
         inputUsername = findViewById(R.id.edit_username);
         inputName = findViewById(R.id.edit_name);
@@ -47,7 +49,6 @@ public class SignUp extends AppCompatActivity {
         inputPassword = findViewById(R.id.edit_password);
         inputConfirmPassword = findViewById(R.id.edit_password2);
         signUp = findViewById(R.id.sign_up);
-
 
         signUp.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -73,8 +74,6 @@ public class SignUp extends AppCompatActivity {
                     failed=true;
                 }
 
-
-
                 //checks Email
                 if (inputEmail.getText().toString().trim().matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
                     inputEmail.setError(null);
@@ -91,7 +90,6 @@ public class SignUp extends AppCompatActivity {
                     inputPhone.setError("Invalid input");
                     failed = true;
                 }
-
 
                 //check password
                 if (!(inputPassword.getText().toString().trim().isEmpty())) {
@@ -112,8 +110,7 @@ public class SignUp extends AppCompatActivity {
                     //boolPwd = true;
                 }
 
-
-                if(failed) return;
+                if (failed) return;
                 //progresses to call DatabaseHelper to initiate registration if not failed
                 String username = inputUsername.getText().toString().trim();
                 String fullname = inputName.getText().toString().trim();

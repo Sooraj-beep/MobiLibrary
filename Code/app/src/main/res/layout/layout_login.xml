@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimaryDark"
+    android:background="@color/colorPrimary"
     android:orientation="vertical">
 
     <TextView
@@ -12,11 +12,11 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="100dp"
-        android:fontFamily="sans-serif-light"
+        android:fontFamily="@font/quicksand_bold"
         android:gravity="center"
         android:text="MobiLibrary"
-        android:textSize="50dp"
-        android:textStyle="bold"></TextView>
+        android:textSize="50sp"
+        android:textStyle="bold"/>
 
 
     <EditText
@@ -26,8 +26,10 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="60dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginBottom="10dp"
         android:ems="10"
-        android:hint="Email "
+        android:fontFamily="@font/quicksand_medium"
+        android:hint="Email"
         android:inputType="textEmailAddress" />
 
     <com.google.android.material.textfield.TextInputLayout
@@ -41,9 +43,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="25dp"
             android:layout_marginEnd="16dp"
             android:ems="10"
+            android:fontFamily="@font/quicksand_medium"
+            android:gravity="center_vertical"
             android:hint="Password"
             android:inputType="textPassword" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -55,6 +59,8 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="16dp"
+        android:background="@color/colorPrimaryDark"
+        android:fontFamily="@font/quicksand_bold"
         android:text="Log In"
         app:layout_constraintEnd_toEndOf="@+id/password_editText"
         app:layout_constraintStart_toStartOf="@id/password_editText"
@@ -73,6 +79,7 @@
             android:layout_marginStart="70dp"
             android:layout_marginTop="8dp"
             android:layout_weight="0.5"
+            android:fontFamily="@font/quicksand_medium"
             android:text="New to MobiLibrary?" />
 
         <TextView
@@ -80,9 +87,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:layout_weight="0.5"
+            android:layout_weight="0.35"
             android:background="?attr/selectableItemBackground"
             android:clickable="true"
+            android:fontFamily="@font/quicksand_medium"
             android:text="Create Account"
             android:textColor="#254A6E"
             android:textColorHighlight="#FFFFFF"

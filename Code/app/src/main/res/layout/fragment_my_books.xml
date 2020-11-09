@@ -4,62 +4,64 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorBackgroundLight"
+    android:background="@color/colorPrimary"
     tools:context="com.example.mobilibrary.MyBooksFragment">
 
     <TextView
         android:id="@+id/myBooks_title"
-        android:layout_width="164dp"
-        android:layout_height="44dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/quicksand_bold"
         android:text="My Books"
         android:textColor="@color/colorText"
-        android:textSize="35dp"
-        app:layout_constraintBottom_toTopOf="@+id/spinner"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.064"
+        android:textSize="35sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Spinner
         android:id="@+id/spinner"
-        android:layout_width="384dp"
-        android:layout_height="61dp"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
         android:layout_marginStart="16dp"
-        android:background="#FFFFFF"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/bg_spinner"
+        android:paddingHorizontal="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/myBooks_title"
+        android:overlapAnchor="false" />
+
+    <ListView
+        android:id="@+id/book_list"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="55dp"
         android:backgroundTint="#FFFFFF"
-        android:textAlignment="center"
-        app:layout_constraintBottom_toTopOf="@+id/book_list"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:divider="#00000000"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/spinner">
+
+    </ListView>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="70dp"
         android:clickable="true"
         android:src="@drawable/ic_add"
         android:tint="#FFFFFF"
-        app:backgroundTint="#3C2A2A"
+        app:backgroundTint="@color/colorNav"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.92"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.81"
         app:maxImageSize="40dp" />
-
-    <ListView
-        android:id="@+id/book_list"
-        android:layout_width="409dp"
-        android:layout_height="484dp"
-        android:layout_marginBottom="64dp"
-        android:backgroundTint="#FFFFFF"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent">
-
-    </ListView>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
