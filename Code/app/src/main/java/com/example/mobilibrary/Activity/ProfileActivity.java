@@ -2,7 +2,12 @@ package com.example.mobilibrary.Activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.Matrix;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
@@ -10,9 +15,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mobilibrary.Callback;
@@ -22,6 +29,8 @@ import com.example.mobilibrary.R;
 import com.example.mobilibrary.reAuthFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +42,8 @@ import java.util.List;
 public class ProfileActivity extends AppCompatActivity implements reAuthFragment.OnFragmentInteractionListener {
 
     private ImageButton editButton;
+    private ImageView profileImage;
+    private FloatingActionButton editProfileImage;
     private TextView usernameText;
     private TextView emailText;
     private TextView phoneText;
@@ -45,6 +56,10 @@ public class ProfileActivity extends AppCompatActivity implements reAuthFragment
     private User currentUser;
     private Context context;
     private DatabaseHelper databaseHelper;
+    private static Bitmap image = null;
+    private static Bitmap rotateImage = null;
+    private static final int CAMERA = 0;
+    private static final int GALLERY = 1;
     final List<View> toggleViews = new ArrayList<View>();
 
     @Override
@@ -54,6 +69,7 @@ public class ProfileActivity extends AppCompatActivity implements reAuthFragment
 
         // Set variables
         editButton = findViewById(R.id.edit_button);
+        profileImage = findViewById(R.id.profile_image_view);
         usernameText = findViewById(R.id.username_text_view);
         emailText = findViewById(R.id.email_text_view);
         phoneText = findViewById(R.id.phone_text_view);
@@ -62,6 +78,7 @@ public class ProfileActivity extends AppCompatActivity implements reAuthFragment
         confirmButton = findViewById(R.id.confirm_button);
         cancelButton = findViewById(R.id.cancel_button);
         signOutButton = findViewById(R.id.sign_out_button);
+        editProfileImage = findViewById(R.id.edit_profile_image_button);
         context = getApplicationContext();
 
         // Set visibility
@@ -69,6 +86,7 @@ public class ProfileActivity extends AppCompatActivity implements reAuthFragment
         phoneText.setVisibility(View.INVISIBLE);
         toggleViews.add(editEmail);
         toggleViews.add(editPhone);
+        toggleViews.add(editProfileImage);
         toggleViews.add(cancelButton);
         toggleViews.add(confirmButton);
         toggleViews.add(emailText);
@@ -241,4 +259,5 @@ public class ProfileActivity extends AppCompatActivity implements reAuthFragment
         editEmail.setText(profileUser.getEmail());
         editPhone.setText(profileUser.getPhoneNo());
     }
+
 }
