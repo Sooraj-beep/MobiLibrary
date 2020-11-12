@@ -1,10 +1,14 @@
 package com.example.mobilibrary;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 
 
-
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +18,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,17 +26,22 @@ import androidx.fragment.app.Fragment;
 
 import com.example.mobilibrary.DatabaseController.User;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.Blob;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.StreamDownloadTask;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -55,6 +65,9 @@ public class MyBooksFragment extends Fragment {
     private static final String[] states = new String[]{"Owned", "Requested", "Accepted", "Borrowed"};
     private FirebaseFirestore db;
     private FirebaseUser userInfo;
+
+    private String bookImage;
+
     public MyBooksFragment() {
         // Required empty public constructor
     }
@@ -82,7 +95,6 @@ public class MyBooksFragment extends Fragment {
                 updateBookList(user);
             }
         });
-
 
         statesSpin = (Spinner) v.findViewById(R.id.spinner);
         ArrayAdapter<String> SpinAdapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, states);
@@ -114,8 +126,8 @@ public class MyBooksFragment extends Fragment {
                 String state = (String) adapterView.getItemAtPosition(i);
                 currentUser(new Callback() {
                     @Override
-                    public void onCallback(User user) {
-                        updateBookList(user);
+                    public void onCallback(final User user){
+                                updateBookList(user);
                     }
                 });
             }
@@ -139,11 +151,13 @@ public class MyBooksFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        System.out.println("IN ONACTIVITYRESULT");
         if (requestCode == 0) {
             if (resultCode == RESULT_OK) {
                 Book new_book = (Book) Objects.requireNonNull(data.getExtras()).getSerializable("new book");
                 bookAdapter.add(new_book);
                 bookAdapter.notifyDataSetChanged();
+                System.out.println("Book adaptor added newBook");
             }
         }
 
@@ -172,7 +186,7 @@ public class MyBooksFragment extends Fragment {
                         currentBook.setTitle(edited_book.getTitle());
                         currentBook.setAuthor(edited_book.getAuthor());
                         currentBook.setISBN(edited_book.getISBN());
-                        currentBook.setImage(edited_book.getImage());
+                        currentBook.setImageId(edited_book.getImageId());
                     }
                 }
                 bookAdapter.notifyDataSetChanged();
@@ -214,48 +228,94 @@ public class MyBooksFragment extends Fragment {
      *
      * @param bookUser
      */
-    public void updateBookList(final User bookUser){
-        db.collection("Books").whereEqualTo("Owner", userInfo.getDisplayName()).orderBy("Title")
+    public void updateBookList(final User bookUser) {
+        System.out.println("IN UPDATE BOOKLIST");
+        db.collection("Books").whereEqualTo("Owner", bookUser.getUsername()).orderBy("Title")
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                         if (value != null) {
                             bookList.clear();
-                            for (QueryDocumentSnapshot doc : value) {
+                            for (final QueryDocumentSnapshot doc : value) {
                                 Log.d(TAG, String.valueOf(doc.getData().get("Owner")));
                                 String bookId = doc.getId();
                                 String bookTitle = Objects.requireNonNull(doc.get("Title")).toString();
                                 String bookAuthor = Objects.requireNonNull(doc.get("Author")).toString();
                                 String bookISBN = Objects.requireNonNull(doc.get("ISBN")).toString();
                                 String bookStatus = Objects.requireNonNull(doc.get("Status")).toString();
-                                byte[] bookImage = null;
-                                if ((Blob) doc.get("Image") != null) {
-                                    Blob imageBlob = (Blob) doc.get("Image");
-                                    bookImage = Objects.requireNonNull(imageBlob).toBytes();
+                                if(doc.get("imageID") != null) {
+                                   bookImage = Objects.requireNonNull(doc.get("imageID")).toString();
                                 }
-
+                                Book currentBook = new Book(bookId, bookTitle, bookISBN, bookAuthor, bookStatus, bookImage, bookUser);
                                 String currState = statesSpin.getSelectedItem().toString().toLowerCase();
-
                                 if (!currState.equals("owned")) {
                                     if (currState.equals(bookStatus)) {
-                                        bookList.add(new Book(bookId,bookTitle, bookISBN, bookAuthor, bookStatus, bookImage, bookUser));
+                                        bookList.add(currentBook);
                                     }
                                 } else {
-                                    bookList.add(new Book(bookId,bookTitle, bookISBN, bookAuthor, bookStatus, bookImage, bookUser));
+                                    bookList.add(currentBook);
                                 }
+                                bookAdapter.notifyDataSetChanged(); // Notifying the adapter to render any new data fetched from the cloud
                             }
-                            bookAdapter.notifyDataSetChanged(); // Notifying the adapter to render any new data fetched from the cloud
                         }
                     }
                 });
     }
 
-    /**
-     * Used to function spinner, if the book is in a certain status it will group them and will
-     * allow the user to view them as such
-     *
-     * @param state
-     */
+    /*public void addImage(final Book book) {
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+        StorageReference dateRef = storageRef.child(book.getFirestoreID());
+        dateRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>()
+        {
+            @Override
+            public void onSuccess(Uri downloadUrl)
+            {
+                book.setImage(downloadUrl);
+            }
+        });
+    }*/
+
+    /*public void setBitMap(final Book book) {
+        //Bitmap bitMap = null;
+        System.out.println("IN SETBITMAP");
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference("books/" + book.getFirestoreID()+ ".jpg");
+        StreamDownloadTask stream = storageRef.getStream();
+        System.out.println("After storageref");
 
 
+        //THIS IS WHERE PROBLEM IS ********
+        final long ONE_MEGABYTE = 1024 * 1024;
+        storageRef.getBytes(ONE_MEGABYTE)
+                .addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                    @Override
+                    public void onSuccess(byte[] bytes) {
+                        Bitmap bm = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                        book.setImage(bm);
+                        System.out.println("BOOKIMAGE SET");
+                    }
+
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle any errors
+            }
+        }); */
+
+
+
+
+        /*dateRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri downloadUrl)
+            {
+                try {
+                    System.out.println("IN TRY");
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(requireContext().getContentResolver(), downloadUrl);
+                    book.setImage(bitmap);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });*/
 }

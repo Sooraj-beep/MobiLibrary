@@ -60,6 +60,17 @@ public class HomeFragment extends Fragment implements SearchView.OnQueryTextList
     private FirebaseFirestore db;
     private static final String TAG = "HomeFragment";
 
+    private RecyclerView booksRV;
+    private RecyclerView.Adapter mAdaptor;
+
+    private List<String> titles = new ArrayList<>();
+    private List<String> authors = new ArrayList<>();
+    private List<String> isbns = new ArrayList<>();
+    private List<String> statuses = new ArrayList<>();
+    private List<String> owners = new ArrayList<>();
+    private List<String> images = new ArrayList<>();
+    private List<String> ids = new ArrayList<>();
+
     public HomeFragment() {
         // Required empty public constructor
     }

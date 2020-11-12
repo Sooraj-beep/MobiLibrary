@@ -63,4 +63,17 @@
 
     </ListView>
 
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/booksRV"
+        android:layout_width="match_parent"
+        android:layout_height="521dp"
+        android:layout_marginTop="204dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:listitem="@layout/books_rows" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

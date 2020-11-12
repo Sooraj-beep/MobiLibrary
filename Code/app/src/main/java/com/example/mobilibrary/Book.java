@@ -1,11 +1,9 @@
 package com.example.mobilibrary;
 
 import android.graphics.Bitmap;
-import android.os.Parcelable;
-import android.widget.ImageView;
+import android.net.Uri;
 
 import com.example.mobilibrary.DatabaseController.User;
-import com.google.firebase.auth.FirebaseUser;
 
 import java.io.Serializable;
 
@@ -18,21 +16,10 @@ public class Book implements Serializable, Comparable<Book> {
     private String status;
     private User owner;
     // location variable?
-    private byte[] image;
+    private String imageId;
     private int id;
 
-    /**Constructor for a new book. Since the new book is not saved to firestore yet,
-     *  the firestore id would be null
-     *
-     * @param title Title of the book
-     * @param ISBN  The book's isbn
-     * @param author The book's author
-     * @param status The book's status
-     * @param image  Byte array of image that user can choose to attach to the book
-     * @param user  The book's owner
-     *
-     */
-    public Book(String title, String ISBN, String author, String status, byte [] image, User user){
+   /*public Book(String title, String ISBN, String author, String status, Bitmap image, User user){
         this.firestoreID = null;
         this.id = nextID;
         this.title = title;
@@ -42,15 +29,15 @@ public class Book implements Serializable, Comparable<Book> {
         this.image = image;
         this.owner = user;
         nextID++;
-    }
+    }*/
 
-    public Book(String firestoreID, String title, String ISBN, String author, String status, byte [] image, User user){
+    public Book(String firestoreID, String title, String ISBN, String author, String status, String imageId, User user){
         this.firestoreID = firestoreID;
         this.title = title;
         this.ISBN = ISBN;
         this.author = author;
         this.status = status;
-        this.image = image;
+        this.imageId = imageId;
         this.owner = user;
     }
 
@@ -98,12 +85,12 @@ public class Book implements Serializable, Comparable<Book> {
         this.owner = owner;
     }
 
-    public byte [] getImage() {
-        return image;
+    public String getImageId() {
+        return imageId;
     }
 
-    public void setImage(byte [] image) {
-        this.image = image;
+    public void setImageId(String imageId) {
+        this.imageId = imageId;
     }
 
     public String getFirestoreID() {

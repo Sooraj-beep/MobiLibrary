@@ -3,6 +3,7 @@ package com.example.mobilibrary;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +22,8 @@ import com.example.mobilibrary.R;
  */
 public class NotificationsFragment extends Fragment {
 
+    RecyclerView notificationsRv;
+
     public NotificationsFragment() {
         // Required empty public constructor
     }
@@ -29,6 +32,11 @@ public class NotificationsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_notifications, container, false);
+        View v = inflater.inflate(R.layout.fragment_notifications, container, false);
+
+        //init recycleview
+        notificationsRv = v.findViewById(R.id.notificationsRV);
+
+        return v;
     }
 }
