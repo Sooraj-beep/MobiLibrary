@@ -109,10 +109,6 @@ public class EditBookFragment extends AppCompatActivity {
             finish();
         }
         
-        // set up firestore instance
-        bookService = BookService.getInstance();
-        context = getApplicationContext();
-        
         final Book book = (Book) getIntent().getSerializableExtra("edit");
 
         // fill fields with correct information from the passed book
