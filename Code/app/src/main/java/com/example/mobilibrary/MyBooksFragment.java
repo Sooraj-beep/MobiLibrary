@@ -15,6 +15,7 @@ import android.widget.Spinner;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.mobilibrary.DatabaseController.User;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import com.google.firebase.firestore.EventListener;
@@ -42,6 +43,7 @@ public class MyBooksFragment extends Fragment {
     private FloatingActionButton addButton;
 
     private Spinner statesSpin;
+    private String spinnerSelected = "owned";
     private static final String[] states = new String[]{"Owned", "Requested", "Accepted", "Borrowed"};
     private FirebaseFirestore db;
 
@@ -96,7 +98,7 @@ public class MyBooksFragment extends Fragment {
         statesSpin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                String state = (String) adapterView.getItemAtPosition(i);
+                spinnerSelected = statesSpin.getSelectedItem().toString().toLowerCase();;
                 updateBookList();
             }
 
@@ -172,36 +174,73 @@ public class MyBooksFragment extends Fragment {
     public void updateBookList() {
         CurrentUser bookUser = CurrentUser.getInstance();
         System.out.println("IN UPDATE BOOKLIST");
-        db.collection("Books").whereEqualTo("Owner", bookUser.getCurrentUser().getUsername()).orderBy("Title")
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                        if (value != null) {
-                            bookList.clear();
-                            for (final QueryDocumentSnapshot doc : value) {
-                                Log.d(TAG, String.valueOf(doc.getData().get("Owner")));
-                                String bookId = doc.getId();
-                                String bookTitle = Objects.requireNonNull(doc.get("Title")).toString();
-                                String bookAuthor = Objects.requireNonNull(doc.get("Author")).toString();
-                                String bookISBN = Objects.requireNonNull(doc.get("ISBN")).toString();
-                                String bookStatus = Objects.requireNonNull(doc.get("Status")).toString();
-                                if(doc.get("imageID") != null) {
-                                   bookImage = Objects.requireNonNull(doc.get("imageID")).toString();
-                                }
-                                Book currentBook = new Book(bookId, bookTitle, bookISBN, bookAuthor, bookStatus, bookImage,
-                                        bookUser.getCurrentUser());
-                                String currState = statesSpin.getSelectedItem().toString().toLowerCase();
-                                if (!currState.equals("owned")) {
-                                    if (currState.equals(bookStatus)) {
-                                        bookList.add(currentBook);
+        if (spinnerSelected.equals("owned")) {
+            db.collection("Books").whereEqualTo("Owner", bookUser.getCurrentUser().getUsername()).orderBy("Title")
+                    .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                        @Override
+                        public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                            if (value != null) {
+                                bookList.clear();
+                                for (final QueryDocumentSnapshot doc : value) {
+                                    Log.d(TAG, String.valueOf(doc.getData().get("Owner")));
+                                    String bookId = doc.getId();
+                                    String bookTitle = Objects.requireNonNull(doc.get("Title")).toString();
+                                    String bookAuthor = Objects.requireNonNull(doc.get("Author")).toString();
+                                    String bookISBN = Objects.requireNonNull(doc.get("ISBN")).toString();
+                                    String bookStatus = Objects.requireNonNull(doc.get("Status")).toString();
+                                    if (doc.get("imageID") != null) {
+                                        bookImage = Objects.requireNonNull(doc.get("imageID")).toString();
                                     }
-                                } else {
+                                    Book currentBook = new Book(bookId, bookTitle, bookISBN, bookAuthor, bookStatus, bookImage,
+                                            bookUser.getCurrentUser());
+
                                     bookList.add(currentBook);
+                                    bookAdapter.notifyDataSetChanged(); // Notifying the adapter to render any new data fetched from the cloud
                                 }
-                                bookAdapter.notifyDataSetChanged(); // Notifying the adapter to render any new data fetched from the cloud
                             }
                         }
-                    }
-                });
+                    });
+        }
+        else if (spinnerSelected.equals("requested")){
+            db.collection("Books").addSnapshotListener(new EventListener<QuerySnapshot>() {
+                        @Override
+                        public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                            if (value != null) {
+                                bookList.clear();
+                                for (final QueryDocumentSnapshot doc : value) {
+                                    String bookId = doc.getId();
+                                    String bookTitle = Objects.requireNonNull(doc.get("Title")).toString();
+                                    String bookAuthor = Objects.requireNonNull(doc.get("Author")).toString();
+                                    String bookISBN = Objects.requireNonNull(doc.get("ISBN")).toString();
+                                    String bookStatus = Objects.requireNonNull(doc.get("Status")).toString();
+                                    String bookOwner = Objects.requireNonNull(doc.get("Owner")).toString();
+                                    if (doc.get("imageID") != null) {
+                                        bookImage = Objects.requireNonNull(doc.get("imageID")).toString();
+                                    }
+                                    User otherUser = new User(bookOwner,"other", "other", "other");
+                                    Book currentBook = new Book(bookId, bookTitle, bookISBN, bookAuthor, bookStatus, bookImage, otherUser);
+                                    //Log.d("SOORAJ", currentBook.getFirestoreID());
+                                    db.collection("Requests").whereEqualTo("requester", bookUser.getCurrentUser().getUsername())
+                                            .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                                                @Override
+                                                public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                                                    if (value != null) {
+                                                        for (final QueryDocumentSnapshot doc : value) {
+                                                            //Log.d("SOORAJ","REquest: " + Objects.requireNonNull(doc.get("bookID")).toString() );
+                                                            if(currentBook.getFirestoreID().equals(Objects.requireNonNull(doc.get("bookID")).toString())){
+                                                                bookList.add(currentBook);
+                                                                bookAdapter.notifyDataSetChanged();
+                                                                Log.d("SOORAJ", currentBook.getFirestoreID());
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            });
+                                }
+                            }
+                        }
+                    });
+
+        }
     }
 }
