@@ -22,4 +22,5 @@
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="title_activity_maps">Map</string>
     <string name="places_api">AIzaSyADFmERhLf1R3L2B1LDfe38bBcN4m1vtLo</string>
+    <string name="_12345678">12345678</string>
 </resources>

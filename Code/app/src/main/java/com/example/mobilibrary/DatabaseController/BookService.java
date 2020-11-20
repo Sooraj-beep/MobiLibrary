@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.mobilibrary.Book;
+import com.example.mobilibrary.IdCallBack;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -70,7 +71,7 @@ public class BookService {
      * @param newBook new Book object
      */
 
-    public void addBook(final Context context, Book newBook){
+    public void addBook(final Context context, Book newBook, final IdCallBack icb){
         // Checks if the book is already added to database
         if (newBook.getFirestoreID()!= null)
             throw new IllegalArgumentException("This book is already added to the database");
@@ -85,7 +86,9 @@ public class BookService {
              @Override
              public void onSuccess(DocumentReference documentReference) {
                  newBook.setFirestoreID(documentReference.getId());
+                 String id = documentReference.getId();
                  Toast.makeText(context, "Successfully added book!", Toast.LENGTH_SHORT).show();
+                 icb.IdCallback(id);
              }
          }).addOnFailureListener(new OnFailureListener() {
              @Override
@@ -106,14 +109,14 @@ public class BookService {
 
     public void uploadImage(String id, Bitmap imageBitmap, OnSuccessListener<Void> successListener, OnFailureListener failureListener) {
         StorageReference storageReference = FirebaseStorage.getInstance().getReference();
-        final StorageReference ref = storageReference.child("books/" + id + ".jpg");
+        StorageReference ref = storageReference.child("books/" + id + ".jpg");
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         if(imageBitmap != null) {
             imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         }
         byte[] data = baos.toByteArray();
 
-        final UploadTask uploadTask = ref.putBytes(data);
+        UploadTask uploadTask = ref.putBytes(data);
         uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -185,7 +188,6 @@ public class BookService {
         Map<String, Object> data = new HashMap<>();
         data.put("ISBN", editBook.getISBN());
         data.put("Author", editBook.getAuthor());
-        data.put("Image", editBook.getImageId());
         data.put("Title", editBook.getTitle());
         data.put("imageID", editBook.getImageId());
         // edit document

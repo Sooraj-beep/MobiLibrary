@@ -19,17 +19,17 @@ public class Book implements Serializable, Comparable<Book> {
     private String imageId;
     private int id;
 
-   /*public Book(String title, String ISBN, String author, String status, Bitmap image, User user){
+   public Book(String title, String ISBN, String author, String status, String image, User user){
         this.firestoreID = null;
         this.id = nextID;
         this.title = title;
         this.ISBN = ISBN;
         this.author = author;
         this.status = status;
-        this.image = image;
+        this.imageId = image;
         this.owner = user;
         nextID++;
-    }*/
+    }
 
     public Book(String firestoreID, String title, String ISBN, String author, String status, String imageId, User user){
         this.firestoreID = firestoreID;

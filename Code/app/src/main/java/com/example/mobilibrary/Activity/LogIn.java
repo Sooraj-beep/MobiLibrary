@@ -1,6 +1,7 @@
 package com.example.mobilibrary.Activity;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -8,12 +9,24 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.mobilibrary.CurrentUser;
 import com.example.mobilibrary.DatabaseController.DatabaseHelper;
+import com.example.mobilibrary.DatabaseController.User;
+import com.example.mobilibrary.HomeFragment;
+import com.example.mobilibrary.MainActivity;
 import com.example.mobilibrary.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+
+
 /**
  * LogIn activity lets user log into the app with their unique email registered to Firebase Authentication
  * User can also choose to go to SignUp activity to create a new account.
@@ -25,6 +38,9 @@ public class LogIn extends AppCompatActivity {
 
     private Button login;
     private TextView signup;
+    public Context context;
+    public User user;
+    private CurrentUser currentUser;
 
     final DatabaseHelper databaseHelper = new DatabaseHelper(this);
 
@@ -36,6 +52,8 @@ public class LogIn extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_login);
+        currentUser = CurrentUser.getInstance();
+        context = getApplicationContext();
         //gets id of layouts
         inputEmail = findViewById(R.id.email_editText);
         inputPassword = findViewById(R.id.password_editText);
@@ -80,12 +98,27 @@ public class LogIn extends AppCompatActivity {
                 if ((boolEmail)&&(boolPwd)){
                     ProgressBar progressBar = findViewById(R.id.progress_bar);
                     progressBar.setVisibility(View.VISIBLE);
-                    databaseHelper.validateUser(email, password);
+                    databaseHelper.validateUser(email, password)
+                            .addOnCompleteListener(task -> {
+                                if(task.isSuccessful()){
+                                    Toast.makeText(LogIn.this, "Authentication Succeeded.", Toast.LENGTH_SHORT).show();
+                                    user = task.getResult();
+                                    currentUser.login(user);
+                                    LogIn.this.startActivity(new Intent(context, MainActivity.class));
+                                } else {
+                                    Toast.makeText(context, "Authentication Failed.", Toast.LENGTH_SHORT).show();
+                                    progressBar.setVisibility(View.GONE);
+                                }
+                            });
+
+
+
+                    }
                     //clear password field
                     inputPassword.setText("");
                 }
-            }
-        });
+            });
+
 
     }
 }

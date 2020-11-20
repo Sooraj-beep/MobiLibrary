@@ -20,10 +20,12 @@ import com.example.mobilibrary.Callback;
 import com.example.mobilibrary.DatabaseController.User;
 import com.example.mobilibrary.MainActivity;
 import com.google.android.gms.common.api.Batch;
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.EmailAuthCredential;
@@ -157,7 +159,7 @@ public class DatabaseHelper {
                                     });
 
                         } else {
-                            Toast.makeText(context, "Account already exists!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, "Failed with: "+ task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -169,26 +171,40 @@ public class DatabaseHelper {
      * @param email    user email from Log In
      * @param password user password from Log In
      */
-    public void validateUser(final String email, final String password) {
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener((Activity) context, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            Toast.makeText(context, "Authentication Succeeded.", Toast.LENGTH_SHORT).show();
-                            //log in to homepage
-                            context.startActivity(new Intent(context, MainActivity.class));
-                            ((Activity) (context)).finish();
-                        } else {
-                            Toast.makeText(context, "Authentication Failed.", Toast.LENGTH_SHORT).show();
-                            //go to log in screen again to prompt a new attempt
-                            context.startActivity(new Intent(context, LogIn.class));
-                            ((Activity) (context)).finish();
-                        }
-                    }
+    public Task<User> validateUser(final String email, final String password) {
+        Task<AuthResult> authResult = mAuth.signInWithEmailAndPassword(email, password);
+        return authResult.continueWithTask(task -> {
+            if (authResult.isSuccessful()) {
+                return getUserbyEmail(email).continueWith(task1 -> {
+                    User user = task1.getResult();
+                    //return user;
+                    return user;
                 });
+            } else {
+                TaskCompletionSource<User> source = new TaskCompletionSource<User>();
+                source.setException(authResult.getException());
+                return source.getTask();
+            }
+        });
+    }
 
+    public Task<User> getUserbyEmail(final String email) {
+        //Toast.makeText(context, "OK", Toast.LENGTH_SHORT).show();
 
+        return db.collection("Users").whereEqualTo("email", email)
+                .get()
+                .continueWith(new Continuation<QuerySnapshot, User>() {
+                    @Override
+                    public User then(@NonNull Task<QuerySnapshot> task) throws Exception {
+                        DocumentSnapshot doc = task.getResult().getDocuments().get(0);
+                        String username = doc.getId();
+                        String name = doc.getString("name");
+                        String phone = doc.getString("phoneNo");
+                        User user = new User(username, email, name, phone);
+                        return user;
+                    }
+
+                });
     }
 
     /**

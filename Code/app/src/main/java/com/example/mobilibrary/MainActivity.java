@@ -4,10 +4,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.widget.Toast;
 
+import com.example.mobilibrary.DatabaseController.User;
 import com.example.mobilibrary.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -18,6 +21,10 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 public class MainActivity extends AppCompatActivity {
 
     private BottomNavigationView bottomNavigationView;
+    //test currentUser
+    private CurrentUser currentUser;
+    private Context context;
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +32,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         bottomNavigationView = findViewById(R.id.bottomNav);
+        //test currentUser
+        currentUser = CurrentUser.getInstance();
+        user = currentUser.getCurrentUser();
+        context = getApplicationContext();
+        Toast.makeText( context,"Account: "+user.getUsername(), Toast.LENGTH_SHORT).show();
 
         bottomNavigationView.setOnNavigationItemSelectedListener(bottomNavMethod);
         bottomNavigationView.setSelectedItemId(R.id.home);

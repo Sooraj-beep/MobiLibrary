@@ -46,7 +46,7 @@ public class BookDetailsTest {
         solo = new Solo(InstrumentationRegistry.getInstrumentation(), rule.getActivity());
 
         // go to MyBooks and switch to addBookFragment
-        solo.enterText((EditText) solo.getView(R.id.email_editText), "nrhassan@ualberta.ca");
+        solo.enterText((EditText) solo.getView(R.id.email_editText), "nrhassan@testemail.ca");
         solo.enterText((EditText) solo.getView(R.id.password_editText), "PassWord15");
         solo.clickOnView(solo.getView(R.id.login_button));
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
@@ -100,10 +100,10 @@ public class BookDetailsTest {
         String status = ((TextView) solo.getView(R.id.view_status)).getText().toString();
 
         // validate displayed information
-        assertEquals("Song of the Lioness", ((TextView) solo.getView(R.id.view_title)).getText().toString());
-        assertEquals("Tamora Pierce",  ((TextView) solo.getView(R.id.view_author)).getText().toString());
-        assertEquals("username", ((TextView) solo.getView(R.id.view_owner)).getText().toString());
-        assertEquals("1234567890123", ((TextView) solo.getView(R.id.view_status)).getText().toString());
+        assertEquals("Song of the Lioness", title);
+        assertEquals("Tamora Pierce", author);
+        assertEquals("username", owner);
+        assertEquals("1234567890123", isbn);
         assertNull(drawable);
     }
 
