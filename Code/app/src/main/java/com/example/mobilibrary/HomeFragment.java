@@ -1,5 +1,6 @@
 package com.example.mobilibrary;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -16,10 +17,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -39,6 +42,8 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.text.NumberFormat;
+import java.text.ParsePosition;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -58,18 +63,8 @@ public class HomeFragment extends Fragment implements SearchView.OnQueryTextList
     private ArrayList<Book> allBooksList;
     private ListView allBooksListView;
     private FirebaseFirestore db;
+    private String bookImage;
     private static final String TAG = "HomeFragment";
-
-    private RecyclerView booksRV;
-    private RecyclerView.Adapter mAdaptor;
-
-    private List<String> titles = new ArrayList<>();
-    private List<String> authors = new ArrayList<>();
-    private List<String> isbns = new ArrayList<>();
-    private List<String> statuses = new ArrayList<>();
-    private List<String> owners = new ArrayList<>();
-    private List<String> images = new ArrayList<>();
-    private List<String> ids = new ArrayList<>();
 
     public HomeFragment() {
         // Required empty public constructor
@@ -89,18 +84,26 @@ public class HomeFragment extends Fragment implements SearchView.OnQueryTextList
         allBooksList = new ArrayList<>();
         allBooksAdapter = new customBookAdapter(this.getActivity(), allBooksList);
         allBooksListView.setAdapter(allBooksAdapter);
-        allBooksListView.setTextFilterEnabled(true);
         setAllBooksList();
 
         searchBar.setOnQueryTextListener(this);
 
+        // Cancelling the search to return to all books again
+        searchBar.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                return false;
+            }
+        });
+
         allBooksListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Book book = allBooksList.get(i);
+                allBooksAdapter.notifyDataSetChanged();
+                Book book = allBooksAdapter.getItem(i);
                 Intent viewBook = new Intent(getActivity(), BookDetailsFragment.class);
                 viewBook.putExtra("view book", book);
-                startActivityForResult(viewBook, 1);
+                startActivity(viewBook);
             }
         });
 
@@ -121,7 +124,7 @@ public class HomeFragment extends Fragment implements SearchView.OnQueryTextList
     }
 
     /**
-     * Sets the allBooksListView, code minimally edited from MyBooksFragment
+     * Sets the allBooksListView, code edited from MyBooksFragment
      */
     public void setAllBooksList() {
         db.collection("Books").orderBy("Title")
@@ -131,94 +134,53 @@ public class HomeFragment extends Fragment implements SearchView.OnQueryTextList
                         if (value != null) {
                             allBooksList.clear();
                             for (QueryDocumentSnapshot doc : value) {
-                                Log.d(TAG, String.valueOf(doc.getData().get("Owner")));
-                                final String bookId = doc.getId();
-                                final String bookOwner = Objects.requireNonNull(doc.get("Owner")).toString();
-                                final String bookTitle = Objects.requireNonNull(doc.get("Title")).toString();
-                                final String bookAuthor = Objects.requireNonNull(doc.get("Author")).toString();
-                                final String bookISBN = Objects.requireNonNull(doc.get("ISBN")).toString();
                                 final String bookStatus = Objects.requireNonNull(doc.get("Status")).toString();
-                                byte[] bookImage = null;
-                                if ((Blob) doc.get("Image") != null) {
-                                    Blob imageBlob = (Blob) doc.get("Image");
-                                    bookImage = Objects.requireNonNull(imageBlob).toBytes();
-                                }
-                                final byte[] finalBookImage = bookImage;
-                                db.collection("Users").document(bookOwner).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                    @Override
-                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                        databaseHelper.getUserProfile(bookOwner, new Callback() {
-                                            @Override
-                                            public void onCallback(User user) {
-                                                allBooksList.add(new Book(bookId,bookTitle, bookISBN, bookAuthor, bookStatus, finalBookImage, user));
-                                                allBooksAdapter.notifyDataSetChanged(); // Notifying the adapter to render any new data fetched from the cloud
-                                            }
-                                        });
+                                final String bookOwner = Objects.requireNonNull(doc.get("Owner")).toString();
+                                if (!bookOwner.equals(databaseHelper.getUser().getDisplayName()) &&
+                                        (bookStatus.equals("available") || bookStatus.equals("requested"))) {
+                                    final String bookId = doc.getId();
+                                    final String bookTitle = Objects.requireNonNull(doc.get("Title")).toString();
+                                    final String bookAuthor = Objects.requireNonNull(doc.get("Author")).toString();
+                                    final String bookISBN = Objects.requireNonNull(doc.get("ISBN")).toString();
+                                    if (doc.get("imageID") != null) {
+                                        bookImage = Objects.requireNonNull(doc.get("imageID")).toString();
                                     }
-                                });
+                                    db.collection("Users").document(bookOwner).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                        @Override
+                                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                            databaseHelper.getUserProfile(bookOwner, new Callback() {
+                                                @Override
+                                                public void onCallback(User user) {
+                                                    allBooksList.add(new Book(bookId, bookTitle, bookISBN, bookAuthor, bookStatus, bookImage, user));
+                                                    Log.d(TAG, "Added all books not belonging to the user, either available or requested.");
+                                                    allBooksAdapter.notifyDataSetChanged(); // Notifying the adapter to render any new data fetched from the cloud
+                                                }
+                                            });
+                                        }
+                                    });
+                                }
                             }
                         }
                     }
                 });
     }
 
-    /**
-     * Code from MyBooksFragment
-     * If requestCode is 0, if its 1, we are either deleting a book (result code =1) or editing
-     * an existing book (result code = 2) with data.
-     *
-     * @param requestCode
-     * @param resultCode
-     * @param data
-     */
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1) {
-            if (resultCode == 1) {
-                // book needs to be deleted, intent has book to delete
-                Book delete_book = (Book) data.getSerializableExtra("delete book");
-
-                // find the book to delete and delete it
-                for (int i = 0; i < allBooksAdapter.getCount(); i++) {
-                    Book currentBook = allBooksAdapter.getItem(i);
-                    if (delete_book.getFirestoreID().equals(currentBook.getFirestoreID())) {
-                        allBooksAdapter.remove(currentBook);
-                    }
-                }
-
-                allBooksAdapter.notifyDataSetChanged();
-            } else if (resultCode == 2) {
-                // book was edited update data set
-                Book edited_book = (Book) data.getSerializableExtra("edited book");
-
-                // find the book to edit and edit it
-                for (int i = 0; i < allBooksList.size(); i++) {
-                    Book currentBook = allBooksList.get(i);
-                    if (edited_book.getFirestoreID().equals(currentBook.getFirestoreID())) {
-                        currentBook.setTitle(edited_book.getTitle());
-                        currentBook.setAuthor(edited_book.getAuthor());
-                        currentBook.setISBN(edited_book.getISBN());
-                        currentBook.setImage(edited_book.getImage());
-                    }
-                }
-                allBooksAdapter.notifyDataSetChanged();
-            }
-        }
-    }
-
     @Override
     public boolean onQueryTextSubmit(String query) {
+        Log.d("OnQueryTextSubmit", query);
+        searchBar.clearFocus();
         return false;
     }
 
     @Override
     public boolean onQueryTextChange(String newText) {
+        Log.d("OnQueryTextChange", newText);
         if (TextUtils.isEmpty(newText)) {
-            allBooksListView.clearTextFilter();
+            allBooksAdapter.getFilter().filter("");
         } else {
-            allBooksListView.setFilterText(newText);
+            allBooksAdapter.getFilter().filter(newText);
         }
         return true;
     }
+
 }

@@ -43,7 +43,7 @@ public class ProfileActivity extends AppCompatActivity implements reAuthFragment
 
     private ImageButton editButton;
     private ImageView profileImage;
-    private FloatingActionButton editProfileImage;
+    //private FloatingActionButton editProfileImage;
     private TextView usernameText;
     private TextView emailText;
     private TextView phoneText;
@@ -78,7 +78,7 @@ public class ProfileActivity extends AppCompatActivity implements reAuthFragment
         confirmButton = findViewById(R.id.confirm_button);
         cancelButton = findViewById(R.id.cancel_button);
         signOutButton = findViewById(R.id.sign_out_button);
-        editProfileImage = findViewById(R.id.edit_profile_image_button);
+        //editProfileImage = findViewById(R.id.edit_profile_image_button);
         context = getApplicationContext();
 
         // Set visibility
@@ -86,7 +86,7 @@ public class ProfileActivity extends AppCompatActivity implements reAuthFragment
         phoneText.setVisibility(View.INVISIBLE);
         toggleViews.add(editEmail);
         toggleViews.add(editPhone);
-        toggleViews.add(editProfileImage);
+        //toggleViews.add(editProfileImage);
         toggleViews.add(cancelButton);
         toggleViews.add(confirmButton);
         toggleViews.add(emailText);

@@ -78,8 +78,8 @@ public class MyBooksFragment extends Fragment {
         System.out.println("In MyBooks Fragment");
         // Inflate the layout for this fragment
         View v =  inflater.inflate(R.layout.fragment_my_books, container, false);
-        addButton = (FloatingActionButton) v.findViewById(R.id.addButton);
-        bookView = (ListView) v.findViewById(R.id.book_list);
+        addButton = v.findViewById(R.id.addButton);
+        bookView = v.findViewById(R.id.book_list);
         db = FirebaseFirestore.getInstance();
         userInfo = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -105,7 +105,7 @@ public class MyBooksFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent addIntent = new Intent(getActivity(), AddBookFragment.class);
-                startActivityForResult(addIntent, 0);
+                startActivity(addIntent);
             }
         });
 
@@ -152,14 +152,14 @@ public class MyBooksFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         System.out.println("IN ONACTIVITYRESULT");
-        if (requestCode == 0) {
+        /*if (requestCode == 0) {
             if (resultCode == RESULT_OK) {
                 Book new_book = (Book) Objects.requireNonNull(data.getExtras()).getSerializable("new book");
                 bookAdapter.add(new_book);
                 bookAdapter.notifyDataSetChanged();
                 System.out.println("Book adaptor added newBook");
             }
-        }
+        }*/
 
         if (requestCode == 1) {
             if (resultCode == 1) {

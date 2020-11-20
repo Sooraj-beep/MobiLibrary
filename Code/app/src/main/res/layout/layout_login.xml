@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimary"
@@ -67,35 +68,41 @@
         app:layout_constraintTop_toBottomOf="@id/password_editText" />
 
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/signup_bar"
-            android:layout_width="31dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="70dp"
-            android:layout_marginTop="8dp"
-            android:layout_weight="0.5"
-            android:fontFamily="@font/quicksand_medium"
-            android:text="New to MobiLibrary?" />
+        android:layout_height="wrap_content">
 
         <TextView
             android:id="@+id/signup_bar2"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_weight="0.35"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="12dp"
             android:background="?attr/selectableItemBackground"
             android:clickable="true"
             android:fontFamily="@font/quicksand_medium"
             android:text="Create Account"
+            android:textAlignment="viewStart"
             android:textColor="#254A6E"
             android:textColorHighlight="#FFFFFF"
-            android:textStyle="bold" />
-    </LinearLayout>
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/signup_bar"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/signup_bar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="12dp"
+            android:fontFamily="@font/quicksand_medium"
+            android:text="New to MobiLibrary?"
+            android:textAlignment="viewEnd"
+            app:layout_constraintEnd_toStartOf="@+id/signup_bar2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ProgressBar
         android:id="@+id/progress_bar"

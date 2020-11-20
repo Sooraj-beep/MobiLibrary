@@ -5,6 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimary"
+    android:clickable="true"
+    android:focusableInTouchMode="true"
     tools:context="com.example.mobilibrary.HomeFragment">
 
     <TextView
@@ -43,8 +45,8 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:clickable="true"
-        android:foreground="@drawable/pfp"
-        app:backgroundTint="#FFFFFF"
+        android:foreground="@drawable/profileic"
+        app:backgroundTint="@color/colorPrimaryDark"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -63,17 +65,5 @@
 
     </ListView>
 
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/booksRV"
-        android:layout_width="match_parent"
-        android:layout_height="521dp"
-        android:layout_marginTop="204dp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:listitem="@layout/books_rows" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

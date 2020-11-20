@@ -7,7 +7,7 @@ android {
     defaultConfig {
         applicationId "com.example.mobilibrary"
         minSdkVersion 26
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
@@ -36,7 +36,7 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation platform('com.google.firebase:firebase-bom:25.12.0')
     implementation 'com.google.firebase:firebase-database:19.5.1'
-    implementation 'com.google.firebase:firebase-auth:20.0.0'
+    implementation 'com.google.firebase:firebase-auth:20.0.1'
     implementation 'com.google.firebase:firebase-firestore:22.0.0'
     implementation 'com.google.firebase:firebase-firestore'
     implementation 'androidx.cardview:cardview:1.0.0'

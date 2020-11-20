@@ -130,7 +130,10 @@ public class AddBookFragment extends AppCompatActivity implements Serializable {
                         public void onCallback(User user) {
                             String bookStatus = "available";
                             String bookId = null;
-                            String bookBitmap = imageBitMap.toString();
+                            String bookBitmap = null;
+                            if (imageBitMap != null) {
+                                bookBitmap = imageBitMap.toString();
+                            }
                             Book newBook = new Book(bookId,bookTitle,bookISBN,bookAuthor,bookStatus,bookBitmap,user);
                             System.out.println("new book was created");
                             bookService.addBook(context, newBook); //add book to firestore
@@ -148,9 +151,9 @@ public class AddBookFragment extends AppCompatActivity implements Serializable {
                                     }
                                 });
                             }
-                            Intent returnIntent = new Intent();
+                            /*Intent returnIntent = new Intent();
                             returnIntent.putExtra("new book", newBook);
-                            setResult(RESULT_OK, returnIntent);
+                            setResult(RESULT_OK, returnIntent);*/
                             finish();
                         }
                     });

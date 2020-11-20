@@ -134,7 +134,7 @@ public class BookDetailsFragment extends AppCompatActivity {
             requestAssets = new TextView[]{title, author, owner, status, ownerTitle,ISBN, isbnTitle, statusTitle };
             reqDataList = new ArrayList<>();
             for (String user: req_users){
-                reqDataList.add(user + "has requested your book");
+                reqDataList.add(user + " has requested your book");
             }
             reqAdapter =  new ArrayAdapter<String>(this,R.layout.req_custom_list, R.id.textView, reqDataList);
             reqList.setAdapter(reqAdapter);
@@ -146,6 +146,7 @@ public class BookDetailsFragment extends AppCompatActivity {
             deleteButton.setVisibility(View.GONE);
             detailsBtn.setVisibility(View.GONE);
             requestsBtn.setVisibility(View.GONE);
+            reqList.setVisibility(View.GONE);
 
             //get book status
             //if book is available/requested, show request button
