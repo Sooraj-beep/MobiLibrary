@@ -33,7 +33,7 @@
                 android:layout_width="125dp"
                 android:layout_height="125dp"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="32dp"
+                android:layout_marginTop="16dp"
                 android:src="@drawable/pfp_og"
                 app:civ_border_color="#FF000000"
                 app:civ_border_overlay="false"

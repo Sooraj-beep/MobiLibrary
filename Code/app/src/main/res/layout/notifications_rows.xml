@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     app:cardBackgroundColor="@color/colorPrimaryDark"
-    app:cardUseCompatPadding="true"
     app:cardCornerRadius="3dp"
     app:cardElevation="2dp"
-    app:contentPadding="3dp">
+    app:cardUseCompatPadding="true"
+    app:contentPadding="5dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,12 +15,14 @@
         android:orientation="horizontal">
 
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profile_pic"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:clickable="true"
-            app:srcCompat="@drawable/ic_generic_avatar" />
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="15dp"
+            android:src="@drawable/pfp_og"
+            app:civ_border_overlay="false" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -31,18 +33,20 @@
                 android:id="@+id/notifications_username"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text = "Username"
-                android:textSize="25sp"
-                android:textStyle="bold"
-                android:textColor="@color/colorText"/>
+                android:fontFamily="@font/quicksand_medium"
+                android:text="Username"
+                android:textColor="@color/colorText"
+                android:textSize="22sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/notifications_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text = "Notification"
-                android:textSize="20sp"
-                android:textColor="@color/colorText"/>
+                android:fontFamily="@font/quicksand_medium"
+                android:text="Notification"
+                android:textColor="@color/colorText"
+                android:textSize="16sp" />
 
         </LinearLayout>
 

@@ -23,13 +23,14 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/notificationsRV"
         android:layout_width="match_parent"
-        android:layout_height="565dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="55dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/notification_title"
         tools:listitem="@layout/notifications_rows" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

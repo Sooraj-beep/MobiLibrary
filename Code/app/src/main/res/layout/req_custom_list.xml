@@ -6,11 +6,13 @@
     android:layout_width="match_parent"
     android:layout_height="60dp">
 
-    <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="55dp"
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/profile_imageView"
+        android:layout_width="50dp"
         android:layout_height="0dp"
-        android:background="@drawable/ic_generic_avatar"
+        android:layout_margin="5dp"
+        android:src="@drawable/pfp_og"
+        app:civ_border_overlay="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -26,7 +28,7 @@
         android:textSize="15sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/acceptRequestBtn"
-        app:layout_constraintStart_toEndOf="@+id/imageView2"
+        app:layout_constraintStart_toEndOf="@+id/profile_imageView"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
