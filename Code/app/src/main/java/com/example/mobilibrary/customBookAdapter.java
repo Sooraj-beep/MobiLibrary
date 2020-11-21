@@ -120,13 +120,8 @@ public class customBookAdapter extends ArrayAdapter<Book> implements Filterable 
             @SuppressWarnings("unchecked")
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
-                Log.d(TAG, ("count: " + String.valueOf(results.count)));
-                if (results.count == 0) {
-                    notifyDataSetInvalidated();
-                } else {
-                    filtered = (ArrayList<Book>) results.values;
-                    notifyDataSetChanged();
-                }
+                filtered = (ArrayList<Book>) results.values;
+                notifyDataSetChanged();
             }
 
         };
