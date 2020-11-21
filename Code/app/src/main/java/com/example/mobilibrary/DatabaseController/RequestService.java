@@ -8,7 +8,11 @@ import androidx.annotation.Nullable;
 
 import com.example.mobilibrary.Book;
 import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -16,6 +20,7 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
@@ -41,20 +46,22 @@ public class RequestService {
     }
 
 // call: RequestService.createRequest.addOnCompleteListener(task->{if task.issuccesfull(): print message else: print failed message)
-    public Task<DocumentReference> createRequest(Request request) {
+    public Task<DocumentReference> createRequest(aRequest request) {
+    //public void createRequest(aRequest request) {
+        System.out.println("In create Request");
         Map<String, Object> data = new HashMap<>();
         data.put("requester", request.getRequester());
         data.put("bookID", request.getBookID());
-        Log.d("SOORAJ", "createRequest: ");
         return db.collection("Requests").add(data);
+
     }
 
-    public ListenerRegistration getRequests(Book book, final DataListener<List<Request>> dataListener ){
+    public ListenerRegistration getRequests(Book book, final DataListener<List<aRequest>> dataListener ){
         return db.collection("Requests").whereEqualTo("bookID", book.getFirestoreID())
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException error) {
-                        List<Request> requests = new ArrayList<>();
+                        List<aRequest> requests = new ArrayList<>();
                         for (QueryDocumentSnapshot doc: queryDocumentSnapshots)
                             requests.add(getRequestfromFirestore(doc));
 
@@ -64,13 +71,13 @@ public class RequestService {
     }
 
     //used to pull a request from firestore
-    public Request getRequestfromFirestore(DocumentSnapshot documentSnapshot){
+    public aRequest getRequestfromFirestore(DocumentSnapshot documentSnapshot){
         String requester = documentSnapshot.getString("requester");
         String bookID = documentSnapshot.getString("bookID");
-        return new Request(documentSnapshot.getId(), requester, bookID);
+        return new aRequest(documentSnapshot.getId(), requester, bookID);
     }
 
-    public Task<Void> acceptRequest(Request request){
+    public Task<Void> acceptRequest(aRequest request){
         WriteBatch batch = db.batch();
 
         DocumentReference requestDoc = db.collection("Requests")

@@ -196,8 +196,7 @@ public class AddBookFragment extends AppCompatActivity implements Serializable {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if((newAuthor.getText().toString() == "" || newTitle.getText().toString() == "")
-                    && (newIsbn.getText().toString().length() == 13)){
+                if((newIsbn.getText().toString().length() == 13)){
                     Toast.makeText(AddBookFragment.this, "ISBN searched", Toast.LENGTH_SHORT).show();
                     String bookInfo = getBookInfo(newIsbn.getText().toString().trim());
                     parseJson(bookInfo);

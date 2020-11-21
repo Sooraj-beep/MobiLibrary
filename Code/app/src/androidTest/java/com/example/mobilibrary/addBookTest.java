@@ -178,6 +178,25 @@ public class addBookTest{
 
     }
 
+    /**
+     * Test whether title and author autofill, when isbn is filled"
+     */
+    @Test
+    public void addBookISBNAutofill() {
+        solo.enterText((EditText) solo.getView(R.id.email_editText), "ktran5@ualberta.ca");
+        solo.enterText((EditText) solo.getView(R.id.password_editText), "happyfun33");
+        solo.clickOnView(solo.getView(R.id.login_button));
+        solo.waitForActivity(MainActivity.class);
+        solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
+        solo.clickOnMenuItem("My Books");
+        solo.clickOnView(solo.getView(R.id.addButton));
+        solo.assertCurrentActivity("Wrong Activity", AddBookFragment.class);
+        solo.enterText((EditText) solo.getView(R.id.book_isbn), "9781683838265"); //input isbn for auto fill
+        solo.waitForText("Harry Potter: Knitting Magic", 1, 2000); // wait for title
+        solo.waitForText("Tanis Gray", 1, 2000); // wait for author
+        solo.clickOnButton("confirm");
+    }
+
     @After
     public void tearDown() throws Exception{
         solo.finishOpenedActivities();

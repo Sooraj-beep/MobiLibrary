@@ -40,6 +40,8 @@ import com.example.mobilibrary.Activity.ProfileActivity;
 import com.example.mobilibrary.DatabaseController.BookService;
 import com.example.mobilibrary.DatabaseController.RequestService;
 import com.example.mobilibrary.DatabaseController.User;
+import com.example.mobilibrary.DatabaseController.aRequest;
+import com.example.mobilibrary.DatabaseController.RequestService;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -48,10 +50,15 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import com.google.firebase.firestore.Query;
+
 import com.google.firebase.firestore.FirebaseFirestoreException;
+
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
@@ -64,7 +71,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+
+import java.util.HashMap;
+
 import java.util.Objects;
+
 
 /**
  * This class takes in a book and displays its details (Title, Author, Owner, ISBN and Status),
@@ -93,12 +104,17 @@ public class BookDetailsFragment extends AppCompatActivity {
     private ArrayAdapter<String> reqAdapter;
     private ArrayList<String> reqDataList;
 
+    private CurrentUser currentUser;
+
+
+
     private FirebaseFirestore db;
     private BookService bookService;
     private RequestService requestService;
     private Context context;
     private RequestQueue mRequestQueue;
 
+    private Button requestedButton;
     private Button requestButton;
     private Button returnButton;
     private Button receiveButton;
@@ -132,6 +148,7 @@ public class BookDetailsFragment extends AppCompatActivity {
         isbnTitle = findViewById(R.id.view_isbn_title);
         statusTitle = findViewById(R.id.view_status_title);
 
+        requestedButton = findViewById(R.id.requested_button);
         requestButton = findViewById(R.id.request_button);
         returnButton = findViewById(R.id.return_button);
         receiveButton = findViewById(R.id.receive_button);
@@ -140,9 +157,11 @@ public class BookDetailsFragment extends AppCompatActivity {
         requestButton.setVisibility(View.GONE);
         returnButton.setVisibility(View.GONE);
         receiveButton.setVisibility(View.GONE);
+        requestedButton.setVisibility(View.GONE);
 
         // set up firestore instance
         bookService = BookService.getInstance();
+        requestService = RequestService.getInstance();
         context = getApplicationContext();
 
         // set up permissions for scanning intent
@@ -162,7 +181,7 @@ public class BookDetailsFragment extends AppCompatActivity {
         owner.setText(viewBook.getOwner().getUsername());
         ISBN.setText(viewBook.getISBN());
         status.setText(viewBook.getStatus());
-        System.out.println("CLICKED BOOK GET TITLE: " + viewBook.getTitle());
+
         convertImage(viewBook.getFirestoreID());
 
         //get current user name and book owners name, check if they match
@@ -199,10 +218,51 @@ public class BookDetailsFragment extends AppCompatActivity {
             //get book status
             if (viewBook.getStatus().equals("available") || (viewBook.getStatus().equals("requested"))) {
                 //if book is available or has requests (and also make sure user hasn't requested it before) display request button
-                System.out.println("should be showing request button");
-                if (!viewBook.getOwner().getPhoneNo().equals("other")) {
+
+                //check is user has requested this book before
+                if (viewBook.getStatus().equals("requested")) {
+                    //get requestors
+                    ArrayList<String> requestors = new ArrayList<String>();
+                    final boolean[] alreadyRequested = new boolean[1];
+                    CollectionReference requestsRef;
+                    db = FirebaseFirestore.getInstance();
+                    //CollectionReference requestsRef = db.collection("Requests");
+                    requestsRef = db.collection("Requests");
+                    System.out.println("Got collection reference");
+                    Query query = requestsRef.whereEqualTo("bookID", viewBook.getFirestoreID());
+                    query.get()
+                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        requestors.clear();
+                                        alreadyRequested[0] = false;
+                                        for (QueryDocumentSnapshot document : task.getResult()) {
+                                            System.out.println("In query document snapshot: " + document.getData());
+                                            requestors.add(document.getData().toString());
+                                            String bookRequester = document.getString("requester");
+                                            //if requester is equal to user then show requested button and exit
+                                            if (bookRequester.equals(getUsername())) {
+                                                alreadyRequested[0] = true;
+                                                requestedButton.setVisibility(View.VISIBLE);
+                                                return;
+                                            }
+
+                                        }
+                                    }
+
+                                }
+                            });
+
+                    if (alreadyRequested[0] == false) {
+                        requestButton.setVisibility(View.VISIBLE);
+                    }
+
+                }else {
                     requestButton.setVisibility(View.VISIBLE);
                 }
+                //requestButton.setVisibility(View.VISIBLE);
+
             }
             else if (viewBook.getStatus().equals("borrowed")){
                 // if book is borrowed, show return button
@@ -226,24 +286,6 @@ public class BookDetailsFragment extends AppCompatActivity {
                     viewBook.setTitle(title.getText().toString());
                     viewBook.setAuthor(author.getText().toString());
                     viewBook.setISBN(ISBN.getText().toString().replaceAll(" ", ""));
-
-                    //If photo changed, pass along to firebase
-                    /*if (!(nullPhoto())) {
-                        viewBook.setImageId(editBitMap.toString());
-                        //System.out.println("Uploading book, id: " + editBitMap.toString());
-                        bookService.uploadImage(viewBook.getFirestoreID(), editBitMap, new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                            }
-                        }, new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Toast.makeText(BookDetailsFragment.this, "Failed to add image.", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    } else {
-                        viewBook.setImageId(null);    // book has no photo so image bitmap is set to null
-                    } */
 
                     // return the book with its changed fields
                     Intent editedIntent = new Intent();
@@ -282,6 +324,24 @@ public class BookDetailsFragment extends AppCompatActivity {
                         finish();
                     }
                 });
+
+                //also have to delete all requests from firebase that came with this book, and their notifications
+                //delete all requests for the book on firestore
+                final FirebaseFirestore db = FirebaseFirestore.getInstance();
+                db.collection("Requests").whereEqualTo("bookID", viewBook.getFirestoreID())
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    document.getReference().delete();
+                                }
+                            }
+                        });
+
+                //delete notifications for everyone who has requested that book
+                //*this is done in the notifictions fragment (going to check if book still exists before displaying notification)
+
             }
         });
 
@@ -299,7 +359,7 @@ public class BookDetailsFragment extends AppCompatActivity {
         });
 
         /**
-         *
+         *If receive button is pressed
          */
         receiveButton.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.M)
@@ -338,14 +398,39 @@ public class BookDetailsFragment extends AppCompatActivity {
         });
 
         /**
-         * If Request Button is pressed, change Book status to request, and change the button
+         * If Request Button is pressed, create new Request object, save to firestore, change Book status to request, and change the button
          */
         requestButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 //change book status to requested
+
+                viewBook.setStatus("requested");
+                bookService.changeStatus(context, viewBook, "requested");
+                requestButton.setVisibility(View.GONE);
+                requestedButton.setVisibility(View.VISIBLE);
+                requestedButton.setPressed(true);
+
+                //create new request and store in firestore
+                aRequest request = new aRequest(getUsername(), viewBook.getFirestoreID());
+                System.out.println("Created new request: " + request);
+                System.out.println("Request service: " + requestService);
+                requestService.createRequest(request).addOnCompleteListener(task -> {
+                    if (task.isSuccessful()){
+                        Toast.makeText(getApplicationContext(), "Successfully requested book!", Toast.LENGTH_LONG).show();
+
+                    }else{
+                        System.out.println("Could not create request");
+                        Toast.makeText(getApplicationContext(), "Unable to request book!", Toast.LENGTH_LONG).show();
+                    }
+                });
+
+                //create notification
+                addToNotifications(viewBook.getOwner().getUsername(), getUsername(), "Has requested to borrow your book.", "1", viewBook.getFirestoreID());
+
                 //System.out.println("VIEWED BOOK FIRESTOREID: " + viewBook.getFirestoreID());
-                String username = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
+                /*String username = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
                 db = FirebaseFirestore.getInstance();
                 db.collection("Requests").whereEqualTo("requester", username)
                         .whereEqualTo("bookID", viewBook.getFirestoreID()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -383,11 +468,12 @@ public class BookDetailsFragment extends AppCompatActivity {
 
 
                     }
-                });
+                });*/
 
 
 
                 //later add: make sure button text stays "requested" when user who already requested clicks on it again
+
 
             }
         });
@@ -536,7 +622,7 @@ public class BookDetailsFragment extends AppCompatActivity {
                     boolean isConnected = isNetworkAvailable();
                     if (!isConnected) {
                         System.out.println("Check Internet Connection");
-                        Toast.makeText(getApplicationContext(), "Please check Internet conncetion", Toast.LENGTH_LONG).show(); //Popup message for user
+                        Toast.makeText(getApplicationContext(), "Please check Internet connection", Toast.LENGTH_LONG).show(); //Popup message for user
                         return;
                     }
 
@@ -664,5 +750,20 @@ public class BookDetailsFragment extends AppCompatActivity {
             bitmapDrawable = (BitmapDrawable) photo.getDrawable();  // get image bitmap
         }
         return drawable == null || bitmapDrawable.getBitmap() == null;  // determine if bitmap is null
+    }
+
+    private void addToNotifications(String otherUser, String user, String notification, String type, String fireStoreID){
+
+        HashMap<Object, String> hashMap = new HashMap<>();
+        hashMap.put("otherUser", otherUser);
+        hashMap.put("user", user);
+        hashMap.put("notification", notification);
+        hashMap.put("type", type);
+        hashMap.put("bookFSID", fireStoreID);
+
+
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("Users").document(otherUser).collection("Notifications").add(hashMap);
+
     }
 }
