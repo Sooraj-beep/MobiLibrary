@@ -44,6 +44,9 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v2
+      
+      - name: Make gradlew executable
+        run: chmod +x ./Code/gradlew
 
       - name: run tests
         uses: reactivecircus/android-emulator-runner@v2
@@ -54,6 +57,9 @@ jobs:
   Unit-test:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout the code
+        uses: actions/checkout@v2
+        
       - name: Make gradlew executable
         run: chmod +x ./Code/gradlew
         
