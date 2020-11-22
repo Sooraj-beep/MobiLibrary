@@ -58,7 +58,7 @@ jobs:
           java-version: 1.8
           
       - name: Unit tests
-        run: ./Code/app/src/androidTest/java/com/example/mobilibrary BookDetailsTest.java
+        run: ./Code/app/src/androidTest/java/com/example/mobilibrary/BookDetailsTest.java
         
           
       - name: Make gradlew executable
