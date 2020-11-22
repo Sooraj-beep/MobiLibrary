@@ -54,6 +54,9 @@ jobs:
   Unit-test:
     runs-on: ubuntu-latest
     steps:
+      - name: Make gradlew executable
+        run: chmod +x ./Code/gradlew
+        
       - name: Run unit tests
         run: ./gradlew test
         working-directory: Code
