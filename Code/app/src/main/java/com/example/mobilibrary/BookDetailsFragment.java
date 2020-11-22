@@ -193,29 +193,19 @@ public class BookDetailsFragment extends AppCompatActivity {
             CollectionReference requestsRef;
             db = FirebaseFirestore.getInstance();
             //CollectionReference requestsRef = db.collection("Requests");
-            requestsRef = db.collection("Requests");
-            System.out.println("Got collection reference");
-            Query query = requestsRef.whereEqualTo("bookID", viewBook.getFirestoreID());
-            query.get()
-                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+
+            db.collection("Requests").whereEqualTo("bookID", viewBook.getFirestoreID())
+                    .addSnapshotListener(new EventListener<QuerySnapshot>() {
                         @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.isSuccessful()) {
-
-
-                                for (QueryDocumentSnapshot document : task.getResult()) {
-                                    System.out.println("In query document snapshot: " + document.getData());
-
-                                    String bookRequester = document.getString("requester");
-                                    //if requester is equal to user then show requested button and exit
-                                        reqDataList.add(bookRequester + " has requested your book");
-
+                        public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                            if (value != null) {
+                                for (final QueryDocumentSnapshot doc : value) {
+                                    //Log.d("SOORAJ","REquest: " + Objects.requireNonNull(doc.get("bookID")).toString() );
+                                        reqDataList.add(Objects.requireNonNull(doc.get("requester")).toString()+ " has requested your book");
                                 }
                             }
-
                         }
                     });
-
             reqAdapter =  new ArrayAdapter<String>(this,R.layout.req_custom_list, R.id.textView, reqDataList);
             reqList.setAdapter(reqAdapter);
             reqList.setVisibility(View.GONE);
