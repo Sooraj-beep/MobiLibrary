@@ -57,7 +57,7 @@ jobs:
         with:
           java-version: 1.8
           
-      - name: Make gradlew executable
+      - name: Make test executable
         run: | 
             chmod +x ./Code/app/src/test/java/com/example/mobilibrary/BookTest.java 
             chmod +x ./Code/app/src/test/java/com/example/mobilibrary/UserTest.java 
@@ -68,9 +68,3 @@ jobs:
             ./Code/app/src/test/java/com/example/mobilibrary/BookTest.java 
             ./Code/app/src/test/java/com/example/mobilibrary/UserTest.java 
             ./Code/app/src/test/java/com/example/mobilibrary/bookStatusTest.java
-          
-      - name: Make gradlew executable
-        run: chmod +x ./Code/gradlew
-
-      - name: Build the app
-        run: ./Code/gradlew build
