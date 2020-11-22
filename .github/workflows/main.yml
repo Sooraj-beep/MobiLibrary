@@ -57,6 +57,9 @@ jobs:
         with:
           java-version: 1.8
           
+      - name: Make gradlew executable
+        run: chmod +x ./Code/app/src/androidTest/java/com/example/mobilibrary/
+          
       - name: Unit tests
         run: ./Code/app/src/androidTest/java/com/example/mobilibrary/BookDetailsTest.java
         
