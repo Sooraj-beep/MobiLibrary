@@ -99,6 +99,8 @@ public class RequestService {
     public Task<Void> decline(String requestID){
         return db.collection("Requests").document(requestID).delete();
     }
+
+
 }
 
 

@@ -1,5 +1,5 @@
 package com.example.mobilibrary.DatabaseController;
 
-public abstract class DataListener<T> {
-    void onDataChange(T data){};
+public interface DataListener<T> {
+    void onDataChange(T data);
 }
