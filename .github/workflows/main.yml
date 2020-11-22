@@ -38,3 +38,31 @@ jobs:
 
       - name: Build the app
         run: ./Code/gradlew build
+        
+  test:
+    # The type of runner that the job will run on
+    name: unit tests
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Checkout the code
+        uses: actions/checkout@v2
+        
+      - name: set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+          
+      - name: Unit tests
+        run: ./Code/app/src/androidTest/java/com/example/mobilibrary BookDetailsTest.java
+        
+          
+      - name: Make gradlew executable
+        run: chmod +x ./Code/gradlew
+
+      - name: Build the app
+        run: ./Code/gradlew build
