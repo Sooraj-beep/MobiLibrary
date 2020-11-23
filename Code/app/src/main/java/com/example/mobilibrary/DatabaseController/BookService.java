@@ -44,7 +44,6 @@ public class BookService {
     //Singleton class implementation
     private static BookService bookDb = null;
     private FirebaseFirestore db;
-    private StorageReference storageReference;
 
     /**
      * This methods gets the instance of BookService class. Creates one if it does not exist
@@ -207,7 +206,7 @@ public class BookService {
                 });
     }
 
-    public void changeStatus(final Context context, final Book book, final String newStatus){
+    public void changeStatus(Context context, final Book book, final String newStatus){
         System.out.println("Book title clicked is: " + book.getTitle());
         //Map<String, Object> data = new HashMap<>();
         //data.put("Status", newStatus);

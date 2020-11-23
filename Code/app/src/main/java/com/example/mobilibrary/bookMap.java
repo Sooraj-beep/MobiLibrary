@@ -15,9 +15,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class bookMap extends FragmentActivity implements OnMapReadyCallback {
-    private GoogleMap map;
-    private Button confirmButton;
-    private SupportMapFragment mapFragment;
     private LatLng bookLatLng;
 
     @Override
@@ -25,15 +22,17 @@ public class bookMap extends FragmentActivity implements OnMapReadyCallback {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_map);
 
-        confirmButton = findViewById(R.id.confirm_location);
-        mapFragment = (SupportMapFragment) getSupportFragmentManager()
+        Button confirmButton = findViewById(R.id.confirm_location);
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
 
         Bundle locationBundle = getIntent().getExtras();
+        assert locationBundle != null;
         bookLatLng = (LatLng) locationBundle.get("LatLang");
 
         confirmButton.setOnClickListener(v -> finish());
 
+        assert mapFragment != null;
         mapFragment.getMapAsync(this);
 
     }
@@ -41,9 +40,8 @@ public class bookMap extends FragmentActivity implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap googleMap) {
         float zoom = 16.0f;
-        map = googleMap;
-        map.addMarker(new MarkerOptions().position(bookLatLng)
+        googleMap.addMarker(new MarkerOptions().position(bookLatLng)
                 .title("Marker"));
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(bookLatLng,zoom));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(bookLatLng,zoom));
     }
 }
