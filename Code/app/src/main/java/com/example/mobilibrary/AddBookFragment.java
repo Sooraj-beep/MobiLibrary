@@ -34,16 +34,10 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.mobilibrary.DatabaseController.BookService;
 import com.example.mobilibrary.DatabaseController.User;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -65,14 +59,10 @@ public class AddBookFragment extends AppCompatActivity implements Serializable {
     private EditText newIsbn;
     private ImageView newImage;
     private Bitmap imageBitMap = null;
-    private Button confirmButton;
-    private FloatingActionButton backButton;
-    private FloatingActionButton cameraButton;
     private CurrentUser currentUser = CurrentUser.getInstance();
 
     private RequestQueue mRequestQueue;
     private FirebaseFirestore db;
-    private StorageReference storageRef;
     private BookService bookService;
     private Context context;
 
@@ -85,12 +75,12 @@ public class AddBookFragment extends AppCompatActivity implements Serializable {
         newAuthor = findViewById(R.id.book_author);
         newIsbn = findViewById(R.id.book_isbn);
         newImage = findViewById(R.id.book_image);
-        confirmButton = findViewById(R.id.confirm_book);
-        backButton = findViewById(R.id.back_button);
-        cameraButton = findViewById(R.id.camera_button);
+        Button confirmButton = findViewById(R.id.confirm_book);
+        FloatingActionButton backButton = findViewById(R.id.back_button);
+        FloatingActionButton cameraButton = findViewById(R.id.camera_button);
 
         mRequestQueue = Volley.newRequestQueue(this);
-        storageRef = FirebaseStorage.getInstance().getReference();
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
 
         bookService = BookService.getInstance();
         context = getApplicationContext();
@@ -369,7 +359,7 @@ public class AddBookFragment extends AppCompatActivity implements Serializable {
         return inputsGood;
     }
 
-    private String getBookInfo(String isbn){
+    public String getBookInfo(String isbn){
         //Check if connected to internet
         boolean isConnected = isNetworkAvailable();
         Uri.Builder builder = null;

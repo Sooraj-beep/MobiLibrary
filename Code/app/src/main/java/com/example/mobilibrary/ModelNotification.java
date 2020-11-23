@@ -2,11 +2,11 @@ package com.example.mobilibrary;
 
 public class ModelNotification {
 
-    String otherUser;
-    String user;
-    String notification;
-    String type;
-    String bookFSID;
+    private String otherUser;
+    private String user;
+    private String notification;
+    private String type;
+    private String bookFSID;
 
     //empty constructor is required for firebase
     public ModelNotification() {

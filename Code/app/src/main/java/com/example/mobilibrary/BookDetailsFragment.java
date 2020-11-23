@@ -29,7 +29,6 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
-import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -41,10 +40,8 @@ import com.example.mobilibrary.DatabaseController.BookService;
 import com.example.mobilibrary.DatabaseController.RequestService;
 import com.example.mobilibrary.DatabaseController.User;
 import com.example.mobilibrary.DatabaseController.aRequest;
-import com.example.mobilibrary.DatabaseController.RequestService;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -87,26 +84,11 @@ public class BookDetailsFragment extends AppCompatActivity {
     private TextView author;
     private TextView owner;
     private TextView ISBN;
-    private TextView status;
-    private TextView ownerTitle;
-    private TextView isbnTitle;
-    private TextView statusTitle;
-    private FloatingActionButton backButton;
-    private ImageButton editButton;
-    private FloatingActionButton deleteButton;
-    private String req_users [] = {"Natalia", "Chloe", "Kimberly", "Jill", "Nguyen", "Sooraj"}; // sort of a placeholder this one, need to replace with actual requesting users once we implement it
-    private Button detailsBtn;
-    private Button requestsBtn;
     private TextView[] requestAssets;
     private ImageView photo;
     private ListView reqList;
     private Bitmap editBitMap = null;
-    private ArrayAdapter<String> reqAdapter;
     private ArrayList<String> reqDataList;
-
-    private CurrentUser currentUser;
-
-
 
     private FirebaseFirestore db;
     private BookService bookService;
@@ -116,7 +98,6 @@ public class BookDetailsFragment extends AppCompatActivity {
 
     private Button requestedButton;
     private Button requestButton;
-    private Button returnButton;
     private Button receiveButton;
     private boolean checkTitle = false;
     private boolean checkAuthor = false;
@@ -135,22 +116,22 @@ public class BookDetailsFragment extends AppCompatActivity {
         title =  findViewById(R.id.view_title);
         author = findViewById(R.id.view_author);
         owner = findViewById(R.id.view_owner);
-        status = findViewById(R.id.view_status);
+        TextView status = findViewById(R.id.view_status);
         ISBN = findViewById(R.id.view_isbn);
-        backButton = findViewById(R.id.back_to_books_button);
-        editButton = findViewById(R.id.edit_button);
-        deleteButton = findViewById(R.id.delete_button);
+        FloatingActionButton backButton = findViewById(R.id.back_to_books_button);
+        FloatingActionButton editButton = findViewById(R.id.edit_button);
+        FloatingActionButton deleteButton = findViewById(R.id.delete_button);
         photo = findViewById(R.id.imageView);
-        detailsBtn = findViewById(R.id.detailsBtn);
-        requestsBtn = findViewById(R.id.reqBtn);
+        Button detailsBtn = findViewById(R.id.detailsBtn);
+        Button requestsBtn = findViewById(R.id.reqBtn);
         reqList = findViewById(R.id.reqListView);
-        ownerTitle = findViewById(R.id.view_owner_title);
-        isbnTitle = findViewById(R.id.view_isbn_title);
-        statusTitle = findViewById(R.id.view_status_title);
+        TextView ownerTitle = findViewById(R.id.view_owner_title);
+        TextView isbnTitle = findViewById(R.id.view_isbn_title);
+        TextView statusTitle = findViewById(R.id.view_status_title);
 
         requestedButton = findViewById(R.id.requested_button);
         requestButton = findViewById(R.id.request_button);
-        returnButton = findViewById(R.id.return_button);
+        Button returnButton = findViewById(R.id.return_button);
         receiveButton = findViewById(R.id.receive_button);
 
         //set all status changing buttons to be invisible
@@ -189,7 +170,7 @@ public class BookDetailsFragment extends AppCompatActivity {
         String bookOwner = viewBook.getOwner().getUsername();
         if (userName.equals(bookOwner)) { //user is looking at their own book (only happens when on myBooks page), can edit or delete, view requests, etc
             // hide request list at open of activity
-            requestAssets = new TextView[]{title, author, owner, status, ownerTitle,ISBN, isbnTitle, statusTitle };
+            requestAssets = new TextView[]{title, author, owner, status, ownerTitle,ISBN, isbnTitle, statusTitle};
             reqDataList = new ArrayList<>();
 
             CollectionReference requestsRef;
@@ -208,7 +189,7 @@ public class BookDetailsFragment extends AppCompatActivity {
                             }
                         }
                     });
-            reqAdapter =  new ArrayAdapter<String>(this,R.layout.req_custom_list, R.id.textView, reqDataList);
+            ArrayAdapter<String> reqAdapter = new ArrayAdapter<String>(this, R.layout.req_custom_list, R.id.textView, reqDataList);
             reqList.setAdapter(reqAdapter);
             reqList.setVisibility(View.GONE);
 
@@ -749,21 +730,6 @@ public class BookDetailsFragment extends AppCompatActivity {
                         }
                     }
                 });
-    }
-
-    /**
-     * Determines if the book's photograph has a null bitmap
-     * @return boolean true if the book's photograph has a null bitmap, false otherwise
-     */
-    private boolean nullPhoto () {
-        Drawable drawable = photo.getDrawable();    // get image
-        BitmapDrawable bitmapDrawable;
-        if (!(drawable instanceof BitmapDrawable)) {
-            bitmapDrawable = null;  // image has no bitmap
-        } else {
-            bitmapDrawable = (BitmapDrawable) photo.getDrawable();  // get image bitmap
-        }
-        return drawable == null || bitmapDrawable.getBitmap() == null;  // determine if bitmap is null
     }
 
     private void addToNotifications(String otherUser, String user, String notification, String type, String fireStoreID){
