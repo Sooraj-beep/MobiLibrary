@@ -1,8 +1,5 @@
 package com.example.mobilibrary;
 
-import android.graphics.Bitmap;
-import android.net.Uri;
-
 import com.example.mobilibrary.DatabaseController.User;
 
 import java.io.Serializable;

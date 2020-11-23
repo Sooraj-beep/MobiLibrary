@@ -6,13 +6,10 @@ import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SearchView;
 
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -20,20 +17,14 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
-import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
-import com.google.firebase.database.annotations.NotNull;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 public class requestMap extends FragmentActivity implements OnMapReadyCallback{
     private LatLng newLatLng;
     private String TAG = "requestMap";
     private GoogleMap map;
-    private Button confirmButton;
     private SearchView searchButton;
 
     @Override
@@ -44,11 +35,13 @@ public class requestMap extends FragmentActivity implements OnMapReadyCallback{
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
 
+        searchButton = findViewById(R.id.search_button);
+
         if (!Places.isInitialized()) {
             Places.initialize(getApplicationContext(), "AIzaSyADFmERhLf1R3L2B1LDfe38bBcN4m1vtLo");
         }
 
-        confirmButton = findViewById(R.id.confirm_request);
+        Button confirmButton = findViewById(R.id.confirm_request);
 
         // Set up a PlaceSelectionListener to handle the response.
         searchButton.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
