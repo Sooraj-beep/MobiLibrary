@@ -33,7 +33,7 @@ import java.util.Map;
 public class RequestService {
     //Singleton class implementation
     private static RequestService requestDb = null;
-    private FirebaseFirestore db;
+    private static FirebaseFirestore db;
 
     public static RequestService getInstance(){
         if (RequestService.requestDb == null)
@@ -45,7 +45,8 @@ public class RequestService {
         db = FirebaseFirestore.getInstance();
     }
 
-// call: RequestService.createRequest.addOnCompleteListener(task->{if task.issuccesfull(): print message else: print failed message)
+
+    // call: RequestService.createRequest.addOnCompleteListener(task->{if task.issuccesfull(): print message else: print failed message)
     public Task<DocumentReference> createRequest(aRequest request) {
     //public void createRequest(aRequest request) {
         System.out.println("In create Request");
@@ -56,29 +57,7 @@ public class RequestService {
 
     }
 
-    public ListenerRegistration getRequests(Book book, final DataListener<List<aRequest>> dataListener ){
-        return db.collection("Requests")
-                .whereEqualTo("bookID", book.getFirestoreID())
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException error) {
-                        List<aRequest> requests = new ArrayList<>();
-                        for (QueryDocumentSnapshot doc: queryDocumentSnapshots)
-                            requests.add(getRequestfromFirestore(doc));
-
-                        dataListener.onDataChange(requests);
-                    }
-                });
-    }
-
-    //used to pull a request from firestore
-    public aRequest getRequestfromFirestore(DocumentSnapshot documentSnapshot){
-        String requester = documentSnapshot.getString("requester");
-        String bookID = documentSnapshot.getString("bookID");
-        return new aRequest(documentSnapshot.getId(), requester, bookID);
-    }
-
-    public Task<Void> acceptRequest(aRequest request){
+    public static Task<Void> acceptRequest(aRequest request){
         WriteBatch batch = db.batch();
 
         DocumentReference requestDoc = db.collection("Requests")
@@ -112,7 +91,7 @@ public class RequestService {
         return batch.commit();
     }
 
-    public Task<Void> declineOthers(List<String> IDs){
+    public static Task<Void> declineOthers(List<String> IDs){
         WriteBatch batch = db.batch();
         for (String requestID: IDs) {
             batch.delete(db.collection("Requests").document(requestID));
@@ -120,7 +99,7 @@ public class RequestService {
         return batch.commit();
     }
 
-    public Task<Void> decline(String requestID){
+    public static Task<Void> decline(String requestID){
         return db.collection("Requests").document(requestID).delete();
     }
 }

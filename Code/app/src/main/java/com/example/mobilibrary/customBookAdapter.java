@@ -39,7 +39,7 @@ public class customBookAdapter extends RecyclerView.Adapter<customBookAdapter.My
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.books_rows, parent, false);
+                .inflate(R.layout.content, parent, false);
 
         MyViewHolder vh = new MyViewHolder(view);
         return vh;
@@ -53,7 +53,6 @@ public class customBookAdapter extends RecyclerView.Adapter<customBookAdapter.My
         holder.title.setText(mBooks.get(position).getTitle());
         holder.author.setText(mBooks.get(position).getAuthor());
         holder.isbn.setText(mBooks.get(position).getISBN());
-        holder.status.setText(mBooks.get(position).getStatus());
 
         //click listener
         holder.parentLayout.setOnClickListener(new View.OnClickListener() {
@@ -115,79 +114,18 @@ public class customBookAdapter extends RecyclerView.Adapter<customBookAdapter.My
         public TextView title;
         public TextView author;
         public TextView isbn;
-        public TextView status;
         CardView parentLayout;
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
-            title = (TextView) itemView.findViewById(R.id.book_title);
-            author = (TextView) itemView.findViewById(R.id.book_author);
-            isbn = (TextView) itemView.findViewById(R.id.book_isbn);
-            status = (TextView) itemView.findViewById(R.id.book_status);
-            parentLayout = (CardView) itemView.findViewById(R.id.parent_layout);
+            title = (TextView) itemView.findViewById(R.id.book_title2);
+            author = (TextView) itemView.findViewById(R.id.book_author2);
+            isbn = (TextView) itemView.findViewById(R.id.book_isbn2);
+            parentLayout = (CardView) itemView.findViewById(R.id.parent_layout2);
         }
 
 
     }
 }
 
-
-//package com.example.mobilibrary;
-//
-//import android.content.Context;
-//import android.view.LayoutInflater;
-//import android.view.View;
-//import android.view.ViewGroup;
-//import android.widget.ArrayAdapter;
-//import android.widget.TextView;
-//
-//import androidx.annotation.NonNull;
-//import androidx.annotation.Nullable;
-//import java.util.ArrayList;
-//
-//public class customBookAdapter extends ArrayAdapter<Book> {
-//    private ArrayList<Book> books;
-//    private Context context;
-//
-//    /**
-//     * Used as a adapter for an array of objects
-//     * @param context
-//     * @param books
-//     */
-//    public customBookAdapter(@NonNull Context context, ArrayList<Book> books) {
-//        super(context,0,books);
-//        this.books = books;
-//        this.context = context;
-//    }
-//
-//    /**
-//     * Create a book item in the listView with the book information (title, author and isbn)
-//     * @param position
-//     * @param convertView
-//     * @param parent
-//     * @return
-//     */
-//    @NonNull
-//    @Override
-//    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-//
-//        View view = convertView;
-//
-//        if(view == null){
-//            view = LayoutInflater.from(context).inflate(R.layout.content, parent,false);
-//        }
-//
-//        Book book = books.get(position);
-//
-//        TextView bookTitle = view.findViewById(R.id.my_book_title);
-//        TextView bookAuthor = view.findViewById(R.id.my_book_author);
-//        TextView bookISBN= view.findViewById(R.id.my_book_ISBN);
-//
-//        bookTitle.setText(book.getTitle());
-//        bookAuthor.setText(book.getAuthor());
-//        bookISBN.setText(book.getISBN());
-//
-//        return view;
-//    }
-//}
 
 

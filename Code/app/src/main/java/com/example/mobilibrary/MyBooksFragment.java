@@ -42,7 +42,7 @@ public class MyBooksFragment extends Fragment {
     private static final String TAG = "MyBooksFragment";
     private RecyclerView bookView;
     private RecyclerView.Adapter bookAdapter;
-    private ArrayList<Book> bookList;
+    private ArrayList<Book> bookList = new ArrayList<>();
     private FloatingActionButton addButton;
 
     private Spinner statesSpin;
@@ -51,6 +51,7 @@ public class MyBooksFragment extends Fragment {
     private FirebaseFirestore db;
 
     private String bookImage;
+
 
     public MyBooksFragment() {
         // Required empty public constructor
@@ -69,7 +70,6 @@ public class MyBooksFragment extends Fragment {
         /* we instantiate a new arraylist in case we have an empty firestore, if not we update this
         list later in updateBookList */
 
-        bookList = new ArrayList<>();
         bookAdapter = new customBookAdapter(getContext(), bookList);
         bookView.setAdapter(bookAdapter);
         updateBookList();
@@ -180,6 +180,9 @@ public class MyBooksFragment extends Fragment {
      *
      */
     public void updateBookList() {
+//        bookList = new ArrayList<>();
+//        bookAdapter = new customBookAdapter(getContext(), bookList);
+//        bookView.setAdapter(bookAdapter);
         CurrentUser bookUser = CurrentUser.getInstance();
         System.out.println("IN UPDATE BOOKLIST");
         if (spinnerSelected.equals("owned")) {
@@ -187,8 +190,8 @@ public class MyBooksFragment extends Fragment {
                     .addSnapshotListener(new EventListener<QuerySnapshot>() {
                         @Override
                         public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                            if (value != null) {
-                                bookList.clear();
+                            if (value != null ) {
+                                bookList.removeAll(bookList);
                                 for (final QueryDocumentSnapshot doc : value) {
                                     Log.d(TAG, String.valueOf(doc.getData().get("Owner")));
                                     String bookId = doc.getId();
@@ -211,11 +214,13 @@ public class MyBooksFragment extends Fragment {
                         }
                     });
         } else if (spinnerSelected.equals("requested")) {
+            System.out.println("REQUESTED");
+            System.out.println(bookList);
             db.collection("Books").addSnapshotListener(new EventListener<QuerySnapshot>() {
                 @Override
                 public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                     if (value != null) {
-                        bookList.clear();
+                        bookList.removeAll(bookList);
                         for (final QueryDocumentSnapshot doc : value) {
                             String bookId = doc.getId();
                             String bookTitle = Objects.requireNonNull(doc.get("Title")).toString();
@@ -250,16 +255,25 @@ public class MyBooksFragment extends Fragment {
                     }
                 }
             });
+        } else if (spinnerSelected.equals("accepted")) {
+            if (bookList != null)
+                bookList.clear();
+
         } else if (spinnerSelected.equals("borrowed")) {
+            System.out.println(bookList);
             db.collection("Users")
                     .document(bookUser.getCurrentUser().getUsername())
                     .addSnapshotListener(new EventListener<DocumentSnapshot>() {
                         @Override
                         public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-                            if (value != null) {
-                                bookList.clear();
+                            if (value != null ) {
+                                System.out.println("INSIDE");
+                                System.out.println(bookList);
+                                bookList.removeAll(bookList);
                                 // ArrayList<Object> to hold array data
-                                bookList = (ArrayList<Book>) value.get("Borrowing");
+                                if (value.get("Borrowing") != null) {
+                                    bookList = (ArrayList<Book>) value.get("Borrowing");
+                                }
                                 bookAdapter.notifyDataSetChanged();
                             }
                         }

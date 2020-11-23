@@ -27,6 +27,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
@@ -97,10 +98,11 @@ public class BookDetailsFragment extends AppCompatActivity {
     private Button requestsBtn;
     private TextView[] requestAssets;
     private ImageView photo;
-    private ListView reqList;
+    private RecyclerView reqView;
+    private RecyclerView.Adapter requestAdapter;
     private Bitmap editBitMap = null;
-    private ArrayAdapter<String> reqAdapter;
-    private ArrayList<String> reqDataList;
+    private ArrayList<aRequest> requestList;
+    //private ArrayList<String> reqDataList;
 
     private CurrentUser currentUser;
 
@@ -140,8 +142,11 @@ public class BookDetailsFragment extends AppCompatActivity {
         deleteButton = findViewById(R.id.delete_button);
         photo = findViewById(R.id.imageView);
         detailsBtn = findViewById(R.id.detailsBtn);
+
         requestsBtn = findViewById(R.id.reqBtn);
-        reqList = findViewById(R.id.reqListView);
+        reqView = (RecyclerView) findViewById(R.id.reqList);
+        requestList = new ArrayList<>();
+
         ownerTitle = findViewById(R.id.view_owner_title);
         isbnTitle = findViewById(R.id.view_isbn_title);
         statusTitle = findViewById(R.id.view_status_title);
@@ -188,27 +193,28 @@ public class BookDetailsFragment extends AppCompatActivity {
         if (userName.equals(bookOwner)) { //user is looking at their own book (only happens when on myBooks page), can edit or delete, view requests, etc
             // hide request list at open of activity
             requestAssets = new TextView[]{title, author, owner, status, ownerTitle,ISBN, isbnTitle, statusTitle };
-            reqDataList = new ArrayList<>();
+            //reqDataList = new ArrayList<>();
 
-            CollectionReference requestsRef;
             db = FirebaseFirestore.getInstance();
-            //CollectionReference requestsRef = db.collection("Requests");
 
             db.collection("Requests").whereEqualTo("bookID", viewBook.getFirestoreID())
                     .addSnapshotListener(new EventListener<QuerySnapshot>() {
                         @Override
                         public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                             if (value != null) {
-                                for (final QueryDocumentSnapshot doc : value) {
+                                requestList.clear();
+                                for (QueryDocumentSnapshot doc : value) {
                                     //Log.d("SOORAJ","REquest: " + Objects.requireNonNull(doc.get("bookID")).toString() );
-                                        reqDataList.add(Objects.requireNonNull(doc.get("requester")).toString()+ " has requested your book");
+                                    aRequest request = new aRequest(doc.getId(), doc.getString("requester"), doc.getString("bookID"));
+                                    requestList.add(request);
                                 }
                             }
                         }
                     });
-            reqAdapter =  new ArrayAdapter<String>(this,R.layout.req_custom_list, R.id.textView, reqDataList);
-            reqList.setAdapter(reqAdapter);
-            reqList.setVisibility(View.GONE);
+            requestAdapter = new RequestAdapter(getApplicationContext(), requestList);
+            //reqAdapter =  new ArrayAdapter<String>(this,R.layout.req_custom_list, R.id.textView, reqDataList);
+            reqView.setAdapter(requestAdapter);
+            reqView.setVisibility(View.GONE);
 
             // get book status
             if (viewBook.getStatus().equals("borrowed") || (viewBook.getStatus().equals("returned"))) {
@@ -462,7 +468,7 @@ public class BookDetailsFragment extends AppCompatActivity {
 
                                 com.example.mobilibrary.DatabaseController.Request request = new com.example.mobilibrary.DatabaseController.Request(username, viewBook.getFirestoreID());
                                 Log.d("SOORAJ", viewBook.getFirestoreID());
-                                requestService = requestService.getInstance();
+                               requestService = requestService.getInstance();
                                 requestService.createRequest(request).addOnCompleteListener(task2 -> {
                                     if(task2.isSuccessful()){
                                         Log.d("SOORAJ", "ADDED NEW REQUEST");
@@ -495,12 +501,11 @@ public class BookDetailsFragment extends AppCompatActivity {
         requestsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//set adapter for requestlistview
 
                 for (TextView asset : requestAssets) {
                     asset.setVisibility(View.GONE);
                 }
-                reqList.setVisibility(View.VISIBLE);
+                reqView.setVisibility(View.VISIBLE);
 
 
             }
@@ -515,7 +520,7 @@ public class BookDetailsFragment extends AppCompatActivity {
                 for (TextView asset : requestAssets) {
                     asset.setVisibility(View.VISIBLE);
                 }
-                reqList.setVisibility(View.GONE);
+                reqView.setVisibility(View.GONE);
 
                 // get book status
                 if (viewBook.getStatus() == "borrowed" || (viewBook.getStatus() == "returned")) {
