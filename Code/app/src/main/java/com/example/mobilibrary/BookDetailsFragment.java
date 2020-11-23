@@ -488,6 +488,7 @@ public class BookDetailsFragment extends AppCompatActivity {
                 for (TextView asset : requestAssets) {
                     asset.setVisibility(View.GONE);
                 }
+                //reqView.setVisibility(View.VISIBLE);
 
                 db = FirebaseFirestore.getInstance();
                 System.out.println("viewBook.firstoreID: "+ viewBook.getFirestoreID());
@@ -512,6 +513,7 @@ public class BookDetailsFragment extends AppCompatActivity {
                             }
                         });
                 reqView = (RecyclerView) findViewById(R.id.reqList);
+                reqView.setVisibility(View.VISIBLE);
 
 
                 //reqAdapter =  new ArrayAdapter<String>(this,R.layout.req_custom_list, R.id.textView, reqDataList);
