@@ -42,12 +42,11 @@ import static org.junit.Assert.assertTrue;
 @RunWith(AndroidJUnit4.class)
 public class ProfileActivityTest {
     private Solo solo;
-    private String username = "profiletest";
-    private String password = "Pas5W0rd!";
+    private final String username = "profiletest";
+    private final String password = "Pas5W0rd!";
     private String email;
     private String phone;
     private FirebaseAuth mAuth;
-    private DatabaseHelper databaseHelper;
 
     @Rule
     public ActivityTestRule<MainActivity> rule =
@@ -61,7 +60,7 @@ public class ProfileActivityTest {
     @Before
     public void setUp() throws Exception {
         solo = new Solo(InstrumentationRegistry.getInstrumentation(), rule.getActivity());
-        databaseHelper = new DatabaseHelper(InstrumentationRegistry.getInstrumentation().getContext());
+        DatabaseHelper databaseHelper = new DatabaseHelper(InstrumentationRegistry.getInstrumentation().getContext());
         mAuth = databaseHelper.getAuth();
         databaseHelper.getUserProfile(username, new Callback() {
             @Override
@@ -71,17 +70,6 @@ public class ProfileActivityTest {
                 mAuth.signInWithEmailAndPassword(email, password);
             }
         });
-    }
-
-    /**
-     * Gets the Activity
-     *
-     * @throws Exception if activity can't be started
-     */
-    @Test
-    public void start() throws Exception {
-        Activity activity = rule.getActivity();
-        solo.assertCurrentActivity("Wrong activity!", MainActivity.class);
     }
 
     /**
@@ -103,31 +91,6 @@ public class ProfileActivityTest {
         assertEquals(usernameTV.getText(), username);
         assertEquals(emailTV.getText(), email);
         assertEquals(phoneTV.getText(), phone);
-        solo.clickOnView(solo.getView(R.id.back_button));
-    }
-
-    /**
-     * Checks that when clicking on a user's profile that is not their own, the appropriate
-     * buttons are invisible to the user viewing the profile, and the appropriate text views
-     * are not the same as their own but that of the other user's.
-     * TODO: Edit this test once the books collection database works on Home Fragment
-     */
-    public void checkDifferentUserVisibility() {
-        solo.assertCurrentActivity("Wrong activity!", MainActivity.class);
-        solo.clickOnText("Test123");
-        solo.assertCurrentActivity("Wrong activity!", ProfileActivity.class);
-        solo.sleep(2000);
-        assertEquals(solo.getView(R.id.edit_button).getVisibility(), View.INVISIBLE);
-        assertEquals(solo.getView(R.id.sign_out_button).getVisibility(), View.INVISIBLE);
-        TextView usernameTV = (TextView) solo.getView(R.id.username_text_view);
-        TextView emailTV = (TextView) solo.getView(R.id.email_text_view);
-        TextView phoneTV = (TextView) solo.getView(R.id.phone_text_view);
-        assertNotEquals(usernameTV.getText(), username);
-        assertNotEquals(emailTV.getText(), email);
-        assertNotEquals(phoneTV.getText(), phone);
-        assertEquals(usernameTV.getText(), "test123");
-        assertEquals(emailTV.getText(), "test1@gmail.com");
-        assertEquals(phoneTV.getText(), "0123456789");
         solo.clickOnView(solo.getView(R.id.back_button));
     }
 
@@ -202,7 +165,6 @@ public class ProfileActivityTest {
     public void checkAccount() {
         solo.sleep(5000);
         checkSameUserVisibility();
-        //checkDifferentUserVisibility();
         checkEditUserProfile();
         checkSignOutButton();
     }
@@ -210,7 +172,7 @@ public class ProfileActivityTest {
     /**
      * Close activity after each test
      *
-     * @throws Exception if activity can't be closed or if deleteUser errors out
+     * @throws Exception if activity can't be closed
      */
     @After
     public void tearDown() throws Exception {

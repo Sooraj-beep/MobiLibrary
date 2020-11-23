@@ -36,7 +36,6 @@ public class MainActivity extends AppCompatActivity {
         currentUser = CurrentUser.getInstance();
         user = currentUser.getCurrentUser();
         context = getApplicationContext();
-        Toast.makeText( context,"Account: "+user.getUsername(), Toast.LENGTH_SHORT).show();
 
         bottomNavigationView.setOnNavigationItemSelectedListener(bottomNavMethod);
         bottomNavigationView.setSelectedItemId(R.id.home);
