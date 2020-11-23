@@ -57,7 +57,8 @@ public class RequestService {
     }
 
     public ListenerRegistration getRequests(Book book, final DataListener<List<aRequest>> dataListener ){
-        return db.collection("Requests").whereEqualTo("bookID", book.getFirestoreID())
+        return db.collection("Requests")
+                .whereEqualTo("bookID", book.getFirestoreID())
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException error) {
@@ -90,7 +91,21 @@ public class RequestService {
                 .document(request.getRequester());
 
         Map<String, Object> newData = new HashMap<>();
-        newData.put("Borrowing", FieldValue.arrayUnion(request.getBookID()));
+        DocumentSnapshot book_doc = db.collection("Books")
+                .document(request.getBookID())
+                .get()
+                .getResult();
+
+        DocumentSnapshot owner_doc = db.collection("Users")
+                .document(book_doc.getString("Owner"))
+                .get()
+                .getResult();
+
+        User owner = new User(owner_doc.getId(), owner_doc.getString("email"), owner_doc.getString("name"), owner_doc.getString("phoneNo"));
+        Book currentBook = new Book(book_doc.getId(), book_doc.getString("Title"), book_doc.getString("ISBN"), book_doc.getString("Author"),
+                book_doc.getString("status"), book_doc.getString("imageID"), owner);
+
+        newData.put("Borrowing", FieldValue.arrayUnion(currentBook));
         batch.update(userDoc, newData);
         batch.delete(requestDoc);
         batch.update(bookDoc, "status", "Borrowed");

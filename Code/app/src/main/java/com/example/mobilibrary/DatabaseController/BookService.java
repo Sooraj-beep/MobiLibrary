@@ -21,6 +21,7 @@ import com.google.firebase.firestore.Blob;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -31,6 +32,7 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -231,4 +233,15 @@ public class BookService {
         });
 
     }
+/*
+    public Task<List<Book>> getBooksbyIDs(List<String> bookIDs){
+        return db.collection("Books")
+                .whereIn(FieldPath.documentId(), bookIDs)
+                .get()
+                .continueWith(task -> {
+                    if
+                })
+    }
+
+ */
 }

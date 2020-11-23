@@ -189,7 +189,8 @@ public class DatabaseHelper {
     public Task<User> getUserbyEmail(final String email) {
         //Toast.makeText(context, "OK", Toast.LENGTH_SHORT).show();
 
-        return db.collection("Users").whereEqualTo("email", email)
+        return db.collection("Users")
+                .whereEqualTo("email", email)
                 .get()
                 .continueWith(new Continuation<QuerySnapshot, User>() {
                     @Override
@@ -213,7 +214,9 @@ public class DatabaseHelper {
      * @param callback callback to profile
      */
     public void getUserProfile(final String username, final Callback callback) {
-        db.collection("Users").document(username).get()
+        db.collection("Users")
+                .document(username)
+                .get()
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
