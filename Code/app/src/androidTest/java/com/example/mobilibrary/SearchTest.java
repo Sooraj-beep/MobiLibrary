@@ -66,8 +66,9 @@ public class SearchTest {
         solo.assertCurrentActivity("Wrong activity!", LogIn.class);
     }
 
-    // go to fragment
-
+    /**
+     * Checks that you can find a book by searching for its title in the search bar.
+     */
     @Test
     public void checkTitleSearchFound() {
         solo.enterText((EditText) solo.getView(R.id.email_editText), email);
@@ -84,6 +85,10 @@ public class SearchTest {
         assertTrue("Title search not found!", solo.waitForText("Found Book Title", 1, 2000));
     }
 
+    /**
+     * Checks that, once a book is found, the details that open when the book is clicked on
+     * matches what was found (i.e. the position isn't retrieved from the original list).
+     */
     @Test
     public void checkTitleSearchFoundDetails() {
         solo.enterText((EditText) solo.getView(R.id.email_editText), email);
@@ -103,6 +108,9 @@ public class SearchTest {
         assertEquals("Found Book Title", title);
     }
 
+    /**
+     * Checks that a user can search for a book by author.
+     */
     @Test
     public void checkAuthorSearchFound() {
         solo.enterText((EditText) solo.getView(R.id.email_editText), email);
@@ -119,6 +127,9 @@ public class SearchTest {
         assertTrue("Author search not found!", solo.waitForText("Search Test Author", 1, 2000));
     }
 
+    /**
+     * Checks that a user can search for a book by ISBN.
+     */
     @Test
     public void checkISBNSearchFound() {
         solo.enterText((EditText) solo.getView(R.id.email_editText), email);
@@ -136,6 +147,9 @@ public class SearchTest {
         assertTrue("ISBN search not found!", solo.waitForText("Search Test ISBN", 1, 2000));
     }
 
+    /**
+     * Checks that entering a search with no results shows an empty list.
+     */
     @Test
     public void checkNotFound() {
         solo.enterText((EditText) solo.getView(R.id.email_editText), email);

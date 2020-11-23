@@ -81,7 +81,6 @@ public class HomeFragment extends Fragment implements SearchView.OnQueryTextList
         allBooksListView = view.findViewById(R.id.all_books_list_view);
         searchBar = view.findViewById(R.id.search_view);
 
-        // list and adapter same as MyBooksFragment ListView
         allBooksList = new ArrayList<>();
         allBooksAdapter = new customBookAdapter(this.getActivity(), allBooksList);
         allBooksListView.setAdapter(allBooksAdapter);
@@ -97,6 +96,7 @@ public class HomeFragment extends Fragment implements SearchView.OnQueryTextList
             }
         });
 
+        // Go to the book that is clicked on from the current list
         allBooksListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -137,6 +137,7 @@ public class HomeFragment extends Fragment implements SearchView.OnQueryTextList
                             for (QueryDocumentSnapshot doc : value) {
                                 final String bookStatus = Objects.requireNonNull(doc.get("Status")).toString();
                                 final String bookOwner = Objects.requireNonNull(doc.get("Owner")).toString();
+                                // Ensures that only books that are not the user's and also available or requested are shown on the page
                                 if (!bookOwner.equals(databaseHelper.getUser().getDisplayName()) &&
                                         (bookStatus.equals("available") || bookStatus.equals("requested"))) {
                                     final String bookId = doc.getId();
@@ -166,6 +167,7 @@ public class HomeFragment extends Fragment implements SearchView.OnQueryTextList
                 });
     }
 
+    // What is called when text is input into the search bar and then when the text is submitted.
     @Override
     public boolean onQueryTextSubmit(String query) {
         Log.d("OnQueryTextSubmit", query);

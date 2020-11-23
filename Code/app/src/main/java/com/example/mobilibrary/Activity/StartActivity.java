@@ -51,10 +51,14 @@ public class StartActivity extends AppCompatActivity {
             }
         });
 
+        // TODO: Delete this here and on activity_start.xml before final project release
         testUserButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                databaseHelper.validateUser("test@mail.com", "Pas5W0rd!")
+                // TODO: FILL IN WITH YOUR PERSONAL TEST USER INFO
+                String email = "";
+                String pass = "";
+                databaseHelper.validateUser(email, pass)
                         .addOnCompleteListener(task -> {
                             currentUser.login(task.getResult());
                             startActivity(new Intent(context, MainActivity.class));

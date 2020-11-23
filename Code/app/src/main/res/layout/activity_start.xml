@@ -66,7 +66,7 @@
         android:id="@+id/logo"
         android:layout_width="248dp"
         android:layout_height="157dp"
-        android:layout_marginTop="175dp"
+        android:layout_marginTop="165dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
@@ -75,11 +75,11 @@
 
     <TextView
         android:id="@+id/quote"
-        android:layout_width="164dp"
-        android:layout_height="74dp"
+        android:layout_width="165dp"
+        android:layout_height="75dp"
         android:layout_marginTop="8dp"
         android:fontFamily="@font/quicksand"
-        android:text="“Books are the mirrors of the soul.” —Virginia Woolf"
+        android:text="“Books are the mirrors of the soul.” \n—Virginia Woolf—"
         android:textAlignment="center"
         android:textSize="18sp"
         android:textStyle="bold"
