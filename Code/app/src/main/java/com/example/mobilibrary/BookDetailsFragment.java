@@ -189,9 +189,23 @@ public class BookDetailsFragment extends AppCompatActivity {
             // hide request list at open of activity
             requestAssets = new TextView[]{title, author, owner, status, ownerTitle,ISBN, isbnTitle, statusTitle };
             reqDataList = new ArrayList<>();
-            for (String user: req_users){
-                reqDataList.add(user + "has requested your book");
-            }
+
+            CollectionReference requestsRef;
+            db = FirebaseFirestore.getInstance();
+            //CollectionReference requestsRef = db.collection("Requests");
+
+            db.collection("Requests").whereEqualTo("bookID", viewBook.getFirestoreID())
+                    .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                        @Override
+                        public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                            if (value != null) {
+                                for (final QueryDocumentSnapshot doc : value) {
+                                    //Log.d("SOORAJ","REquest: " + Objects.requireNonNull(doc.get("bookID")).toString() );
+                                        reqDataList.add(Objects.requireNonNull(doc.get("requester")).toString()+ " has requested your book");
+                                }
+                            }
+                        }
+                    });
             reqAdapter =  new ArrayAdapter<String>(this,R.layout.req_custom_list, R.id.textView, reqDataList);
             reqList.setAdapter(reqAdapter);
             reqList.setVisibility(View.GONE);

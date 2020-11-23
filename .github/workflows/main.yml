@@ -40,20 +40,26 @@ jobs:
         run: ./Code/gradlew build
         
   test:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
       - name: checkout
         uses: actions/checkout@v2
+      
+      - name: Make gradlew executable
+        run: chmod +x ./Code/gradlew
 
       - name: run tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 29
-          script: ./Code/gradlew connectedCheck
+          script: ./Code/gradlew
           
   Unit-test:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout the code
+        uses: actions/checkout@v2
+        
       - name: Make gradlew executable
         run: chmod +x ./Code/gradlew
         
