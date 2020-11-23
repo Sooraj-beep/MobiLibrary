@@ -180,9 +180,6 @@ public class MyBooksFragment extends Fragment {
      *
      */
     public void updateBookList() {
-//        bookList = new ArrayList<>();
-//        bookAdapter = new customBookAdapter(getContext(), bookList);
-//        bookView.setAdapter(bookAdapter);
         CurrentUser bookUser = CurrentUser.getInstance();
         System.out.println("IN UPDATE BOOKLIST");
         if (spinnerSelected.equals("owned")) {
@@ -256,8 +253,22 @@ public class MyBooksFragment extends Fragment {
                 }
             });
         } else if (spinnerSelected.equals("accepted")) {
-            if (bookList != null)
-                bookList.clear();
+            System.out.println(bookList);
+            db.collection("Users")
+                    .document(bookUser.getCurrentUser().getUsername())
+                    .addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                        @Override
+                        public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                            if (value != null ) {
+                                bookList.removeAll(bookList);
+                                // ArrayList<Object> to hold array data
+                                if (value.get("Accepted") != null) {
+                                    bookList = (ArrayList<Book>) value.get("Accepted");
+                                }
+                                bookAdapter.notifyDataSetChanged();
+                            }
+                        }
+                    });
 
         } else if (spinnerSelected.equals("borrowed")) {
             System.out.println(bookList);

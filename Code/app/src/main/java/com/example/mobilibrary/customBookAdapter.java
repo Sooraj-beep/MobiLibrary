@@ -68,7 +68,8 @@ public class customBookAdapter extends RecyclerView.Adapter<customBookAdapter.My
 
                 //Get the User object from currently clicked book by going into firestore
                 final FirebaseFirestore db = FirebaseFirestore.getInstance();
-                DocumentReference doc = db.collection("Users").document(String.valueOf(mBooks.get(position).getOwner()));
+                String owner_username = mBooks.get(position).getOwner().getUsername();
+                DocumentReference doc = db.collection("Users").document(owner_username);
                 if (bookImage != null){
                     Base64.encodeToString(bookImage, Base64.DEFAULT);
                 }
@@ -78,10 +79,10 @@ public class customBookAdapter extends RecyclerView.Adapter<customBookAdapter.My
                         DocumentSnapshot documentSnapshot = task.getResult();
                         System.out.println("Document snapshot data: " + documentSnapshot.getData());
                         System.out.println("Document snapshot data email: " + documentSnapshot.get("email"));
-                        String username = documentSnapshot.get("username").toString();
-                        String email = documentSnapshot.get("email").toString();
-                        String name = documentSnapshot.get("name").toString();
-                        String phoneNo = documentSnapshot.get("phoneNo").toString();
+                        String username = Objects.requireNonNull(documentSnapshot.get("username").toString());
+                        String email = Objects.requireNonNull(documentSnapshot.get("email").toString());
+                        String name = Objects.requireNonNull(documentSnapshot.get("name").toString());
+                        String phoneNo = Objects.requireNonNull(documentSnapshot.get("phoneNo").toString());
 
                         User user = new User(username, email, name, phoneNo);
 

@@ -23,7 +23,7 @@
                 android:id="@+id/textview_requester"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="25dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="16dp"
                 android:text="Username"
@@ -38,7 +38,7 @@
                 android:id="@+id/textview_message"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="25dp"
                 android:layout_marginTop="8dp"
                 android:text="has requested your book" />
 

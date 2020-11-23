@@ -98,11 +98,11 @@ public class BookDetailsFragment extends AppCompatActivity {
     private Button requestsBtn;
     private TextView[] requestAssets;
     private ImageView photo;
-    private RecyclerView reqView;
-    private RecyclerView.Adapter requestAdapter;
+
     private Bitmap editBitMap = null;
     private ArrayList<aRequest> requestList;
-    //private ArrayList<String> reqDataList;
+    private RecyclerView reqView;
+    private RecyclerView.Adapter requestAdapter;
 
     private CurrentUser currentUser;
 
@@ -144,7 +144,6 @@ public class BookDetailsFragment extends AppCompatActivity {
         detailsBtn = findViewById(R.id.detailsBtn);
 
         requestsBtn = findViewById(R.id.reqBtn);
-        reqView = (RecyclerView) findViewById(R.id.reqList);
         requestList = new ArrayList<>();
 
         ownerTitle = findViewById(R.id.view_owner_title);
@@ -188,33 +187,18 @@ public class BookDetailsFragment extends AppCompatActivity {
         convertImage(viewBook.getFirestoreID());
 
         //get current user name and book owners name, check if they match
-        String userName = getUsername();
+        currentUser = CurrentUser.getInstance();
+        String userName = currentUser.getCurrentUser().getUsername();
         String bookOwner = viewBook.getOwner().getUsername();
+        System.out.println(userName);
+        System.out.println(bookOwner);
+
         if (userName.equals(bookOwner)) { //user is looking at their own book (only happens when on myBooks page), can edit or delete, view requests, etc
             // hide request list at open of activity
-            requestAssets = new TextView[]{title, author, owner, status, ownerTitle,ISBN, isbnTitle, statusTitle };
+            //requestAssets = new TextView[]{title, author, owner, status, ownerTitle,ISBN, isbnTitle, statusTitle };
             //reqDataList = new ArrayList<>();
-
-            db = FirebaseFirestore.getInstance();
-
-            db.collection("Requests").whereEqualTo("bookID", viewBook.getFirestoreID())
-                    .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                        @Override
-                        public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                            if (value != null) {
-                                requestList.clear();
-                                for (QueryDocumentSnapshot doc : value) {
-                                    //Log.d("SOORAJ","REquest: " + Objects.requireNonNull(doc.get("bookID")).toString() );
-                                    aRequest request = new aRequest(doc.getId(), doc.getString("requester"), doc.getString("bookID"));
-                                    requestList.add(request);
-                                }
-                            }
-                        }
-                    });
-            requestAdapter = new RequestAdapter(getApplicationContext(), requestList);
-            //reqAdapter =  new ArrayAdapter<String>(this,R.layout.req_custom_list, R.id.textView, reqDataList);
-            reqView.setAdapter(requestAdapter);
-            reqView.setVisibility(View.GONE);
+            requestAssets = new TextView[]{title, author, owner, status, ownerTitle,ISBN, isbnTitle, statusTitle};
+            requestsBtn.setEnabled(true);
 
             // get book status
             if (viewBook.getStatus().equals("borrowed") || (viewBook.getStatus().equals("returned"))) {
@@ -501,11 +485,37 @@ public class BookDetailsFragment extends AppCompatActivity {
         requestsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 for (TextView asset : requestAssets) {
                     asset.setVisibility(View.GONE);
                 }
-                reqView.setVisibility(View.VISIBLE);
+
+                db = FirebaseFirestore.getInstance();
+                System.out.println("viewBook.firstoreID: "+ viewBook.getFirestoreID());
+
+                db.collection("Requests").whereEqualTo("bookID", viewBook.getFirestoreID())
+                        .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                            @Override
+                            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                                System.out.println("INSIDE");
+                                if (value != null) {
+                                    requestList.clear();
+                                    for (QueryDocumentSnapshot doc : value) {
+                                        //Log.d("SOORAJ","Request: " + Objects.requireNonNull(doc.get("bookID")).toString() );
+                                        aRequest request = new aRequest(doc.getId(), doc.getString("requester"), doc.getString("bookID"));
+                                        requestList.add(request);
+                                    }
+                                    System.out.println("Request list: "+requestList);
+                                }
+                                requestAdapter = new RequestAdapter(getApplicationContext(), requestList);
+                                reqView.setAdapter(requestAdapter);
+
+                            }
+                        });
+                reqView = (RecyclerView) findViewById(R.id.reqList);
+
+
+                //reqAdapter =  new ArrayAdapter<String>(this,R.layout.req_custom_list, R.id.textView, reqDataList);
+
 
 
             }

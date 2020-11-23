@@ -33,7 +33,7 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.MyViewHo
     @Override
     public RequestAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.books_rows, parent, false);
+                .inflate(R.layout.layout_request_list, parent, false);
 
         MyViewHolder vh = new MyViewHolder(view);
         return vh;
@@ -44,13 +44,14 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.MyViewHo
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         // get element from your dataset at this position
         // replace the contents of the view with that element
+        System.out.println(mRequests);
         holder.requester.setText(mRequests.get(position).getRequester());
 
         //clicks listener
         holder.acceptButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                RequestService.acceptRequest(mRequests.get(position))
+                requestService.acceptRequest(mRequests.get(position))
                         .addOnCompleteListener(task -> {
                             if (task.isSuccessful()) {
                                 Toast.makeText(mContext, "Successfully accepted request from" + mRequests.get(position).getRequester(), Toast.LENGTH_SHORT).show();
@@ -59,7 +60,7 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.MyViewHo
                                     if (i != position)
                                         deletedIDs.add(mRequests.get(i).getID());
                                 }
-                                RequestService.declineOthers(deletedIDs);
+                                requestService.declineOthers(deletedIDs);
                                 notifyDataSetChanged();
                             } else {
                                 Toast.makeText(mContext, "Failed to accept the request", Toast.LENGTH_SHORT).show();
@@ -88,10 +89,6 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.MyViewHo
     }
 
 
-    public void clearData(){
-        mRequests.clear();
-        notifyDataSetChanged();
-    }
 
     @Override
     public int getItemCount() {
