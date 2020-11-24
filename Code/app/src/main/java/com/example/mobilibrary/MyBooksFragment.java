@@ -30,10 +30,10 @@ import java.util.Objects;
 import static android.app.Activity.RESULT_OK;
 
 /**
+ * @author Sooraj;
  * My Books fragment that is navigated to using notification bar. Contains a dropdown that organizes the User's books into status:
  * Owned, Requested, Accepted, and Borrowed. The user is able to see book title, author, isbn, and status.
- * The user is also able to add and edit their books in this Fragment
- *
+ * The user is also able to add and edit their books opened from this Fragment
  */
 public class MyBooksFragment extends Fragment {
     private static final String TAG = "MyBooksFragment";
@@ -59,8 +59,8 @@ public class MyBooksFragment extends Fragment {
         System.out.println("In MyBooks Fragment");
         // Inflate the layout for this fragment
         View v =  inflater.inflate(R.layout.fragment_my_books, container, false);
-        addButton = (FloatingActionButton) v.findViewById(R.id.addButton);
-        bookView = (ListView) v.findViewById(R.id.book_list);
+        addButton = v.findViewById(R.id.addButton);
+        bookView = v.findViewById(R.id.book_list);
         db = FirebaseFirestore.getInstance();
 
         /* we instantiate a new arraylist in case we have an empty firestore, if not we update this
@@ -80,7 +80,7 @@ public class MyBooksFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent addIntent = new Intent(getActivity(), AddBookFragment.class);
-                startActivityForResult(addIntent, 0);
+                startActivity(addIntent);
             }
         });
 
@@ -114,22 +114,22 @@ public class MyBooksFragment extends Fragment {
      * If requestCode is 0, if its 1, we are either deleting a book (result code =1) or editing
      * an existing book (result code = 2) with data.
      *
-     * @param requestCode
-     * @param resultCode
-     * @param data
+     * @param requestCode type of code entering into the new activity
+     * @param resultCode result code from finishing activity
+     * @param data data from the finished activity
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         System.out.println("IN ONACTIVITYRESULT");
-        if (requestCode == 0) {
+        /*if (requestCode == 0) {
             if (resultCode == RESULT_OK) {
                 Book new_book = (Book) Objects.requireNonNull(data.getExtras()).getSerializable("new book");
                 bookAdapter.add(new_book);
                 bookAdapter.notifyDataSetChanged();
                 System.out.println("Book adaptor added newBook");
             }
-        }
+        }*/
 
         if (requestCode == 1) {
             if (resultCode == 1) {
@@ -166,10 +166,9 @@ public class MyBooksFragment extends Fragment {
 
     /**
      * Used to fill bookList with firestore items, will get the information from the current User
-     *Call back and use it to instantiate a new book object from the firesotre information and add
+     * Call back and use it to instantiate a new book object from the firestore information and add
      * it to the bookList (clears it in case we have new items and want to count them) and updates
      * adapter
-     *
      */
     public void updateBookList() {
         CurrentUser bookUser = CurrentUser.getInstance();

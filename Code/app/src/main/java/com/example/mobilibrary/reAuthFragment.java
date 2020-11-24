@@ -18,6 +18,15 @@ import android.widget.EditText;
 import com.example.mobilibrary.DatabaseController.DatabaseHelper;
 import com.example.mobilibrary.DatabaseController.User;
 
+/**
+ * @author Jill;
+ * This fragment, extending DialogFragment, pops up when the user tries to edit their own profile.
+ * In order to change anything in FirebaseUser, the user must be recently authenticated, so this
+ * ensures all users can properly edit their own profile. The dialog pops up when the user clicks
+ * the edit button, and only changes the page to open editing if the user correctly re-authenticates.
+ * If the user clicks away, the dialog goes away, and nothing happens on the page.
+ */
+
 public class reAuthFragment extends DialogFragment {
 
     private EditText email;
@@ -48,6 +57,7 @@ public class reAuthFragment extends DialogFragment {
         email = view.findViewById(R.id.old_email_text_view);
         password = view.findViewById(R.id.password_text_view);
 
+        // Builds the dialog for the user to input re-auth data
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(view)
                 .setTitle("Re-authentication")
@@ -60,7 +70,9 @@ public class reAuthFragment extends DialogFragment {
         return builder.create();
     }
 
-    // https://stackoverflow.com/questions/2620444/how-to-prevent-a-dialog-from-closing-when-a-button-is-clicked
+    /**
+     * Prevents dialog from closing if the entered information is incorrect
+     */
     @Override
     public void onResume() {
         super.onResume();

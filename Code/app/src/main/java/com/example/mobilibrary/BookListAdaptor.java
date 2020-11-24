@@ -26,9 +26,10 @@ import org.w3c.dom.Text;
 import java.util.List;
 import java.util.Objects;
 
-
-
-
+/**
+ * @author ;
+ *
+ */
 public class BookListAdaptor extends RecyclerView.Adapter<BookListAdaptor.MyViewHolder> {
     private List<String> mTitles;
     private List<String> mAuthors;

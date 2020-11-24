@@ -65,7 +65,7 @@ public class addBookTest{
      */
     @Test
     public void checkActivities() {
-// Asserts that the current activity is MyBooks and if it will switch to addBookFragment. Otherwise, show “Wrong Activity”
+        // Asserts that the current activity is MyBooks and if it will switch to addBookFragment. Otherwise, show "Wrong Activity"
         solo.enterText((EditText) solo.getView(R.id.email_editText), "ktran5@ualberta.ca");
         solo.enterText((EditText) solo.getView(R.id.password_editText), "happyfun33");
         solo.clickOnView(solo.getView(R.id.login_button));
@@ -80,7 +80,7 @@ public class addBookTest{
      */
     @Test
     public void addActivity() {
-// Asserts that the current activity is MyBooks and if it will switch to addBookFragment. Otherwise, show “Wrong Activity”
+        // Asserts that the current activity is MyBooks and if it will switch to addBookFragment. Otherwise, show "Wrong Activity"
         solo.enterText((EditText) solo.getView(R.id.email_editText), "ktran5@ualberta.ca");
         solo.enterText((EditText) solo.getView(R.id.password_editText), "happyfun33");
         solo.clickOnView(solo.getView(R.id.login_button));

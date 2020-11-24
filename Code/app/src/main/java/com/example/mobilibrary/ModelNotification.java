@@ -1,5 +1,8 @@
 package com.example.mobilibrary;
 
+/**
+ * @author Chloe;
+ */
 public class ModelNotification {
 
     private String otherUser;
