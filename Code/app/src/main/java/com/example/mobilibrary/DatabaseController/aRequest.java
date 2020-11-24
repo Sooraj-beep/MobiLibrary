@@ -1,7 +1,5 @@
 package com.example.mobilibrary.DatabaseController;
 
-import java.io.Serializable;
-
 public class aRequest {
     private final String ID;//to be set only after pulling request from firestore
     private final String requester;
