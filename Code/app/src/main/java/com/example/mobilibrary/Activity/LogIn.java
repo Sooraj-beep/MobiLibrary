@@ -28,6 +28,7 @@ import com.google.firebase.auth.AuthResult;
 
 
 /**
+ * @author Nyugen;
  * LogIn activity lets user log into the app with their unique email registered to Firebase Authentication
  * User can also choose to go to SignUp activity to create a new account.
  */

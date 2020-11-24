@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -34,6 +35,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.mobilibrary.Activity.ProfileActivity;
 import com.example.mobilibrary.DatabaseController.BookService;
 import com.example.mobilibrary.DatabaseController.RequestService;
 import com.example.mobilibrary.DatabaseController.User;
@@ -73,6 +75,7 @@ import java.util.Objects;
 
 
 /**
+ * @author Natalia;
  * This class takes in a book and displays its details (Title, Author, Owner, ISBN and Status),
  * requests currently on the book, and, if available, the book's photograph.
  * Additionally, this class can toggle between displaying the book details and the list of requests on the book
@@ -94,7 +97,7 @@ public class BookDetailsFragment extends AppCompatActivity {
     private Context context;
     private RequestQueue mRequestQueue;
 
-    private Button requested;
+    private Button requestedButton;
     private Button requestButton;
     private Button receiveButton;
     private boolean checkTitle = false;
@@ -117,7 +120,7 @@ public class BookDetailsFragment extends AppCompatActivity {
         TextView status = findViewById(R.id.view_status);
         ISBN = findViewById(R.id.view_isbn);
         FloatingActionButton backButton = findViewById(R.id.back_to_books_button);
-        FloatingActionButton editButton = findViewById(R.id.edit_button);
+        ImageButton editButton = findViewById(R.id.edit_button);
         FloatingActionButton deleteButton = findViewById(R.id.delete_button);
         photo = findViewById(R.id.imageView);
         Button detailsBtn = findViewById(R.id.detailsBtn);
@@ -127,7 +130,7 @@ public class BookDetailsFragment extends AppCompatActivity {
         TextView isbnTitle = findViewById(R.id.view_isbn_title);
         TextView statusTitle = findViewById(R.id.view_status_title);
 
-        requested = findViewById(R.id.requested);
+        requestedButton = findViewById(R.id.requested_button);
         requestButton = findViewById(R.id.request_button);
         Button returnButton = findViewById(R.id.return_button);
         receiveButton = findViewById(R.id.receive_button);
@@ -136,7 +139,7 @@ public class BookDetailsFragment extends AppCompatActivity {
         requestButton.setVisibility(View.GONE);
         returnButton.setVisibility(View.GONE);
         receiveButton.setVisibility(View.GONE);
-        requested.setVisibility(View.GONE);
+        requestedButton.setVisibility(View.GONE);
 
         // set up firestore instance
         bookService = BookService.getInstance();
@@ -206,6 +209,7 @@ public class BookDetailsFragment extends AppCompatActivity {
             deleteButton.setVisibility(View.GONE);
             detailsBtn.setVisibility(View.GONE);
             requestsBtn.setVisibility(View.GONE);
+            reqList.setVisibility(View.GONE);
 
             //get book status
             if (viewBook.getStatus().equals("available") || (viewBook.getStatus().equals("requested"))) {
@@ -236,7 +240,7 @@ public class BookDetailsFragment extends AppCompatActivity {
                                             //if requester is equal to user then show requested button and exit
                                             if (bookRequester.equals(getUsername())) {
                                                 alreadyRequested[0] = true;
-                                                requested.setVisibility(View.VISIBLE);
+                                                requestedButton.setVisibility(View.VISIBLE);
                                                 return;
                                             }
 
@@ -401,8 +405,8 @@ public class BookDetailsFragment extends AppCompatActivity {
                 viewBook.setStatus("requested");
                 bookService.changeStatus(context, viewBook, "requested");
                 requestButton.setVisibility(View.GONE);
-                requested.setVisibility(View.VISIBLE);
-                requested.setPressed(true);
+                requestedButton.setVisibility(View.VISIBLE);
+                requestedButton.setPressed(true);
 
                 //create new request and store in firestore
                 aRequest request = new aRequest(getUsername(), viewBook.getFirestoreID());
@@ -506,6 +510,16 @@ public class BookDetailsFragment extends AppCompatActivity {
                 } else {
                     // show loan button for available, requested or accepted books
                 }
+            }
+        });
+
+        //Opens the profile of the user who owns the book.
+        owner.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, ProfileActivity.class);
+                intent.putExtra("profile", owner.getText());
+                startActivity(intent);
             }
         });
     }

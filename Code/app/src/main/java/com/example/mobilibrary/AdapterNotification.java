@@ -26,6 +26,10 @@ import com.google.zxing.oned.ITFReader;
 import java.util.ArrayList;
 import java.util.Objects;
 
+/**
+ * @author ;
+ * This class is to display all the notifications a user has.
+ */
 
 /* TYPES OF NOTIFICATIONS
 1) Another user has requested your book -> lead to book details

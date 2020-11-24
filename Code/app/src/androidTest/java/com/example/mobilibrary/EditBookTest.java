@@ -61,10 +61,9 @@ public class EditBookTest {
         solo.enterText((EditText) solo.getView(R.id.book_title), "Song of the Lioness");
         solo.enterText((EditText) solo.getView(R.id.book_author), "Tamora Pierce");
         solo.enterText((EditText) solo.getView(R.id.book_isbn), "1234567890123");
-        solo.clickOnButton("confirm");
+        solo.clickOnButton("Confirm");
 
         // view book's details
-        ArrayList<TextView> book = solo.clickInList(1);
         solo.clickOnText("Song of the Lioness");
         solo.assertCurrentActivity("Wrong Activity", BookDetailsFragment.class);
 
@@ -125,7 +124,7 @@ public class EditBookTest {
         solo.clearEditText((EditText) solo.getView(R.id.edit_title));
         solo.enterText((EditText) solo.getView(R.id.edit_title), "Circle of Magic");
         solo.enterText((EditText) solo.getView(R.id.edit_isbn), "1234567890124");
-        solo.clickOnButton("CONFIRM");
+        solo.clickOnButton("Confirm");
         solo.assertCurrentActivity("Wrong Activity", BookDetailsFragment.class);
 
         // confirm fields changed in bookDetails
@@ -156,7 +155,7 @@ public class EditBookTest {
 
         // leave without changing anything
         solo.assertCurrentActivity("Wrong Activity", EditBookFragment.class);
-        solo.clickOnButton("CONFIRM");
+        solo.clickOnButton("Confirm");
         solo.assertCurrentActivity("Wrong Activity", BookDetailsFragment.class);
 
         // confirm nothing has changed in bookDetail
@@ -189,7 +188,7 @@ public class EditBookTest {
         solo.clearEditText((EditText) solo.getView(R.id.edit_title));
         solo.clearEditText((EditText) solo.getView(R.id.edit_author));
         solo.clearEditText((EditText) solo.getView(R.id.edit_isbn));
-        solo.clickOnButton("CONFIRM");
+        solo.clickOnButton("Confirm");
         solo.waitForText("Required: Book Title!", 1, 2000); // wait for error message
         solo.waitForText("Required: Book Author!", 1, 2000); // wait for error message
         solo.waitForText("Required: Book ISBN!", 1, 2000); // wait for error message

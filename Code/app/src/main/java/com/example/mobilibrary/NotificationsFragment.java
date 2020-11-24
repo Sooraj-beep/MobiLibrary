@@ -29,6 +29,7 @@ import java.util.Collections;
 import java.util.Objects;
 
 /**
+ * @author Chloe;
  * Notifications fragment that is navigated to using the navigation bar. Shows the user's notifications they will receive when interacting
  * with other users. Clicking on a notification will lead to another activity depending on the kind of notification:
  * 1) Another user has requested your book -> lead to book details
@@ -61,12 +62,15 @@ public class NotificationsFragment extends Fragment {
         return v;
     }
 
+    /**
+     * Gets all of a user's notifications from Firestore
+     */
     private void getAllNotifications() {
 
         System.out.println("in getallnotifications:");
         notificationsList = new ArrayList<>();
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
-        System.out.println("Got instamce");
+        System.out.println("Got instance");
         db.collection("Users").document(getUsername()).collection("Notifications")
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
@@ -139,6 +143,10 @@ public class NotificationsFragment extends Fragment {
                 });
     }
 
+    /**
+     * Gets the current user's username from Firebase
+     * @return String: username
+     */
     private String getUsername(){
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         String userName = user.getDisplayName();
