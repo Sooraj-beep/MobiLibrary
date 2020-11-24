@@ -17,6 +17,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -31,6 +32,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class RequestService {
     //Singleton class implementation
@@ -62,32 +65,21 @@ public class RequestService {
     public static Task<Void> acceptRequest(aRequest request){
         WriteBatch batch = db.batch();
 
-        DocumentReference requestDoc = db.collection("Requests")
-                .document(request.getID());
-
         DocumentReference bookDoc = db.collection("Books")
                 .document(request.getBookID());
 
-        DocumentReference userDoc = db.collection("Users")
-                .document(request.getRequester());
 
         Map<String, Object> newData = new HashMap<>();
-        getBookfromFirestore(request.getBookID())
-                .addOnCompleteListener(new OnCompleteListener<Book>() {
-            @Override
-            public void onComplete(@NonNull Task<Book> task) {
-                Book currentBook = task.getResult();
-                newData.put("Accepted", FieldValue.arrayUnion(currentBook));
-                batch.update(userDoc, newData);
-                batch.delete(requestDoc);
-                batch.update(bookDoc, "status", "Accepted");
-                batch.commit();
-            }
-        });
+//Add the user whose request has been accepted to the book
+        newData.put("AcceptedTo", request.getRequester());
+
+        batch.update(bookDoc, newData);
+        batch.update(bookDoc, "Status", "accepted");
         return batch.commit();
     }
 
-    public static Task<Void> declineOthers(List<String> IDs){
+    //delete all requests in firestore for a book after accepting
+    public static Task<Void> deleteAll(List<String> IDs){
         WriteBatch batch = db.batch();
         for (String requestID: IDs) {
             batch.delete(db.collection("Requests").document(requestID));
@@ -99,45 +91,7 @@ public class RequestService {
         return db.collection("Requests").document(requestID).delete();
     }
 
-    public static Task<Book> getBookfromFirestore(final String bookID){
-        return db.collection("Books")
-                .document(bookID)
-                .get()
-                .continueWithTask(task -> {
-                    if (task.isSuccessful()){
-                        DocumentSnapshot doc = task.getResult();
-                        String title = doc.getString("Title");
-                        String ISBN = doc.getString("ISBN");
-                        String author = doc.getString("Author");
-                        String status = doc.getString("Status");
-                        String imageId = doc.getString("imageID");
-                        String username = doc.getString("Owner");
-                        return getUserbyUsername(username).continueWith(task1 -> {
-                            User owner = task1.getResult();
-                            Book book = new Book(doc.getId(), title, ISBN, author, status, imageId, owner);
-                            return book;
-                        });
-                    } else {
-                        TaskCompletionSource<Book> source = new TaskCompletionSource<Book>();
-                        source.setException(task.getException());
-                        return source.getTask();
-                    }
-                });
 
-        }
-    public static Task<User> getUserbyUsername(final String username){
-        return db.collection("Users")
-                .document(username)
-                .get()
-                .continueWith(new Continuation<DocumentSnapshot, User>() {
-                    @Override
-                    public User then(@NonNull Task<DocumentSnapshot> task) throws Exception {
-                        DocumentSnapshot doc = task.getResult();
-                        User user = new User(username, doc.getString("email"), doc.getString("name"), doc.getString("phone"));
-                        return user;
-                    }
-                });
-    }
 }
 
 

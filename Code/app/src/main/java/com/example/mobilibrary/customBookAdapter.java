@@ -51,8 +51,12 @@ public class customBookAdapter extends RecyclerView.Adapter<customBookAdapter.My
         // get element from your dataset at this position
         // replace the contents of the view with that element
         holder.title.setText(mBooks.get(position).getTitle());
+        System.out.println("Title " + mBooks.get(position).getTitle());
         holder.author.setText(mBooks.get(position).getAuthor());
+        System.out.println("Author " + mBooks.get(position).getAuthor());
         holder.isbn.setText(mBooks.get(position).getISBN());
+        System.out.println("ISBN " + mBooks.get(position).getISBN());
+
 
         //click listener
         holder.parentLayout.setOnClickListener(new View.OnClickListener() {

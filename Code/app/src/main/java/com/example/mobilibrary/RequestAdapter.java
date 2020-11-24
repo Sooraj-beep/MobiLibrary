@@ -1,6 +1,7 @@
 package com.example.mobilibrary;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mobilibrary.DatabaseController.RequestService;
 import com.example.mobilibrary.DatabaseController.aRequest;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,25 +52,38 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.MyViewHo
 
         //clicks listener
         holder.acceptButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                requestService.acceptRequest(mRequests.get(position))
-                        .addOnCompleteListener(task -> {
-                            if (task.isSuccessful()) {
-                                Toast.makeText(mContext, "Successfully accepted request from" + mRequests.get(position).getRequester(), Toast.LENGTH_SHORT).show();
-                                List<String> deletedIDs = new ArrayList<>();
-                                for (int i = 0; i < mRequests.size(); i++) {
-                                    if (i != position)
-                                        deletedIDs.add(mRequests.get(i).getID());
-                                }
-                                requestService.declineOthers(deletedIDs);
-                                notifyDataSetChanged();
-                            } else {
-                                Toast.makeText(mContext, "Failed to accept the request", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-            }
-        });
+           @Override
+           public void onClick(View v) {
+               requestService.acceptRequest(mRequests.get(position))
+                       .addOnCompleteListener(task -> {
+                           if (task.isSuccessful()) {
+                               Toast.makeText(mContext, "Successfully accepted request from" + mRequests.get(position).getRequester(), Toast.LENGTH_SHORT).show();
+                               if (mRequests.size() > 0) {
+                                   List<String> deletedIDs = new ArrayList<>();
+                                   for (int i = 0; i < mRequests.size(); i++) {
+                                       deletedIDs.add(mRequests.get(i).getID());
+                                   }
+                                   requestService.deleteAll(deletedIDs).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                       @Override
+                                       public void onSuccess(Void aVoid) {
+                                           Log.e("BookDetailsFragment", "Successfully deletes al requests");
+                                       }
+                                   }).addOnFailureListener(new OnFailureListener() {
+                                       @Override
+                                       public void onFailure(@NonNull Exception e) {
+                                           Log.e("BookDatailsFragment", "Failed to delete requests: " + e.toString());
+                                       }
+                                   });
+                               }
+                               notifyDataSetChanged();
+                           } else {
+                               Toast.makeText(mContext, "Failed to accept the request", Toast.LENGTH_SHORT).show();
+                           }
+
+                       });
+           }
+       });
+
 
         holder.declineButton.setOnClickListener(new View.OnClickListener() {
             @Override
