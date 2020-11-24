@@ -35,6 +35,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+/**
+ * @author ;
+ * Class to work with all requests in Firestore.
+ */
+
 public class RequestService {
     //Singleton class implementation
     private static RequestService requestDb = null;

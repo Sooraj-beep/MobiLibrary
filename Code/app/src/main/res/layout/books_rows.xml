@@ -1,32 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/parent_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     app:cardBackgroundColor="@color/colorPrimaryDark"
-    app:cardUseCompatPadding="true"
-    app:cardCornerRadius="20dp"
+    app:cardCornerRadius="15dp"
     app:cardElevation="6dp"
-    app:contentPadding="10dp"
-    android:id="@+id/parent_layout">
-
-
+    app:cardUseCompatPadding="true"
+    app:contentPadding="10dp">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_width="373dp"
+        android:layout_height="162dp"
         android:orientation="horizontal">
 
 
         <LinearLayout
-            android:layout_width="267dp"
-            android:layout_height="match_parent"
+            android:layout_width="264dp"
+            android:layout_height="160dp"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/book_title"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="68dp"
                 android:text="Title"
                 android:textColor="@color/colorText"
                 android:textSize="25sp"
@@ -35,7 +33,7 @@
             <TextView
                 android:id="@+id/book_author"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="51dp"
                 android:text="Author"
                 android:textColor="@color/colorText"
                 android:textSize="20sp" />
@@ -43,7 +41,7 @@
             <TextView
                 android:id="@+id/book_isbn"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="46dp"
                 android:text="ISBN"
                 android:textColor="@color/colorText"
                 android:textSize="20sp" />
@@ -54,8 +52,12 @@
 
         <TextView
             android:id="@+id/book_status"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="10dp"
+            android:fontFamily="@font/quicksand_medium"
+            android:gravity="end"
             android:text="Status"
             android:textColor="@color/colorText"
             android:textSize="20sp" />

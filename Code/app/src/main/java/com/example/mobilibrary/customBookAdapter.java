@@ -3,12 +3,16 @@ package com.example.mobilibrary;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -22,17 +26,24 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.w3c.dom.Text;
 
+import java.text.NumberFormat;
+import java.text.ParsePosition;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class customBookAdapter extends RecyclerView.Adapter<customBookAdapter.MyViewHolder>{
+public class customBookAdapter extends RecyclerView.Adapter<customBookAdapter.MyViewHolder> implements Filterable {
     private ArrayList<Book> mBooks;
     private Context mContext;
+    private ArrayList<Book> filtered;
+    final private static String TAG = "customBookAdapter";
+
 
     public customBookAdapter(Context context, ArrayList<Book> books){
         this.mContext = context;
         this.mBooks = books;
+        this.filtered = books;
     }
+
 
     // Create new views (invoked by the layout manager)
     @NonNull
@@ -130,7 +141,72 @@ public class customBookAdapter extends RecyclerView.Adapter<customBookAdapter.My
 
 
     }
+    //@Nullable
+//
+//    public Book getItem(int position) {
+//        return filtered.get(position);
+//    }
+
+    /**
+     * Filters adapter by a constraint entered by the user, used to search for specific books.
+     * @return search result
+     */
+    @NonNull
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+                FilterResults result = new FilterResults();
+                ArrayList<Book> found = new ArrayList<Book>();
+                if (constraint.toString().length() > 0) {
+                    if (isNumeric(constraint.toString())) {
+                        for (Book b : mBooks) {
+                            if (b.getISBN().contains(constraint.toString())) {
+                                found.add(b);
+                            }
+                        }
+                    } else {
+                        constraint = constraint.toString().toLowerCase();
+                        for (Book b : mBooks) {
+                            Log.d(TAG, ("GET BOOK: " + b.getTitle() + " " + b.getAuthor() + " " + b.getOwner()));
+                            if (b.getTitle().toLowerCase().contains(constraint) ||
+                                    b.getAuthor().toLowerCase().contains(constraint)) {
+                                found.add(b);
+                            }
+                        }
+                    }
+                    result.values = found;
+                    result.count = found.size();
+                } else {
+                    result.values = mBooks;
+                    result.count = mBooks.size();
+                }
+                return result;
+            }
+
+            @SuppressWarnings("unchecked")
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+                filtered = (ArrayList<Book>) results.values;
+                notifyDataSetChanged();
+            }
+
+        };
+    }
+
+    /**
+     * Checks if a string is a number value. Used for ISBN search.
+     * @param str string to be checked
+     * @return bool
+     */
+    public static boolean isNumeric(String str) {
+        NumberFormat formatter = NumberFormat.getInstance();
+        ParsePosition pos = new ParsePosition(0);
+        formatter.parse(str, pos);
+        return str.length() == pos.getIndex();
+    }
+
+
 }
-
-
-

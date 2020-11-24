@@ -4,6 +4,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.Serializable;
 
+/**
+ * @author ;
+ * This is a class for Request objects.
+ */
+
 public class aRequest {
     private final String ID;//to be set only after pulling request from firestore
     private final String requester;

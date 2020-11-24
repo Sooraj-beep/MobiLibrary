@@ -2,6 +2,10 @@ package com.example.mobilibrary;
 
 import com.example.mobilibrary.DatabaseController.User;
 
+/**
+ * @author Nguyen;
+ * Singleton for current logged in user.
+ */
 public class CurrentUser {
     private static CurrentUser currentUser = null;
     //private BookRepository BRepository;

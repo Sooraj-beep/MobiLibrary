@@ -1,12 +1,13 @@
 package com.example.mobilibrary;
 
-import android.graphics.Bitmap;
-import android.net.Uri;
-
 import com.example.mobilibrary.DatabaseController.User;
 
 import java.io.Serializable;
 
+/**
+ * @author Sooraj;
+ * Class for Book objects.
+ */
 public class Book implements Serializable, Comparable<Book> {
     private String firestoreID;
     private static int nextID = 0;

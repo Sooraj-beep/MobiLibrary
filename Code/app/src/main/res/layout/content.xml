@@ -27,6 +27,7 @@
 
         <TextView
             android:id="@+id/book_author2"
+            android:layout_marginTop="8dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Author"
@@ -35,6 +36,7 @@
 
         <TextView
             android:id="@+id/book_isbn2"
+            android:layout_marginTop="8dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="ISBN"
@@ -43,12 +45,7 @@
 
 
     </LinearLayout>
-
-
-
-
-
-
-
 </androidx.cardview.widget.CardView>
+
+
 

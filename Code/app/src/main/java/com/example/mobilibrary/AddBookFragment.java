@@ -34,16 +34,10 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.mobilibrary.DatabaseController.BookService;
 import com.example.mobilibrary.DatabaseController.User;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -58,21 +52,20 @@ import java.io.Serializable;
 
 import static android.provider.MediaStore.ACTION_IMAGE_CAPTURE;
 
-
+/**
+ * @author Kimberly, Chloe;
+ * Creating a new Book object and uploading it to Firestore, attributing it to the current user.
+ */
 public class AddBookFragment extends AppCompatActivity implements Serializable {
     private EditText newTitle;
     private EditText newAuthor;
     private EditText newIsbn;
     private ImageView newImage;
     private Bitmap imageBitMap = null;
-    private Button confirmButton;
-    private FloatingActionButton backButton;
-    private FloatingActionButton cameraButton;
     private CurrentUser currentUser = CurrentUser.getInstance();
 
     private RequestQueue mRequestQueue;
     private FirebaseFirestore db;
-    private StorageReference storageRef;
     private BookService bookService;
     private Context context;
 
@@ -85,12 +78,12 @@ public class AddBookFragment extends AppCompatActivity implements Serializable {
         newAuthor = findViewById(R.id.book_author);
         newIsbn = findViewById(R.id.book_isbn);
         newImage = findViewById(R.id.book_image);
-        confirmButton = findViewById(R.id.confirm_book);
-        backButton = findViewById(R.id.back_button);
-        cameraButton = findViewById(R.id.camera_button);
+        Button confirmButton = findViewById(R.id.confirm_book);
+        FloatingActionButton backButton = findViewById(R.id.back_button);
+        FloatingActionButton cameraButton = findViewById(R.id.camera_button);
 
         mRequestQueue = Volley.newRequestQueue(this);
-        storageRef = FirebaseStorage.getInstance().getReference();
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
 
         bookService = BookService.getInstance();
         context = getApplicationContext();
@@ -153,9 +146,6 @@ public class AddBookFragment extends AppCompatActivity implements Serializable {
                             }
                         }
                     }); //add book to firestore
-                    Intent returnIntent = new Intent();
-                    returnIntent.putExtra("new book", newBook);
-                    setResult(RESULT_OK, returnIntent);
                     finish();
                 }
             }
@@ -274,7 +264,7 @@ public class AddBookFragment extends AppCompatActivity implements Serializable {
      * scanner, find the relevant book information (title, author and isbn) and will set the
      * corresponding fields, or it will return an error message.
      *
-     * @param key
+     * @param key key to be parsed
      */
     private void parseJson(String key) {
         final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, key.toString(),
@@ -350,9 +340,9 @@ public class AddBookFragment extends AppCompatActivity implements Serializable {
      * As well as if the ISBN is the correct length. If not valid, will
      * sent setError message, if valid will return a true boolean.
      *
-     * @param title
-     * @param Author
-     * @param ISBN
+     * @param title book title
+     * @param Author book author
+     * @param ISBN book ISBN
      * @return boolean
      */
     public Boolean checkInputs(String title, String Author, String ISBN) {
@@ -372,7 +362,13 @@ public class AddBookFragment extends AppCompatActivity implements Serializable {
         return inputsGood;
     }
 
-    private String getBookInfo(String isbn){
+    /**
+     * Used to get the book information from google books api
+     *
+     * @param isbn
+     * @return
+     */
+    public String getBookInfo(String isbn){
         //Check if connected to internet
         boolean isConnected = isNetworkAvailable();
         Uri.Builder builder = null;

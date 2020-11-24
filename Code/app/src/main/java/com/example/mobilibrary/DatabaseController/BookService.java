@@ -37,16 +37,15 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * @author ;
  * This class interacts with the database to get books on the cloud
  * and do all the database related tasks for the books
-
  */
 public class BookService {
     private static final String TAG = "AddBookFragment";
     //Singleton class implementation
     private static BookService bookDb = null;
     private FirebaseFirestore db;
-    private StorageReference storageReference;
 
     /**
      * This methods gets the instance of BookService class. Creates one if it does not exist
@@ -102,11 +101,11 @@ public class BookService {
     }
 
     /**
-     *
-     * @param id
-     * @param imageBitmap
-     * @param successListener
-     * @param failureListener
+     * Uploads image onto Firebase Storage
+     * @param id image ID
+     * @param imageBitmap image bitmap
+     * @param successListener success listener
+     * @param failureListener failure listener
      */
 
     public void uploadImage(String id, Bitmap imageBitmap, OnSuccessListener<Void> successListener, OnFailureListener failureListener) {
@@ -209,7 +208,7 @@ public class BookService {
                 });
     }
 
-    public void changeStatus(final Context context, final Book book, final String newStatus){
+    public void changeStatus(Context context, final Book book, final String newStatus){
         System.out.println("Book title clicked is: " + book.getTitle());
         //Map<String, Object> data = new HashMap<>();
         //data.put("Status", newStatus);

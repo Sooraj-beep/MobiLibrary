@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimaryDark"
+    android:background="@color/colorPrimary"
     android:orientation="vertical"
     tools:context=".Activity.SignUp">
 
@@ -18,14 +18,37 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/quicksand_bold"
+                android:gravity="center_horizontal"
+                android:text="MobiLibrary"
+                android:textSize="30sp"
+                android:textStyle="bold" />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/default_pfp"
+                android:layout_width="125dp"
+                android:layout_height="125dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"
+                android:src="@drawable/pfp_og"
+                android:visibility="gone"
+                app:civ_border_color="#FF000000"
+                app:civ_border_overlay="false"
+                app:civ_border_width="2dp" />
+
             <EditText
                 android:id="@+id/edit_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="60dp"
+                android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
                 android:ems="10"
+                android:fontFamily="@font/quicksand_medium"
                 android:hint="Name"
                 android:inputType="textPersonName" />
 
@@ -37,6 +60,7 @@
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
                 android:ems="10"
+                android:fontFamily="@font/quicksand_medium"
                 android:hint="Username"
                 android:inputType="textPersonName"
                 app:errorEnabled="true" />
@@ -49,6 +73,7 @@
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
                 android:ems="10"
+                android:fontFamily="@font/quicksand_medium"
                 android:hint="Email Address"
                 android:inputType="textEmailAddress" />
 
@@ -60,12 +85,13 @@
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
                 android:ems="10"
+                android:fontFamily="@font/quicksand_medium"
                 android:hint="Phone Number"
                 android:inputType="phone" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="65dp"
                 app:errorEnabled="true"
                 app:passwordToggleEnabled="true">
 
@@ -77,13 +103,14 @@
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="16dp"
                     android:ems="10"
+                    android:fontFamily="@font/quicksand_medium"
                     android:hint="Password"
                     android:inputType="textPassword" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="60dp"
                 app:errorEnabled="true"
                 app:passwordToggleEnabled="true">
 
@@ -95,6 +122,7 @@
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="16dp"
                     android:ems="10"
+                    android:fontFamily="@font/quicksand_medium"
                     android:hint="Confirm Password"
                     android:inputType="textPassword" />
             </com.google.android.material.textfield.TextInputLayout>
@@ -106,24 +134,10 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
+                android:background="@color/colorSignUpButton"
+                android:fontFamily="@font/quicksand_bold"
                 android:text="Sign Up" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="134dp"
-                android:gravity="bottom|center"
-                android:orientation="vertical">
-
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:fontFamily="sans-serif"
-                    android:text="MobiLibrary"
-                    android:textSize="20dp"
-                    android:textStyle="bold" />
-            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
