@@ -21,6 +21,10 @@ import com.google.android.libraries.places.api.Places;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * @author Kimberly;
+ *
+ */
 public class requestMap extends FragmentActivity implements OnMapReadyCallback{
     private LatLng newLatLng;
     private String TAG = "requestMap";

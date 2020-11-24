@@ -75,6 +75,7 @@ import java.util.Objects;
 
 
 /**
+ * @author Natalia;
  * This class takes in a book and displays its details (Title, Author, Owner, ISBN and Status),
  * requests currently on the book, and, if available, the book's photograph.
  * Additionally, this class can toggle between displaying the book details and the list of requests on the book
@@ -119,7 +120,7 @@ public class BookDetailsFragment extends AppCompatActivity {
         TextView status = findViewById(R.id.view_status);
         ISBN = findViewById(R.id.view_isbn);
         FloatingActionButton backButton = findViewById(R.id.back_to_books_button);
-        FloatingActionButton editButton = findViewById(R.id.edit_button);
+        ImageButton editButton = findViewById(R.id.edit_button);
         FloatingActionButton deleteButton = findViewById(R.id.delete_button);
         photo = findViewById(R.id.imageView);
         Button detailsBtn = findViewById(R.id.detailsBtn);

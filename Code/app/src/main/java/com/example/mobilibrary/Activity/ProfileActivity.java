@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * @author Jill;
  * This class displays a user's profile (username, email, and phone number), and if the viewer is also the currently
  * logged in user, allows editing of the email and phone number (with re-authentication).
  */
@@ -175,6 +176,13 @@ public class ProfileActivity extends AppCompatActivity implements reAuthFragment
                 // User must correctly re-authenticate before editing their account
                 new reAuthFragment().show(getSupportFragmentManager(), "RE-AUTHENTICATION");
 
+                /*editProfileImage.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                    }
+                });*/
+
                 // User cancels edit
                 cancelButton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -259,5 +267,10 @@ public class ProfileActivity extends AppCompatActivity implements reAuthFragment
         editEmail.setText(profileUser.getEmail());
         editPhone.setText(profileUser.getPhoneNo());
     }
+
+    /*// TODO: Implement PFP Editing
+    public void editPFP() {
+
+    }*/
 
 }

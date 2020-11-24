@@ -206,7 +206,6 @@
         android:layout_width="45dp"
         android:layout_height="45dp"
         android:clickable="true"
-        android:visibility="invisible"
         app:backgroundTint="@color/colorPrimaryDark"
         app:fabCustomSize="45dp"
         app:layout_constraintBottom_toBottomOf="@+id/profile_image_view"

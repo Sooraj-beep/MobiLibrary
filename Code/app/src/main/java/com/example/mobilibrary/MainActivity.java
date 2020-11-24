@@ -15,6 +15,7 @@ import com.example.mobilibrary.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 /**
+ * @author Chloe;
  * Initializes the navigation bar when the app is run, and sets the Homepage Fragment as the main page
  */
 

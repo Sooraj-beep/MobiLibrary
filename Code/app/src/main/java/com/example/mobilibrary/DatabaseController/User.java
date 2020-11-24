@@ -2,6 +2,11 @@ package com.example.mobilibrary.DatabaseController;
 
 import java.io.Serializable;
 
+/**
+ * @author Nguyen;
+ * This is a class for User objects.
+ */
+
 public class User implements Serializable {
     private final String username;
     private String email;

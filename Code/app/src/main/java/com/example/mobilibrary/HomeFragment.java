@@ -52,9 +52,10 @@ import java.util.Objects;
 import static android.app.Activity.RESULT_OK;
 
 /**
+ * @author Jill, Chloe;
  * Homepage fragment that can be navigated to using navigation bar. Contains search bar, and access to the User profile.
- * If possible, will also show a list of all available books as default (low priority)
- * Can view book details by clicking on book
+ * Shows list of all available or requested (but not accepted) books that are not the user's own (searchable).
+ * Can view book details by clicking on book.
  */
 public class HomeFragment extends Fragment implements SearchView.OnQueryTextListener {
 
@@ -167,14 +168,23 @@ public class HomeFragment extends Fragment implements SearchView.OnQueryTextList
                 });
     }
 
-    // What is called when text is input into the search bar and then when the text is submitted.
+    /**
+     * What is called when the search text is submitted.
+     * @param query user input search query
+     * @return bool (false to finish search)
+     */
     @Override
     public boolean onQueryTextSubmit(String query) {
         Log.d("OnQueryTextSubmit", query);
-        searchBar.clearFocus();
+        searchBar.clearFocus(); // Exit keyboard
         return false;
     }
 
+    /**
+     * What is called when a user inputs text into the search bar, called with each new character change.
+     * @param newText current user input (search query)
+     * @return bool (true to search)
+     */
     @Override
     public boolean onQueryTextChange(String newText) {
         Log.d("OnQueryTextChange", newText);

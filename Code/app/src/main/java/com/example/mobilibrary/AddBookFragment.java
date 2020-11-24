@@ -52,7 +52,10 @@ import java.io.Serializable;
 
 import static android.provider.MediaStore.ACTION_IMAGE_CAPTURE;
 
-
+/**
+ * @author Kimberly, Chloe;
+ * Creating a new Book object and uploading it to Firestore, attributing it to the current user.
+ */
 public class AddBookFragment extends AppCompatActivity implements Serializable {
     private EditText newTitle;
     private EditText newAuthor;
@@ -261,7 +264,7 @@ public class AddBookFragment extends AppCompatActivity implements Serializable {
      * scanner, find the relevant book information (title, author and isbn) and will set the
      * corresponding fields, or it will return an error message.
      *
-     * @param key
+     * @param key key to be parsed
      */
     private void parseJson(String key) {
         final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, key.toString(),
@@ -337,9 +340,9 @@ public class AddBookFragment extends AppCompatActivity implements Serializable {
      * As well as if the ISBN is the correct length. If not valid, will
      * sent setError message, if valid will return a true boolean.
      *
-     * @param title
-     * @param Author
-     * @param ISBN
+     * @param title book title
+     * @param Author book author
+     * @param ISBN book ISBN
      * @return boolean
      */
     public Boolean checkInputs(String title, String Author, String ISBN) {

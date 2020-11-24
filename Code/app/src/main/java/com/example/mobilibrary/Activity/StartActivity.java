@@ -14,6 +14,10 @@ import com.example.mobilibrary.DatabaseController.DatabaseHelper;
 import com.example.mobilibrary.MainActivity;
 import com.example.mobilibrary.R;
 
+/**
+ * @author Jill;
+ * This is the activity seen when the app is first opened, containing the log in/sign up options.
+ */
 public class StartActivity extends AppCompatActivity {
 
     private Button logInButton;
@@ -56,8 +60,8 @@ public class StartActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // TODO: FILL IN WITH YOUR PERSONAL TEST USER INFO
-                String email = "";
-                String pass = "";
+                String email = "test@mail.com";
+                String pass = "Pas5W0rd!";
                 databaseHelper.validateUser(email, pass)
                         .addOnCompleteListener(task -> {
                             currentUser.login(task.getResult());

@@ -50,7 +50,8 @@ import static com.google.firebase.firestore.DocumentChange.Type.MODIFIED;
 import static com.google.firebase.firestore.DocumentChange.Type.REMOVED;
 
 /**
- * This class handles the database related tasks that are requested from other activities
+ * @author Nguyen, Jill;
+ * This class handles the database related tasks that are requested from other activities.
  */
 
 public class DatabaseHelper {

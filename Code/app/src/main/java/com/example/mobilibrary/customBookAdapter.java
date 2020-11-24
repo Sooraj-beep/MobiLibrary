@@ -20,6 +20,11 @@ import java.text.ParsePosition;
 import java.util.ArrayList;
 import java.util.Locale;
 
+/**
+ * @author Jill, Sooraj;
+ * This is a custom book adapter to display all the books grabbed from Firestore,
+ * based on certain criteria (which comes from the activity it is used in).
+ */
 public class customBookAdapter extends ArrayAdapter<Book> implements Filterable {
     private ArrayList<Book> books;
     private ArrayList<Book> filtered;
@@ -29,8 +34,8 @@ public class customBookAdapter extends ArrayAdapter<Book> implements Filterable 
     /**
      * Used as a adapter for an array of objects
      *
-     * @param context
-     * @param books
+     * @param context context of adapter
+     * @param books list of all books that could possibly be seen in the view
      */
     public customBookAdapter(@NonNull Context context, ArrayList<Book> books) {
         super(context, 0, books);
@@ -42,10 +47,10 @@ public class customBookAdapter extends ArrayAdapter<Book> implements Filterable 
     /**
      * Create a book item in the listView with the book information (title, author and isbn)
      *
-     * @param position
-     * @param convertView
-     * @param parent
-     * @return
+     * @param position position of book in list
+     * @param convertView convert view
+     * @param parent parent
+     * @return view
      */
     @NonNull
     @Override
@@ -82,6 +87,10 @@ public class customBookAdapter extends ArrayAdapter<Book> implements Filterable 
         return filtered.get(position);
     }
 
+    /**
+     * Filters adapter by a constraint entered by the user, used to search for specific books.
+     * @return search result
+     */
     @NonNull
     @Override
     public Filter getFilter() {
@@ -127,6 +136,11 @@ public class customBookAdapter extends ArrayAdapter<Book> implements Filterable 
         };
     }
 
+    /**
+     * Checks if a string is a number value. Used for ISBN search.
+     * @param str string to be checked
+     * @return bool
+     */
     public static boolean isNumeric(String str) {
         NumberFormat formatter = NumberFormat.getInstance();
         ParsePosition pos = new ParsePosition(0);

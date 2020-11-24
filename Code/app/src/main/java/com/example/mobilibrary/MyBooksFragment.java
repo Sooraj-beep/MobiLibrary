@@ -30,10 +30,10 @@ import java.util.Objects;
 import static android.app.Activity.RESULT_OK;
 
 /**
+ * @author Sooraj;
  * My Books fragment that is navigated to using notification bar. Contains a dropdown that organizes the User's books into status:
  * Owned, Requested, Accepted, and Borrowed. The user is able to see book title, author, isbn, and status.
- * The user is also able to add and edit their books in this Fragment
- *
+ * The user is also able to add and edit their books opened from this Fragment
  */
 public class MyBooksFragment extends Fragment {
     private static final String TAG = "MyBooksFragment";
@@ -114,9 +114,9 @@ public class MyBooksFragment extends Fragment {
      * If requestCode is 0, if its 1, we are either deleting a book (result code =1) or editing
      * an existing book (result code = 2) with data.
      *
-     * @param requestCode
-     * @param resultCode
-     * @param data
+     * @param requestCode type of code entering into the new activity
+     * @param resultCode result code from finishing activity
+     * @param data data from the finished activity
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -169,7 +169,6 @@ public class MyBooksFragment extends Fragment {
      * Call back and use it to instantiate a new book object from the firestore information and add
      * it to the bookList (clears it in case we have new items and want to count them) and updates
      * adapter
-     *
      */
     public void updateBookList() {
         CurrentUser bookUser = CurrentUser.getInstance();

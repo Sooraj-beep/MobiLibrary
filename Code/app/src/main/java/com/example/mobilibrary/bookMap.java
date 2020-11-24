@@ -14,6 +14,10 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+/**
+ * @author Kimberly;
+ *
+ */
 public class bookMap extends FragmentActivity implements OnMapReadyCallback {
     private LatLng bookLatLng;
 

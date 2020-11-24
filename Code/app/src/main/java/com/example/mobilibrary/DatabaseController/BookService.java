@@ -35,9 +35,9 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * @author ;
  * This class interacts with the database to get books on the cloud
  * and do all the database related tasks for the books
-
  */
 public class BookService {
     private static final String TAG = "AddBookFragment";
@@ -99,11 +99,11 @@ public class BookService {
     }
 
     /**
-     *
-     * @param id
-     * @param imageBitmap
-     * @param successListener
-     * @param failureListener
+     * Uploads image onto Firebase Storage
+     * @param id image ID
+     * @param imageBitmap image bitmap
+     * @param successListener success listener
+     * @param failureListener failure listener
      */
 
     public void uploadImage(String id, Bitmap imageBitmap, OnSuccessListener<Void> successListener, OnFailureListener failureListener) {
