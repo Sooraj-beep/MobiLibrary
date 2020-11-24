@@ -58,6 +58,7 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 
 /**
+ * @author Natalia, Chloe;
  * This class takes in a book and edits it Title, Author, ISBN and photograph. The first three
  * can be done manually or via scanning the book's ISBN
  */
@@ -174,9 +175,9 @@ public class EditBookFragment extends AppCompatActivity {
             }
         });
 
-        /**
-         * When the Scan Button is pressed, a new activity intent opens to take a picture of the
-         * book's barcode
+        /*
+          When the Scan Button is pressed, a new activity intent opens to take a picture of the
+          book's barcode
          */
         scanButton.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.M)
@@ -186,8 +187,8 @@ public class EditBookFragment extends AppCompatActivity {
             }
         });
 
-        /**
-         * When the Delete Image Button is pressed, the book's photograph's bitmap is set to null
+        /*
+          When the Delete Image Button is pressed, the book's photograph's bitmap is set to null
          */
         deleteImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -198,9 +199,9 @@ public class EditBookFragment extends AppCompatActivity {
             }
         });
 
-        /**
-         * When the Edit Image Button is pressed a new activity intent opens to take a picture to
-         * attach to the book
+        /*
+          When the Edit Image Button is pressed a new activity intent opens to take a picture to
+          attach to the book
          */
         editImageButton.setOnClickListener(view -> {
             Intent camera_intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -297,7 +298,7 @@ public class EditBookFragment extends AppCompatActivity {
      * If requestCode is 2, the image's bitmap is set as the book photograph's bitmap, otherwise the ISBN is
      * set as the book's ISBN and the author and title fields are filled based on information from ISBN
      * @param requestCode 2 if picture was taken for the book photograph, otherwise return from scan activity
-     * @param resultCode
+     * @param resultCode result code from finished activity
      * @param data image bitmap if requestCode is 2, isbn information otherwise
      */
     @Override
@@ -416,7 +417,7 @@ public class EditBookFragment extends AppCompatActivity {
      * won't arrive until after the code completes) we need to use onCallBack interface. It will
      * take the info and allow the information to be used (without null).
      *
-     * @param cbh
+     * @param cbh callback of the user
      */
     public void currentUser(final Callback cbh) {
         final FirebaseUser userInfo = FirebaseAuth.getInstance().getCurrentUser();

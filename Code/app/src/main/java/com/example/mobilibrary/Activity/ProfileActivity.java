@@ -2,7 +2,12 @@ package com.example.mobilibrary.Activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.Matrix;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
@@ -10,9 +15,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mobilibrary.Callback;
@@ -22,12 +29,22 @@ import com.example.mobilibrary.R;
 import com.example.mobilibrary.reAuthFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+/**
+ * @author Jill;
+ * This class displays a user's profile (username, email, and phone number), and if the viewer is also the currently
+ * logged in user, allows editing of the email and phone number (with re-authentication).
+ */
 
 public class ProfileActivity extends AppCompatActivity implements reAuthFragment.OnFragmentInteractionListener {
 
     private ImageButton editButton;
+    private ImageView profileImage;
+    //private FloatingActionButton editProfileImage;
     private TextView usernameText;
     private TextView emailText;
     private TextView phoneText;
@@ -40,6 +57,10 @@ public class ProfileActivity extends AppCompatActivity implements reAuthFragment
     private User currentUser;
     private Context context;
     private DatabaseHelper databaseHelper;
+    private static Bitmap image = null;
+    private static Bitmap rotateImage = null;
+    private static final int CAMERA = 0;
+    private static final int GALLERY = 1;
     final List<View> toggleViews = new ArrayList<View>();
 
     @Override
@@ -49,14 +70,16 @@ public class ProfileActivity extends AppCompatActivity implements reAuthFragment
 
         // Set variables
         editButton = findViewById(R.id.edit_button);
+        profileImage = findViewById(R.id.profile_image_view);
         usernameText = findViewById(R.id.username_text_view);
         emailText = findViewById(R.id.email_text_view);
         phoneText = findViewById(R.id.phone_text_view);
         editEmail = findViewById(R.id.edit_new_email);
         editPhone = findViewById(R.id.edit_phone);
-        confirmButton = findViewById(R.id.confirm_book);
+        confirmButton = findViewById(R.id.confirm_button);
         cancelButton = findViewById(R.id.cancel_button);
         signOutButton = findViewById(R.id.sign_out_button);
+        //editProfileImage = findViewById(R.id.edit_profile_image_button);
         context = getApplicationContext();
 
         // Set visibility
@@ -64,6 +87,7 @@ public class ProfileActivity extends AppCompatActivity implements reAuthFragment
         phoneText.setVisibility(View.INVISIBLE);
         toggleViews.add(editEmail);
         toggleViews.add(editPhone);
+        //toggleViews.add(editProfileImage);
         toggleViews.add(cancelButton);
         toggleViews.add(confirmButton);
         toggleViews.add(emailText);
@@ -84,7 +108,7 @@ public class ProfileActivity extends AppCompatActivity implements reAuthFragment
     }
 
     /**
-     * Get user information from database: get profileUser's username from previous activity and then by searching database using databaseHelper
+     * Get user information from database: get profileUser's username from previous activity and then by searching database using databaseHelper.
      */
     private void getProfileInfo() {
         Intent intent = getIntent();
@@ -102,7 +126,7 @@ public class ProfileActivity extends AppCompatActivity implements reAuthFragment
     }
 
     /**
-     * Checks to see if the profile opened is the currently logged in user's own profile
+     * Checks to see if the profile opened is the currently logged in user's own profile.
      */
     private void checkIfOwnProfile() {
         String myUsername = databaseHelper.getUser().getDisplayName();
@@ -129,7 +153,6 @@ public class ProfileActivity extends AppCompatActivity implements reAuthFragment
      */
     private void setProfilePage() {
         // Set TextViews
-        System.out.println("In Set Profile Page");
         usernameText.setText(profileUser.getUsername());
         emailText.setText(profileUser.getEmail());
         phoneText.setText(profileUser.getPhoneNo());
@@ -152,6 +175,13 @@ public class ProfileActivity extends AppCompatActivity implements reAuthFragment
             public void onClick(View v) {
                 // User must correctly re-authenticate before editing their account
                 new reAuthFragment().show(getSupportFragmentManager(), "RE-AUTHENTICATION");
+
+                /*editProfileImage.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                    }
+                });*/
 
                 // User cancels edit
                 cancelButton.setOnClickListener(new View.OnClickListener() {
@@ -189,11 +219,12 @@ public class ProfileActivity extends AppCompatActivity implements reAuthFragment
             }
         });
 
+        // If the Sign Out button is clicked
         signOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 databaseHelper.signOut();
-                Intent intent = new Intent(ProfileActivity.this, LogIn.class);
+                Intent intent = new Intent(ProfileActivity.this, StartActivity.class);
                 startActivity(intent);
                 finish();
             }
@@ -218,7 +249,6 @@ public class ProfileActivity extends AppCompatActivity implements reAuthFragment
 
     /**
      * Checks if the provided editText email is valid.
-     * https://stackoverflow.com/questions/12947620/email-address-validation-in-android-on-edittext
      *
      * @param target - the email entered to be validated
      * @return true for valid email pattern, false otherwise
@@ -227,10 +257,20 @@ public class ProfileActivity extends AppCompatActivity implements reAuthFragment
         return (!TextUtils.isEmpty(target) && Patterns.EMAIL_ADDRESS.matcher(target).matches());
     }
 
+    /**
+     * onOkPressed is for what happens with the sign-in dialog fragment for re-authentication,
+     * once the sign-in is confirmed to be correct and the dialog closes.
+     */
     @Override
     public void onOkPressed() {
         toggleVisibility(toggleViews);
         editEmail.setText(profileUser.getEmail());
         editPhone.setText(profileUser.getPhoneNo());
     }
+
+    /*// TODO: Implement PFP Editing
+    public void editPFP() {
+
+    }*/
+
 }

@@ -30,6 +30,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @author ;
+ * Class to work with all requests in Firestore.
+ */
+
 public class RequestService {
     //Singleton class implementation
     private static RequestService requestDb = null;
