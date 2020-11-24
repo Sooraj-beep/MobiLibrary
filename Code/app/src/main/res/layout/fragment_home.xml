@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorBackgroundLight"
     tools:context="com.example.mobilibrary.HomeFragment">
 
     <TextView
@@ -31,7 +30,7 @@
         android:layout_alignParentStart="true"
         android:layout_marginStart="8dp"
         android:layout_marginTop="0dp"
-        android:layout_marginBottom="5dp"
+        android:layout_marginBottom="0dp"
         android:background="@drawable/rounded_searchbar"
         android:paddingLeft="10dp"
         android:text="Search Books..."
@@ -48,7 +47,7 @@
         android:layout_marginTop="12dp"
         android:layout_marginEnd="6dp"
         android:layout_toEndOf="@+id/home_title"
-        android:clickable="true"h
+        android:clickable="true"
         android:foreground="@drawable/pfp"
         app:backgroundTint="#FFFFFF" />
 
