@@ -22,7 +22,7 @@ public class StartActivity extends AppCompatActivity {
 
     private Button logInButton;
     private Button signUpButton;
-    private Button testUserButton;
+    private Button testUserButton; // TODO: Remove by end of part 4
     private DatabaseHelper databaseHelper;
     private Context context;
     private CurrentUser currentUser;
@@ -55,13 +55,13 @@ public class StartActivity extends AppCompatActivity {
             }
         });
 
-        // TODO: Delete this here and on activity_start.xml before final project release
+        // TODO: Delete this here and on activity_start.xml before final project demo/release
         testUserButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: FILL IN WITH YOUR PERSONAL TEST USER INFO
-                String email = "test@mail.com";
-                String pass = "Pas5W0rd!";
+                // TODO: FILL WITH YOUR PERSONAL TEST USER INFO
+                String email = "";
+                String pass = "";
                 databaseHelper.validateUser(email, pass)
                         .addOnCompleteListener(task -> {
                             currentUser.login(task.getResult());

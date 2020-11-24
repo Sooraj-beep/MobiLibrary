@@ -12,7 +12,7 @@
         android:layout_width="150dp"
         android:layout_height="200dp"
         android:layout_marginTop="20dp"
-        android:background="@drawable/ic_launcher_background"
+        android:background="@color/colorPrimaryDark"
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -258,13 +258,12 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-
     <Button
         android:id="@+id/reqBtn"
         style="?android:attr/borderlessButtonStyle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimaryDark"
+        android:background="@color/colorAccent"
         android:fontFamily="@font/quicksand_bold"
         android:text="Requests"
         android:textAllCaps="false"
@@ -299,7 +298,7 @@
         android:id="@+id/reqListView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@color/colorPrimaryDark"
+        android:background="@color/colorAccent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
