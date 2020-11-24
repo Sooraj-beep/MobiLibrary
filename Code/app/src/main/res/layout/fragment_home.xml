@@ -4,20 +4,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorBackgroundLight"
     tools:context="com.example.mobilibrary.HomeFragment">
 
     <TextView
         android:id="@+id/home_title"
         android:layout_width="wrap_content"
-        android:layout_height="58dp"
+        android:layout_height="64dp"
         android:layout_above="@+id/searchbar"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
-        android:layout_marginBottom="-11dp"
+        android:layout_marginBottom="0dp"
         android:text="MobiLibrary"
         android:textColor="@color/colorText"
         android:textSize="35dp" />
@@ -30,8 +29,8 @@
         android:layout_above="@+id/other_profile"
         android:layout_alignParentStart="true"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp"
         android:background="@drawable/rounded_searchbar"
         android:paddingLeft="10dp"
         android:text="Search Books..."
@@ -48,7 +47,7 @@
         android:layout_marginTop="12dp"
         android:layout_marginEnd="6dp"
         android:layout_toEndOf="@+id/home_title"
-        android:clickable="true"h
+        android:clickable="true"
         android:foreground="@drawable/pfp"
         app:backgroundTint="#FFFFFF" />
 

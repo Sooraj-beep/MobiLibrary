@@ -63,7 +63,7 @@ public class HomeFragment extends Fragment implements SearchView.OnQueryTextList
     private SearchView searchBar;
     private ArrayAdapter<Book> allBooksAdapter;
     private ArrayList<Book> allBooksList;
-    private ListView allBooksListView;
+    private RecyclerView allBooksListView;
     private FirebaseFirestore db;
     private String bookImage;
     private static final String TAG = "HomeFragment";
@@ -79,8 +79,8 @@ public class HomeFragment extends Fragment implements SearchView.OnQueryTextList
         databaseHelper = new DatabaseHelper(this.getContext());
         db = FirebaseFirestore.getInstance();
 
-        allBooksListView = view.findViewById(R.id.all_books_list_view);
-        searchBar = view.findViewById(R.id.search_view);
+        allBooksListView = view.findViewById(R.id.booksRV);
+        searchBar = view.findViewById(R.id.searchbar);
 
         allBooksList = new ArrayList<>();
         allBooksAdapter = new customBookAdapter(this.getActivity(), allBooksList);
