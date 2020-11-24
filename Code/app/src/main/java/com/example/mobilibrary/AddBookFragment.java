@@ -362,6 +362,12 @@ public class AddBookFragment extends AppCompatActivity implements Serializable {
         return inputsGood;
     }
 
+    /**
+     * Used to get the book information from google books api
+     *
+     * @param isbn
+     * @return
+     */
     public String getBookInfo(String isbn){
         //Check if connected to internet
         boolean isConnected = isNetworkAvailable();

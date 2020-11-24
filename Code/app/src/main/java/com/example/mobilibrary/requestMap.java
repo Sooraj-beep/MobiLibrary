@@ -31,6 +31,11 @@ public class requestMap extends FragmentActivity implements OnMapReadyCallback{
     private GoogleMap map;
     private SearchView searchButton;
 
+    /**
+     * Used to create the map and setting up the search bar
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,6 +92,12 @@ public class requestMap extends FragmentActivity implements OnMapReadyCallback{
         });
     }
 
+    /**
+     * When the map is ready on start or is updated (from the search bar). This will
+     * change the map on change when it's ready
+     *
+     * @param googleMap
+     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
