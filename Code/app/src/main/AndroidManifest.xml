@@ -41,7 +41,8 @@
         </activity>
         <activity
             android:name=".MainActivity"
-            android:label="MainActivity" />
+            android:label="MainActivity"
+            android:windowSoftInputMode="adjustPan"/>
         <activity
             android:name=".AddBookFragment"
             android:label="@string/title_activity_add_book_fragment"
