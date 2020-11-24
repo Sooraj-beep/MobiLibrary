@@ -16,8 +16,10 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.mobilibrary.DatabaseController.DatabaseHelper;
 import com.example.mobilibrary.DatabaseController.RequestService;
 import com.example.mobilibrary.DatabaseController.User;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -53,7 +55,7 @@ public class MyBooksFragment extends Fragment {
     private String spinnerSelected = "owned";
     private static final String[] states = new String[]{"Owned", "Requested", "Accepted", "Borrowed"};
     private FirebaseFirestore db;
-
+    private DatabaseHelper databaseHelper;
     private String bookImage;
     private RequestService requestService;
 
@@ -71,7 +73,7 @@ public class MyBooksFragment extends Fragment {
         addButton = (FloatingActionButton) v.findViewById(R.id.addButton);
         bookView = (RecyclerView) v.findViewById(R.id.book_list);
         db = FirebaseFirestore.getInstance();
-
+        databaseHelper = new DatabaseHelper(this.getContext());
         /* we instantiate a new arraylist in case we have an empty firestore, if not we update this
         list later in updateBookList */
 
@@ -93,19 +95,7 @@ public class MyBooksFragment extends Fragment {
                 startActivityForResult(addIntent, 0);
             }
         });
-/*
-        bookView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Book book = bookList.get(i);
-                Intent viewBook = new Intent(getActivity(), BookDetailsFragment.class);
-                viewBook.putExtra("view book", book);
-                // viewBook.putExtra("book owner", user.getusername());   // need to get user somehow, add User variable to this class
-                startActivityForResult(viewBook, 1);
-            }
-        });
 
- */
 
         statesSpin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -122,62 +112,6 @@ public class MyBooksFragment extends Fragment {
         return v;
     }
 
-    /**
-     * If requestCode is 0, if its 1, we are either deleting a book (result code =1) or editing
-     * an existing book (result code = 2) with data.
-     *
-     * @param requestCode
-     * @param resultCode
-     * @param data
-     */
-    /*
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        System.out.println("IN ONACTIVITYRESULT");
-        if (requestCode == 0) {
-            if (resultCode == RESULT_OK) {
-                Book new_book = (Book) Objects.requireNonNull(data.getExtras()).getSerializable("new book");
-                bookAdapter.add(new_book);
-                bookAdapter.notifyDataSetChanged();
-                System.out.println("Book adaptor added newBook");
-            }
-        }
-
-        if (requestCode == 1) {
-            if (resultCode == 1) {
-                // book needs to be deleted, intent has book to delete
-                Book delete_book = (Book) data.getSerializableExtra("delete book");
-
-                // find the book to delete and delete it
-                for (int i = 0; i < bookAdapter.getCount(); i++) {
-                    Book currentBook = bookAdapter.getItem(i);
-                    if (delete_book.getFirestoreID().equals(currentBook.getFirestoreID())) {
-                        bookAdapter.remove(currentBook);
-                    }
-                }
-
-                bookAdapter.notifyDataSetChanged();
-            } else if (resultCode == 2) {
-                // book was edited update data set
-                Book edited_book = (Book) data.getSerializableExtra("edited book");
-
-                // find the book to edit and edit it
-                for (int i = 0; i < bookList.size(); i++) {
-                    Book currentBook = bookList.get(i);
-                    if (edited_book.getFirestoreID().equals(currentBook.getFirestoreID())) {
-                        currentBook.setTitle(edited_book.getTitle());
-                        currentBook.setAuthor(edited_book.getAuthor());
-                        currentBook.setISBN(edited_book.getISBN());
-                        currentBook.setImageId(edited_book.getImageId());
-                    }
-                }
-                bookAdapter.notifyDataSetChanged();
-            }
-        }
-    }
-
-     */
 
     /**
      * Used to fill bookList with firestore items, will get the information from the current User
@@ -277,11 +211,19 @@ public class MyBooksFragment extends Fragment {
                                 if (doc.get("imageID") != null) {
                                     bookImage = Objects.requireNonNull(doc.get("imageID")).toString();
                                 }
-                                User owner = new User(bookOwner, "other", "other", "other");
-                                Book currentBook = new Book(bookId, bookTitle, bookISBN, bookAuthor, bookStatus, bookImage, owner);
-                                bookList.add(currentBook);
+                                db.collection("Users").document(bookOwner).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                        databaseHelper.getUserProfile(bookOwner, new Callback() {
+                                            @Override
+                                            public void onCallback(User user) {
+                                                bookList.add(new Book(bookId, bookTitle, bookISBN, bookAuthor, bookStatus, bookImage, user));
+                                                bookAdapter.notifyDataSetChanged();
+                                            }
+                                        });
+                                    }
+                                });
                             }
-                            bookAdapter.notifyDataSetChanged();
                         }
 
                     });
@@ -319,11 +261,19 @@ public class MyBooksFragment extends Fragment {
                                 if (doc.get("imageID") != null) {
                                     bookImage = Objects.requireNonNull(doc.get("imageID")).toString();
                                 }
-                                User owner = new User(bookOwner, "other", "other", "other");
-                                Book currentBook = new Book(bookId, bookTitle, bookISBN, bookAuthor, bookStatus, bookImage, owner);
-                                bookList.add(currentBook);
+                                db.collection("Users").document(bookOwner).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                        databaseHelper.getUserProfile(bookOwner, new Callback() {
+                                            @Override
+                                            public void onCallback(User user) {
+                                                bookList.add(new Book(bookId, bookTitle, bookISBN, bookAuthor, bookStatus, bookImage, user));
+                                                bookAdapter.notifyDataSetChanged();
+                                            }
+                                        });
+                                    }
+                                });
                             }
-                            bookAdapter.notifyDataSetChanged();
                         }
 
                     });
