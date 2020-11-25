@@ -17,9 +17,13 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.libraries.places.api.Places;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.WriteBatch;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Kimberly;
@@ -85,8 +89,17 @@ public class requestMap extends FragmentActivity implements OnMapReadyCallback{
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent mapIntent = new Intent();
-                mapIntent.putExtra("LatLang", newLatLng);
+                WriteBatch batch = db.batch();
+
+                DocumentReference bookDoc = db.collection("Books")
+                        .document(request.getBookID());
+
+                Map<String, Object> newData = new HashMap<>();
+                //Add the user whose request has been accepted to the book
+                newData.put("AcceptedTo", request.getRequester());
+
+                batch.update(bookDoc, newData);
+                batch.update(bookDoc, "Status", "accepted");
                 finish();
             }
         });
