@@ -31,6 +31,7 @@ import java.util.Objects;
  *
  */
 public class BookListAdaptor extends RecyclerView.Adapter<BookListAdaptor.MyViewHolder> {
+
     private List<String> mTitles;
     private List<String> mAuthors;
     private List<String> mISBNS;
@@ -38,9 +39,13 @@ public class BookListAdaptor extends RecyclerView.Adapter<BookListAdaptor.MyView
     private List<String> mOwners;
     private List<String> mImageIDs;
     private List<String> mFirestoreIDs;
+
+
+    //private List<String> mBooks;
     private Context mContext;
 
     public BookListAdaptor(Context context, List<String> titles, List<String> authors, List<String> isbns, List<String> statuses, List<String> owners, List<String> imageIDs, List<String> firestoreIDs) {
+
         mTitles = titles;
         mAuthors = authors;
         mISBNS = isbns;
@@ -130,7 +135,7 @@ public class BookListAdaptor extends RecyclerView.Adapter<BookListAdaptor.MyView
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return mTitles.size();
+        return (mTitles == null) ? 0 : mTitles.size();
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {

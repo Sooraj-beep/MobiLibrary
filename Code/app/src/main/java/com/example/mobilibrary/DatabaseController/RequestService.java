@@ -12,10 +12,12 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -25,10 +27,13 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
 
+import java.time.chrono.IsoChronology;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author ;
@@ -38,7 +43,7 @@ import java.util.Map;
 public class RequestService {
     //Singleton class implementation
     private static RequestService requestDb = null;
-    private FirebaseFirestore db;
+    private static FirebaseFirestore db;
 
     public static RequestService getInstance(){
         if (RequestService.requestDb == null)
@@ -50,7 +55,8 @@ public class RequestService {
         db = FirebaseFirestore.getInstance();
     }
 
-// call: RequestService.createRequest.addOnCompleteListener(task->{if task.issuccesfull(): print message else: print failed message)
+
+    // call: RequestService.createRequest.addOnCompleteListener(task->{if task.issuccesfull(): print message else: print failed message)
     public Task<DocumentReference> createRequest(aRequest request) {
     //public void createRequest(aRequest request) {
         System.out.println("In create Request");
@@ -61,48 +67,24 @@ public class RequestService {
 
     }
 
-    public ListenerRegistration getRequests(Book book, final DataListener<List<aRequest>> dataListener ){
-        return db.collection("Requests").whereEqualTo("bookID", book.getFirestoreID())
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException error) {
-                        List<aRequest> requests = new ArrayList<>();
-                        for (QueryDocumentSnapshot doc: queryDocumentSnapshots)
-                            requests.add(getRequestfromFirestore(doc));
-
-                        dataListener.onDataChange(requests);
-                    }
-                });
-    }
-
-    //used to pull a request from firestore
-    public aRequest getRequestfromFirestore(DocumentSnapshot documentSnapshot){
-        String requester = documentSnapshot.getString("requester");
-        String bookID = documentSnapshot.getString("bookID");
-        return new aRequest(documentSnapshot.getId(), requester, bookID);
-    }
-
-    public Task<Void> acceptRequest(aRequest request){
+    public static Task<Void> acceptRequest(aRequest request){
         WriteBatch batch = db.batch();
-
-        DocumentReference requestDoc = db.collection("Requests")
-                .document(request.getID());
 
         DocumentReference bookDoc = db.collection("Books")
                 .document(request.getBookID());
 
-        DocumentReference userDoc = db.collection("Users")
-                .document(request.getRequester());
 
         Map<String, Object> newData = new HashMap<>();
-        newData.put("Borrowing", FieldValue.arrayUnion(request.getBookID()));
-        batch.update(userDoc, newData);
-        batch.delete(requestDoc);
-        batch.update(bookDoc, "status", "Borrowed");
+//Add the user whose request has been accepted to the book
+        newData.put("AcceptedTo", request.getRequester());
+
+        batch.update(bookDoc, newData);
+        batch.update(bookDoc, "Status", "accepted");
         return batch.commit();
     }
 
-    public Task<Void> declineOthers(List<String> IDs){
+    //delete all requests in firestore for a book after accepting
+    public static Task<Void> deleteAll(List<String> IDs){
         WriteBatch batch = db.batch();
         for (String requestID: IDs) {
             batch.delete(db.collection("Requests").document(requestID));
@@ -110,10 +92,13 @@ public class RequestService {
         return batch.commit();
     }
 
-    public Task<Void> decline(String requestID){
+    public static Task<Void> decline(String requestID){
         return db.collection("Requests").document(requestID).delete();
     }
+
+
 }
+
 
 
 
