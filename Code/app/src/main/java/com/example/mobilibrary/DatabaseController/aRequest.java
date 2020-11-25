@@ -1,5 +1,7 @@
 package com.example.mobilibrary.DatabaseController;
 
+import androidx.recyclerview.widget.RecyclerView;
+
 import java.io.Serializable;
 
 /**

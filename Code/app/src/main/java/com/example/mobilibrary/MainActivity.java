@@ -37,7 +37,6 @@ public class MainActivity extends AppCompatActivity {
         currentUser = CurrentUser.getInstance();
         user = currentUser.getCurrentUser();
         context = getApplicationContext();
-
         bottomNavigationView.setOnNavigationItemSelectedListener(bottomNavMethod);
         bottomNavigationView.setSelectedItemId(R.id.home);
         getSupportFragmentManager().beginTransaction().replace(R.id.container, new HomeFragment()).commit();

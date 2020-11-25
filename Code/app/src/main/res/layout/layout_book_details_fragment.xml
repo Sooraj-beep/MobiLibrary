@@ -11,7 +11,7 @@
         android:id="@+id/imageView"
         android:layout_width="150dp"
         android:layout_height="200dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="24dp"
         android:background="@color/colorPrimaryDark"
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
@@ -197,29 +197,15 @@
             app:layout_constraintTop_toBottomOf="@+id/view_status_title" />
 
         <Button
-            android:id="@+id/request_button"
-            android:layout_width="131dp"
-            android:layout_height="45dp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="16dp"
-            android:backgroundTint="#ECBE84"
-            android:fontFamily="@font/quicksand_bold"
-            android:text="Request"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/view_status" />
-
-        <Button
             android:id="@+id/return_button"
             android:layout_width="131dp"
-            android:layout_height="45dp"
+            android:layout_height="40dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="16dp"
-            android:backgroundTint="#FD94B9"
+            android:layout_marginTop="32dp"
+            android:background="@drawable/rounded_button_less"
+            android:backgroundTint="@color/colorBorrow"
             android:fontFamily="@font/quicksand_bold"
             android:text="Return"
             app:layout_constraintEnd_toEndOf="parent"
@@ -229,12 +215,13 @@
         <Button
             android:id="@+id/receive_button"
             android:layout_width="131dp"
-            android:layout_height="45dp"
+            android:layout_height="40dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="16dp"
-            android:backgroundTint="#FD94B9"
+            android:layout_marginTop="32dp"
+            android:background="@drawable/rounded_button_less"
+            android:backgroundTint="@color/colorBorrow"
             android:fontFamily="@font/quicksand_bold"
             android:text="Receive"
             app:layout_constraintEnd_toEndOf="parent"
@@ -244,17 +231,35 @@
         <Button
             android:id="@+id/requested_button"
             android:layout_width="131dp"
-            android:layout_height="45dp"
+            android:layout_height="40dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="16dp"
-            android:backgroundTint="#E6A489"
+            android:layout_marginTop="32dp"
+            android:background="@drawable/rounded_button_less"
+            android:backgroundTint="@color/colorRequested"
             android:fontFamily="@font/quicksand_bold"
             android:text="Requested"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/view_status" />
+
+        <Button
+            android:id="@+id/request_button"
+            android:layout_width="131dp"
+            android:layout_height="40dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="32dp"
+            android:background="@drawable/rounded_button_less"
+            android:backgroundTint="@color/colorRequest"
+            android:fontFamily="@font/quicksand_bold"
+            android:text="Request"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/view_status" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
@@ -294,14 +299,16 @@
         app:layout_constraintEnd_toStartOf="@+id/imageView"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <ListView
-        android:id="@+id/reqListView"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/reqList"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@color/colorAccent"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        tools:listitem="@layout/layout_request_list" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

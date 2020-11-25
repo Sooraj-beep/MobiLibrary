@@ -28,6 +28,9 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -87,16 +90,21 @@ public class BookDetailsFragment extends AppCompatActivity {
     private TextView ISBN;
     private TextView[] requestAssets;
     private ImageView photo;
-    private ListView reqList;
+
     private Bitmap editBitMap = null;
-    private ArrayList<String> reqDataList;
+    private ArrayList<aRequest> requestList;
+    private RecyclerView reqView;
+    private RecyclerView.Adapter requestAdapter;
 
     private FirebaseFirestore db;
     private BookService bookService;
     private RequestService requestService;
     private Context context;
     private RequestQueue mRequestQueue;
+    private CurrentUser currentUser;
 
+    private Button detailsBtn;
+    private Button requestsBtn;
     private Button requestedButton;
     private Button requestButton;
     private Button receiveButton;
@@ -123,12 +131,10 @@ public class BookDetailsFragment extends AppCompatActivity {
         ImageButton editButton = findViewById(R.id.edit_button);
         FloatingActionButton deleteButton = findViewById(R.id.delete_button);
         photo = findViewById(R.id.imageView);
-        Button detailsBtn = findViewById(R.id.detailsBtn);
-        Button requestsBtn = findViewById(R.id.reqBtn);
-        reqList = findViewById(R.id.reqListView);
-        TextView ownerTitle = findViewById(R.id.view_owner_title);
-        TextView isbnTitle = findViewById(R.id.view_isbn_title);
-        TextView statusTitle = findViewById(R.id.view_status_title);
+        detailsBtn = findViewById(R.id.detailsBtn);
+        requestsBtn = findViewById(R.id.reqBtn);
+        reqView = findViewById(R.id.reqList);
+        requestList = new ArrayList<>();
 
         requestedButton = findViewById(R.id.requested_button);
         requestButton = findViewById(R.id.request_button);
@@ -167,32 +173,19 @@ public class BookDetailsFragment extends AppCompatActivity {
         convertImage(viewBook.getFirestoreID());
 
         //get current user name and book owners name, check if they match
-        String userName = getUsername();
+        currentUser = CurrentUser.getInstance();
+        String userName = currentUser.getCurrentUser().getUsername();
         String bookOwner = viewBook.getOwner().getUsername();
+        System.out.println(userName);
+        System.out.println(bookOwner);
+
         if (userName.equals(bookOwner)) { //user is looking at their own book (only happens when on myBooks page), can edit or delete, view requests, etc
             // hide request list at open of activity
-            requestAssets = new TextView[]{title, author, owner, status, ownerTitle,ISBN, isbnTitle, statusTitle};
-            reqDataList = new ArrayList<>();
-
-            CollectionReference requestsRef;
-            db = FirebaseFirestore.getInstance();
-            //CollectionReference requestsRef = db.collection("Requests");
-
-            db.collection("Requests").whereEqualTo("bookID", viewBook.getFirestoreID())
-                    .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                        @Override
-                        public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                            if (value != null) {
-                                for (final QueryDocumentSnapshot doc : value) {
-                                    //Log.d("SOORAJ","REquest: " + Objects.requireNonNull(doc.get("bookID")).toString() );
-                                        reqDataList.add(Objects.requireNonNull(doc.get("requester")).toString()+ " has requested your book");
-                                }
-                            }
-                        }
-                    });
-            ArrayAdapter<String> reqAdapter = new ArrayAdapter<String>(this, R.layout.req_custom_list, R.id.textView, reqDataList);
-            reqList.setAdapter(reqAdapter);
-            reqList.setVisibility(View.GONE);
+            //requestAssets = new TextView[]{title, author, owner, status, ownerTitle,ISBN, isbnTitle, statusTitle };
+            //reqDataList = new ArrayList<>();
+            requestAssets = new TextView[]{title, author, owner, status, ISBN};
+            reqView.setVisibility(View.INVISIBLE);
+            requestsBtn.setEnabled(true);
 
             // get book status
             if (viewBook.getStatus().equals("borrowed") || (viewBook.getStatus().equals("returned"))) {
@@ -209,7 +202,7 @@ public class BookDetailsFragment extends AppCompatActivity {
             deleteButton.setVisibility(View.GONE);
             detailsBtn.setVisibility(View.GONE);
             requestsBtn.setVisibility(View.GONE);
-            reqList.setVisibility(View.GONE);
+            reqView.setVisibility(View.GONE);
 
             //get book status
             if (viewBook.getStatus().equals("available") || (viewBook.getStatus().equals("requested"))) {
@@ -217,7 +210,7 @@ public class BookDetailsFragment extends AppCompatActivity {
 
                 //check is user has requested this book before
                 if (viewBook.getStatus().equals("requested")) {
-                    //get requestors
+                    //get all requesting users
                     ArrayList<String> requestors = new ArrayList<String>();
                     final boolean[] alreadyRequested = new boolean[1];
                     CollectionReference requestsRef;
@@ -341,9 +334,7 @@ public class BookDetailsFragment extends AppCompatActivity {
             }
         });
 
-        /**
-         * If Edit Button is pressed, open EditBookFragment activity and pass it the book to edit its fields
-         */
+        // If Edit Button is pressed, open EditBookFragment activity and pass it the book to edit its fields
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -354,9 +345,7 @@ public class BookDetailsFragment extends AppCompatActivity {
             }
         });
 
-        /**
-         *If receive button is pressed
-         */
+        // If receive button is pressed
         receiveButton.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
@@ -373,10 +362,7 @@ public class BookDetailsFragment extends AppCompatActivity {
             }
         });
 
-        /**
-         * If return button is pressed, check if the book brought to the exchange is the one that
-         * is to be returned.
-         */
+        // If return button is pressed, check if the book brought to the exchange is the one that is to be returned.
         returnButton.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
@@ -393,9 +379,7 @@ public class BookDetailsFragment extends AppCompatActivity {
             }
         });
 
-        /**
-         * If Request Button is pressed, create new Request object, save to firestore, change Book status to request, and change the button
-         */
+        // If Request Button is pressed, create new Request object, save to firestore, change Book status to request, and change the button
         requestButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -447,7 +431,7 @@ public class BookDetailsFragment extends AppCompatActivity {
 
                                 com.example.mobilibrary.DatabaseController.Request request = new com.example.mobilibrary.DatabaseController.Request(username, viewBook.getFirestoreID());
                                 Log.d("SOORAJ", viewBook.getFirestoreID());
-                                requestService = requestService.getInstance();
+                               requestService = requestService.getInstance();
                                 requestService.createRequest(request).addOnCompleteListener(task2 -> {
                                     if(task2.isSuccessful()){
                                         Log.d("SOORAJ", "ADDED NEW REQUEST");
@@ -474,33 +458,58 @@ public class BookDetailsFragment extends AppCompatActivity {
             }
         });
 
-        /**
-         * Toggles view, shows request list and hides book details
-         */
+        // Toggles view, shows request list and hides book details
         requestsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//set adapter for requestlistview
-
                 for (TextView asset : requestAssets) {
                     asset.setVisibility(View.GONE);
                 }
-                reqList.setVisibility(View.VISIBLE);
+                //reqView.setVisibility(View.VISIBLE);
+
+                db = FirebaseFirestore.getInstance();
+                System.out.println("viewBook.firstoreID: "+ viewBook.getFirestoreID());
+
+                db.collection("Requests").whereEqualTo("bookID", viewBook.getFirestoreID())
+                        .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                            @Override
+                            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                                System.out.println("INSIDE");
+                                if (value != null) {
+                                    requestList.clear();
+                                    for (QueryDocumentSnapshot doc : value) {
+                                        //Log.d("SOORAJ","Request: " + Objects.requireNonNull(doc.get("bookID")).toString() );
+                                        aRequest request = new aRequest(doc.getId(), doc.getString("requester"), doc.getString("bookID"));
+                                        requestList.add(request);
+                                    }
+                                    System.out.println("Request list: "+requestList);
+                                }
+                                requestAdapter = new RequestAdapter(BookDetailsFragment.this, requestList);
+                                reqView.setAdapter(requestAdapter);
+
+                            }
+                        });
+
+                reqView = (RecyclerView) findViewById(R.id.reqList);
+                reqView.addItemDecoration(new DividerItemDecoration(context, DividerItemDecoration.VERTICAL));
+                reqView.setVisibility(View.VISIBLE);
+
+
+                //reqAdapter =  new ArrayAdapter<String>(this,R.layout.req_custom_list, R.id.textView, reqDataList);
+
 
 
             }
         });
 
-        /**
-         * Toggles view, hides request list and shows book details
-         */
+        // Toggles view, hides request list and shows book details
         detailsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 for (TextView asset : requestAssets) {
                     asset.setVisibility(View.VISIBLE);
                 }
-                reqList.setVisibility(View.GONE);
+                reqView.setVisibility(View.GONE);
 
                 // get book status
                 if (viewBook.getStatus() == "borrowed" || (viewBook.getStatus() == "returned")) {
@@ -513,7 +522,7 @@ public class BookDetailsFragment extends AppCompatActivity {
             }
         });
 
-        //Opens the profile of the user who owns the book.
+        // Opens the profile of the user who owns the book.
         owner.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -694,7 +703,7 @@ public class BookDetailsFragment extends AppCompatActivity {
 
 
     /**
-     * Check if connnected to the internet
+     * Check if connected to the internet
      * @return boolean true if connected, false otherwise
      */
     private boolean isNetworkAvailable() {
