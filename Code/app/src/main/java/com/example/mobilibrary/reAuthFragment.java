@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -67,6 +68,7 @@ public class reAuthFragment extends DialogFragment {
                         // To be overridden
                     }
                 });
+
         return builder.create();
     }
 
@@ -79,6 +81,7 @@ public class reAuthFragment extends DialogFragment {
         final AlertDialog d = (AlertDialog) getDialog();
         if (d != null) {
             Button positiveButton = (Button) d.getButton(Dialog.BUTTON_POSITIVE);
+            positiveButton.setTextColor(Color.BLACK);
             positiveButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

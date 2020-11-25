@@ -40,22 +40,21 @@
     <Button
         android:id="@+id/home_log_in_button"
         android:layout_width="120dp"
-        android:layout_height="35dp"
+        android:layout_height="40dp"
         android:layout_marginTop="32dp"
-        android:background="@color/colorPrimaryDark"
+        android:background="@drawable/rounded_button_login"
         android:fontFamily="@font/quicksand_bold"
         android:text="Log In"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/quote" />
 
     <Button
         android:id="@+id/home_sign_up_button"
         android:layout_width="120dp"
-        android:layout_height="35dp"
+        android:layout_height="40dp"
         android:layout_marginTop="20dp"
-        android:background="@color/colorSignUpButton"
+        android:background="@drawable/rounded_button_signup"
         android:fontFamily="@font/quicksand_bold"
         android:text="Sign Up"
         app:layout_constraintEnd_toEndOf="parent"
@@ -71,7 +70,7 @@
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/logo_test" />
+        app:srcCompat="@drawable/logo" />
 
     <TextView
         android:id="@+id/quote"

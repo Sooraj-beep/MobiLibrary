@@ -29,7 +29,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:background="@drawable/rounded_searchbar"
+        android:background="@drawable/rounded_button"
         android:iconifiedByDefault="false"
         android:paddingRight="10dp"
         android:queryHint="Search books..."
@@ -45,7 +45,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:clickable="true"
-        android:foreground="@drawable/profileic"
+        android:foreground="@drawable/ic_profile"
         app:backgroundTint="@color/colorPrimaryDark"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
