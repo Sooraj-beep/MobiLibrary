@@ -15,6 +15,7 @@ import com.example.mobilibrary.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 /**
+ * @author Chloe;
  * Initializes the navigation bar when the app is run, and sets the Homepage Fragment as the main page
  */
 
@@ -36,8 +37,6 @@ public class MainActivity extends AppCompatActivity {
         currentUser = CurrentUser.getInstance();
         user = currentUser.getCurrentUser();
         context = getApplicationContext();
-        Toast.makeText( context,"Account: "+ user.getUsername(), Toast.LENGTH_SHORT).show();
-
         bottomNavigationView.setOnNavigationItemSelectedListener(bottomNavMethod);
         bottomNavigationView.setSelectedItemId(R.id.home);
         getSupportFragmentManager().beginTransaction().replace(R.id.container, new HomeFragment()).commit();

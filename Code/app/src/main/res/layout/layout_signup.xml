@@ -25,6 +25,7 @@
                 android:fontFamily="@font/quicksand_bold"
                 android:gravity="center_horizontal"
                 android:text="MobiLibrary"
+                android:textColor="@color/colorText"
                 android:textSize="30sp"
                 android:textStyle="bold" />
 
@@ -34,7 +35,7 @@
                 android:layout_height="125dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="16dp"
-                android:src="@drawable/pfp_og"
+                android:src="@drawable/pfp"
                 android:visibility="gone"
                 app:civ_border_color="#FF000000"
                 app:civ_border_overlay="false"
@@ -134,7 +135,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
-                android:background="@color/colorSignUpButton"
+                android:background="@drawable/rounded_button_signup"
                 android:fontFamily="@font/quicksand_bold"
                 android:text="Sign Up" />
 

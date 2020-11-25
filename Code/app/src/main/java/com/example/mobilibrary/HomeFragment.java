@@ -8,6 +8,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.provider.ContactsContract;
@@ -61,9 +62,9 @@ public class HomeFragment extends Fragment implements SearchView.OnQueryTextList
 
     private DatabaseHelper databaseHelper;
     private SearchView searchBar;
-    private ArrayAdapter<Book> allBooksAdapter;
+    private customBookAdapter allBooksAdapter;
     private ArrayList<Book> allBooksList;
-    private RecyclerView allBooksListView;
+    private RecyclerView allBooksRV;
     private FirebaseFirestore db;
     private String bookImage;
     private static final String TAG = "HomeFragment";
@@ -79,12 +80,15 @@ public class HomeFragment extends Fragment implements SearchView.OnQueryTextList
         databaseHelper = new DatabaseHelper(this.getContext());
         db = FirebaseFirestore.getInstance();
 
-        allBooksListView = view.findViewById(R.id.booksRV);
-        searchBar = view.findViewById(R.id.searchbar);
+        allBooksRV = view.findViewById(R.id.all_books_recycler_view);
+        searchBar = view.findViewById(R.id.search_view);
+
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+        allBooksRV.setLayoutManager(mLayoutManager);
 
         allBooksList = new ArrayList<>();
-        allBooksAdapter = new customBookAdapter(this.getActivity(), allBooksList);
-        allBooksListView.setAdapter(allBooksAdapter);
+        allBooksAdapter = new customBookAdapter(getContext(), allBooksList);
+        allBooksRV.setAdapter(allBooksAdapter);
         setAllBooksList();
 
         searchBar.setOnQueryTextListener(this);
@@ -94,18 +98,6 @@ public class HomeFragment extends Fragment implements SearchView.OnQueryTextList
             @Override
             public boolean onClose() {
                 return false;
-            }
-        });
-
-        // Go to the book that is clicked on from the current list
-        allBooksListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                allBooksAdapter.notifyDataSetChanged();
-                Book book = allBooksAdapter.getItem(i);
-                Intent viewBook = new Intent(getActivity(), BookDetailsFragment.class);
-                viewBook.putExtra("view book", book);
-                startActivity(viewBook);
             }
         });
 
@@ -126,7 +118,7 @@ public class HomeFragment extends Fragment implements SearchView.OnQueryTextList
     }
 
     /**
-     * Sets the allBooksListView, code edited from MyBooksFragment
+     * Sets the allBooksRV, code edited from MyBooksFragment
      */
     public void setAllBooksList() {
         db.collection("Books").orderBy("Title")
@@ -176,6 +168,7 @@ public class HomeFragment extends Fragment implements SearchView.OnQueryTextList
     @Override
     public boolean onQueryTextSubmit(String query) {
         Log.d("OnQueryTextSubmit", query);
+        allBooksAdapter.getFilter().filter(query);
         searchBar.clearFocus(); // Exit keyboard
         return false;
     }

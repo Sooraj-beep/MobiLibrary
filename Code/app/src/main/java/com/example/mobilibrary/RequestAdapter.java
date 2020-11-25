@@ -1,6 +1,5 @@
 package com.example.mobilibrary;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -14,10 +13,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.mobilibrary.Activity.StartActivity;
+import com.example.mobilibrary.Activity.ProfileActivity;
 import com.example.mobilibrary.DatabaseController.RequestService;
 import com.example.mobilibrary.DatabaseController.aRequest;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
@@ -28,7 +26,6 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.MyViewHo
     private ArrayList<aRequest> mRequests;
     private Context mContext;
     private RequestService requestService;
-    private LatLng requestLatLng;
 
     public RequestAdapter(Context context, ArrayList<aRequest> requests) {
         this.mContext = context;
@@ -55,39 +52,48 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.MyViewHo
         System.out.println(mRequests);
         holder.requester.setText(mRequests.get(position).getRequester());
 
+        holder.requester.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, ProfileActivity.class);
+                intent.putExtra("profile", holder.requester.getText().toString());
+                mContext.startActivity(intent);
+            }
+        });
+
         //clicks listener
         holder.acceptButton.setOnClickListener(new View.OnClickListener() {
-           @Override
-           public void onClick(View v) {
-               requestService.acceptRequest(mRequests.get(position))
-                       .addOnCompleteListener(task -> {
-                           if (task.isSuccessful()) {
-                               Toast.makeText(mContext, "Successfully accepted request from" + mRequests.get(position).getRequester(), Toast.LENGTH_SHORT).show();
-                               if (mRequests.size() > 0) {
-                                   List<String> deletedIDs = new ArrayList<>();
-                                   for (int i = 0; i < mRequests.size(); i++) {
-                                       deletedIDs.add(mRequests.get(i).getID());
-                                   }
-                                   requestService.deleteAll(deletedIDs).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                       @Override
-                                       public void onSuccess(Void aVoid) {
-                                           Log.e("BookDetailsFragment", "Successfully deletes al requests");
-                                       }
-                                   }).addOnFailureListener(new OnFailureListener() {
-                                       @Override
-                                       public void onFailure(@NonNull Exception e) {
-                                           Log.e("BookDatailsFragment", "Failed to delete requests: " + e.toString());
-                                       }
-                                   });
-                               }
-                               notifyDataSetChanged();
-                           } else {
-                               Toast.makeText(mContext, "Failed to accept the request", Toast.LENGTH_SHORT).show();
-                           }
+            @Override
+            public void onClick(View v) {
+                requestService.acceptRequest(mRequests.get(position))
+                        .addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(mContext, "Successfully accepted request from" + mRequests.get(position).getRequester(), Toast.LENGTH_SHORT).show();
+                                if (mRequests.size() > 0) {
+                                    List<String> deletedIDs = new ArrayList<>();
+                                    for (int i = 0; i < mRequests.size(); i++) {
+                                        deletedIDs.add(mRequests.get(i).getID());
+                                    }
+                                    requestService.deleteAll(deletedIDs).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            Log.e("BookDetailsFragment", "Successfully deletes al requests");
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.e("BookDatailsFragment", "Failed to delete requests: " + e.toString());
+                                        }
+                                    });
+                                }
+                                notifyDataSetChanged();
+                            } else {
+                                Toast.makeText(mContext, "Failed to accept the request", Toast.LENGTH_SHORT).show();
+                            }
 
-                       });
-           }
-       });
+                        });
+            }
+        });
 
 
         holder.declineButton.setOnClickListener(new View.OnClickListener() {
@@ -108,6 +114,8 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.MyViewHo
         });
 
     }
+
+
 
     @Override
     public int getItemCount() {

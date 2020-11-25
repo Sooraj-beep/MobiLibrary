@@ -17,7 +17,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.mobilibrary.DatabaseController.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -25,6 +24,8 @@ import com.google.zxing.oned.ITFReader;
 
 import java.util.ArrayList;
 import java.util.Objects;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * @author ;
@@ -205,7 +206,7 @@ public class AdapterNotification extends RecyclerView.Adapter<RecyclerView.ViewH
     //Create viewholder classes for each type of notificiation
     class typeOne extends RecyclerView.ViewHolder { //someone has requested to borrow your book, arrow is visible, border is not there (color=background)
 
-        FloatingActionButton profilePic;
+        CircleImageView profilePic;
         TextView userName;
         TextView notification;
         TextView arrow;
@@ -231,7 +232,7 @@ public class AdapterNotification extends RecyclerView.Adapter<RecyclerView.ViewH
     //class typeTwo
     class typeTwo extends RecyclerView.ViewHolder { //User has declined your request, border is red, no arrow
 
-        FloatingActionButton profilePic;
+        CircleImageView profilePic;
         TextView userName;
         TextView notification;
         CardView notifications;
@@ -255,7 +256,7 @@ public class AdapterNotification extends RecyclerView.Adapter<RecyclerView.ViewH
     //class typeThree
     class typeThree extends RecyclerView.ViewHolder { //User has accepted your request, border is green, show arrow
 
-        FloatingActionButton profilePic;
+        CircleImageView profilePic;
         TextView userName;
         TextView notification;
         CardView notifications;
@@ -281,7 +282,7 @@ public class AdapterNotification extends RecyclerView.Adapter<RecyclerView.ViewH
     //class typeFour
     class typeFour extends RecyclerView.ViewHolder { //The location the current user has selected to meet with the other has been sent
 
-        FloatingActionButton profilePic;
+        CircleImageView profilePic;
         TextView userName;
         TextView notification;
         CardView notifications;
@@ -307,7 +308,7 @@ public class AdapterNotification extends RecyclerView.Adapter<RecyclerView.ViewH
     //class typeFive
     class typeFive extends RecyclerView.ViewHolder { //User has accepted your request, border is green, show arrow
 
-        FloatingActionButton profilePic;
+        CircleImageView profilePic;
         TextView userName;
         TextView notification;
         CardView notifications;
