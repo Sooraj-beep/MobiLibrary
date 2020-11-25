@@ -48,10 +48,13 @@
             android:name=".Activity.LogIn"
             android:configChanges="keyboardHidden|orientation">
         </activity>
-        <activity
-            android:name=".MainActivity"
+        <activity android:name=".MainActivity"
             android:label="MainActivity"
-            android:windowSoftInputMode="adjustPan" />
+            android:windowSoftInputMode="adjustPan">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".AddBookFragment"
             android:label="@string/title_activity_add_book_fragment"

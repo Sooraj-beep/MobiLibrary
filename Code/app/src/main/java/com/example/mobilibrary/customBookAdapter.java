@@ -3,9 +3,12 @@ package com.example.mobilibrary;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -22,16 +25,20 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.w3c.dom.Text;
 
+import java.text.NumberFormat;
+import java.text.ParsePosition;
 import java.util.ArrayList;
 import java.util.Objects;
 
 public class customBookAdapter extends RecyclerView.Adapter<customBookAdapter.MyViewHolder> implements Filterable {
     private ArrayList<Book> mBooks;
+    private ArrayList<Book> mBooksfiltered;
     private Context mContext;
 
     public customBookAdapter(Context context, ArrayList<Book> books){
         this.mContext = context;
         this.mBooks = books;
+        this.mBooksfiltered = books;
     }
 
     // Create new views (invoked by the layout manager)
@@ -50,13 +57,15 @@ public class customBookAdapter extends RecyclerView.Adapter<customBookAdapter.My
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         // get element from your dataset at this position
         // replace the contents of the view with that element
-        holder.title.setText(mBooks.get(position).getTitle());
-        System.out.println("Title " + mBooks.get(position).getTitle());
-        holder.author.setText(mBooks.get(position).getAuthor());
-        System.out.println("Author " + mBooks.get(position).getAuthor());
-        holder.isbn.setText(mBooks.get(position).getISBN());
-        System.out.println("ISBN " + mBooks.get(position).getISBN());
-
+        holder.title.setText(mBooksfiltered.get(position).getTitle());
+        System.out.println("Title " + mBooksfiltered.get(position).getTitle());
+        holder.author.setText(mBooksfiltered.get(position).getAuthor());
+        System.out.println("Author " + mBooksfiltered.get(position).getAuthor());
+        holder.isbn.setText(mBooksfiltered.get(position).getISBN());
+        System.out.println("ISBN " + mBooksfiltered.get(position).getISBN());
+        String currStatus = mBooksfiltered.get(position).getStatus();
+        holder.status.setText(currStatus);
+        System.out.println("Status " + currStatus);
 
         //click listener
         holder.parentLayout.setOnClickListener(new View.OnClickListener() {
@@ -65,14 +74,14 @@ public class customBookAdapter extends RecyclerView.Adapter<customBookAdapter.My
 
                 //get image of book clicked
                 byte[] bookImage = null;
-                if (mBooks.get(position).getImageId() != null){
-                    String bookImageString = mBooks.get(position).getImageId();
+                if (mBooksfiltered.get(position).getImageId() != null){
+                    String bookImageString = mBooksfiltered.get(position).getImageId();
                     bookImage = Base64.decode(bookImageString, 0);
                 }
 
                 //Get the User object from currently clicked book by going into firestore
                 final FirebaseFirestore db = FirebaseFirestore.getInstance();
-                String owner_username = mBooks.get(position).getOwner().getUsername();
+                String owner_username = mBooksfiltered.get(position).getOwner().getUsername();
                 DocumentReference doc = db.collection("Users").document(owner_username);
                 if (bookImage != null){
                     Base64.encodeToString(bookImage, Base64.DEFAULT);
@@ -95,7 +104,7 @@ public class customBookAdapter extends RecyclerView.Adapter<customBookAdapter.My
                     }
                     private void initIntent(User user) {
                         //get the book details of currently clicked item
-                        Book newBook = new Book(mBooks.get(position).getFirestoreID(), mBooks.get(position).getTitle(), mBooks.get(position).getISBN(), mBooks.get(position).getAuthor(), mBooks.get(position).getStatus(), mBooks.get(position).getImageId(), user);
+                        Book newBook = new Book(mBooksfiltered.get(position).getFirestoreID(), mBooksfiltered.get(position).getTitle(), mBooksfiltered.get(position).getISBN(), mBooksfiltered.get(position).getAuthor(), mBooksfiltered.get(position).getStatus(), mBooksfiltered.get(position).getImageId(), user);
                         Intent viewBook = new Intent(mContext, BookDetailsFragment.class);
                         viewBook.putExtra("view book", newBook);
                         mContext.startActivity(viewBook);
@@ -111,7 +120,7 @@ public class customBookAdapter extends RecyclerView.Adapter<customBookAdapter.My
 
     @Override
     public int getItemCount() {
-        return (mBooks == null) ? 0 : mBooks.size();
+        return (mBooksfiltered == null) ? 0 : mBooksfiltered.size();
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder{
@@ -119,27 +128,18 @@ public class customBookAdapter extends RecyclerView.Adapter<customBookAdapter.My
         public TextView title;
         public TextView author;
         public TextView isbn;
+        public TextView status;
         CardView parentLayout;
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
-            title = (TextView) itemView.findViewById(R.id.book_title2);
-            author = (TextView) itemView.findViewById(R.id.book_author2);
-            isbn = (TextView) itemView.findViewById(R.id.book_isbn2);
-            parentLayout = (CardView) itemView.findViewById(R.id.parent_layout2);
+            title = itemView.findViewById(R.id.my_book_title);
+            author = itemView.findViewById(R.id.my_book_author);
+            isbn = itemView.findViewById(R.id.my_book_ISBN);
+            status = itemView.findViewById(R.id.my_book_status);
+            parentLayout = itemView.findViewById(R.id.parent_layout);
         }
 
 
-    }
-
-    @Override
-    public int getCount() {
-        return filtered.size();
-    }
-
-    @Nullable
-    @Override
-    public Book getItem(int position) {
-        return filtered.get(position);
     }
 
     /**
@@ -157,15 +157,15 @@ public class customBookAdapter extends RecyclerView.Adapter<customBookAdapter.My
                 ArrayList<Book> found = new ArrayList<Book>();
                 if (constraint.toString().length() > 0) {
                     if (isNumeric(constraint.toString())) {
-                        for (Book b : books) {
+                        for (Book b : mBooks) {
                             if (b.getISBN().contains(constraint.toString())) {
                                 found.add(b);
                             }
                         }
                     } else {
                         constraint = constraint.toString().toLowerCase();
-                        for (Book b : books) {
-                            Log.d(TAG, ("GET BOOK: " + b.getTitle() + " " + b.getAuthor() + " " + b.getOwner()));
+                        for (Book b : mBooks) {
+                            Log.d("", ("GET BOOK: " + b.getTitle() + " " + b.getAuthor() + " " + b.getOwner()));
                             if (b.getTitle().toLowerCase().contains(constraint) ||
                                     b.getAuthor().toLowerCase().contains(constraint)) {
                                 found.add(b);
@@ -175,8 +175,8 @@ public class customBookAdapter extends RecyclerView.Adapter<customBookAdapter.My
                     result.values = found;
                     result.count = found.size();
                 } else {
-                    result.values = books;
-                    result.count = books.size();
+                    result.values = mBooks;
+                    result.count = mBooks.size();
                 }
                 return result;
             }
@@ -184,7 +184,7 @@ public class customBookAdapter extends RecyclerView.Adapter<customBookAdapter.My
             @SuppressWarnings("unchecked")
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
-                filtered = (ArrayList<Book>) results.values;
+                mBooksfiltered = (ArrayList<Book>) results.values;
                 notifyDataSetChanged();
             }
 

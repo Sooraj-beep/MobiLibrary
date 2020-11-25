@@ -39,7 +39,7 @@ import java.util.Objects;
 import static android.app.Activity.RESULT_OK;
 
 /**
- * @author Sooraj;
+ * @author Sooraj, Kimberly;
  * My Books fragment that is navigated to using notification bar. Contains a dropdown that organizes the User's books into status:
  * Owned, Requested, Accepted, and Borrowed. The user is able to see book title, author, isbn, and status.
  * The user is also able to add and edit their books opened from this Fragment
@@ -110,60 +110,6 @@ public class MyBooksFragment extends Fragment {
             }
         });
         return v;
-    }
-
-    /**
-     * If requestCode is 0, if its 1, we are either deleting a book (result code =1) or editing
-     * an existing book (result code = 2) with data.
-     *
-     * @param requestCode type of code entering into the new activity
-     * @param resultCode result code from finishing activity
-     * @param data data from the finished activity
-     */
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        System.out.println("IN ONACTIVITYRESULT");
-        /*if (requestCode == 0) {
-            if (resultCode == RESULT_OK) {
-                Book new_book = (Book) Objects.requireNonNull(data.getExtras()).getSerializable("new book");
-                bookAdapter.add(new_book);
-                bookAdapter.notifyDataSetChanged();
-                System.out.println("Book adaptor added newBook");
-            }
-        }*/
-
-        if (requestCode == 1) {
-            if (resultCode == 1) {
-                // book needs to be deleted, intent has book to delete
-                Book delete_book = (Book) data.getSerializableExtra("delete book");
-
-                // find the book to delete and delete it
-                for (int i = 0; i < bookAdapter.getCount(); i++) {
-                    Book currentBook = bookAdapter.getItem(i);
-                    if (delete_book.getFirestoreID().equals(currentBook.getFirestoreID())) {
-                        bookAdapter.remove(currentBook);
-                    }
-                }
-
-                bookAdapter.notifyDataSetChanged();
-            } else if (resultCode == 2) {
-                // book was edited update data set
-                Book edited_book = (Book) data.getSerializableExtra("edited book");
-
-                // find the book to edit and edit it
-                for (int i = 0; i < bookList.size(); i++) {
-                    Book currentBook = bookList.get(i);
-                    if (edited_book.getFirestoreID().equals(currentBook.getFirestoreID())) {
-                        currentBook.setTitle(edited_book.getTitle());
-                        currentBook.setAuthor(edited_book.getAuthor());
-                        currentBook.setISBN(edited_book.getISBN());
-                        currentBook.setImageId(edited_book.getImageId());
-                    }
-                }
-                bookAdapter.notifyDataSetChanged();
-            }
-        }
     }
 
     /**
