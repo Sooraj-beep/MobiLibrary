@@ -66,6 +66,20 @@ public class customBookAdapter extends RecyclerView.Adapter<customBookAdapter.My
         String currStatus = mBooksfiltered.get(position).getStatus();
         holder.status.setText(currStatus);
         System.out.println("Status " + currStatus);
+        switch (currStatus) {
+            case "available":
+                holder.status.setBackgroundResource(R.drawable.rounded_bg_avail);
+                break;
+            case "requested":
+                holder.status.setBackgroundResource(R.drawable.rounded_bg_req);
+                break;
+            case "accepted":
+                holder.status.setBackgroundResource(R.drawable.rounded_bg_acc);
+                break;
+            case "borrowed":
+                holder.status.setBackgroundResource(R.drawable.rounded_bg_borr);
+                break;
+        }
 
         //click listener
         holder.parentLayout.setOnClickListener(new View.OnClickListener() {

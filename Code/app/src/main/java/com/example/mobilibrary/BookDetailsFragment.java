@@ -99,7 +99,10 @@ public class BookDetailsFragment extends AppCompatActivity {
     private RequestService requestService;
     private Context context;
     private RequestQueue mRequestQueue;
+    private CurrentUser currentUser;
 
+    private Button detailsBtn;
+    private Button requestsBtn;
     private Button requestedButton;
     private Button requestButton;
     private Button receiveButton;
@@ -127,13 +130,9 @@ public class BookDetailsFragment extends AppCompatActivity {
         FloatingActionButton deleteButton = findViewById(R.id.delete_button);
         photo = findViewById(R.id.imageView);
         detailsBtn = findViewById(R.id.detailsBtn);
-
         requestsBtn = findViewById(R.id.reqBtn);
+        reqView = findViewById(R.id.reqList);
         requestList = new ArrayList<>();
-
-        ownerTitle = findViewById(R.id.view_owner_title);
-        isbnTitle = findViewById(R.id.view_isbn_title);
-        statusTitle = findViewById(R.id.view_status_title);
 
         requestedButton = findViewById(R.id.requested_button);
         requestButton = findViewById(R.id.request_button);
@@ -182,7 +181,8 @@ public class BookDetailsFragment extends AppCompatActivity {
             // hide request list at open of activity
             //requestAssets = new TextView[]{title, author, owner, status, ownerTitle,ISBN, isbnTitle, statusTitle };
             //reqDataList = new ArrayList<>();
-            requestAssets = new TextView[]{title, author, owner, status, ownerTitle,ISBN, isbnTitle, statusTitle};
+            requestAssets = new TextView[]{title, author, owner, status, ISBN};
+            reqView.setVisibility(View.INVISIBLE);
             requestsBtn.setEnabled(true);
 
             // get book status
@@ -200,7 +200,7 @@ public class BookDetailsFragment extends AppCompatActivity {
             deleteButton.setVisibility(View.GONE);
             detailsBtn.setVisibility(View.GONE);
             requestsBtn.setVisibility(View.GONE);
-            reqList.setVisibility(View.GONE);
+            reqView.setVisibility(View.GONE);
 
             //get book status
             if (viewBook.getStatus().equals("available") || (viewBook.getStatus().equals("requested"))) {
@@ -208,7 +208,7 @@ public class BookDetailsFragment extends AppCompatActivity {
 
                 //check is user has requested this book before
                 if (viewBook.getStatus().equals("requested")) {
-                    //get requestors
+                    //get all requesting users
                     ArrayList<String> requestors = new ArrayList<String>();
                     final boolean[] alreadyRequested = new boolean[1];
                     CollectionReference requestsRef;
@@ -332,9 +332,7 @@ public class BookDetailsFragment extends AppCompatActivity {
             }
         });
 
-        /**
-         * If Edit Button is pressed, open EditBookFragment activity and pass it the book to edit its fields
-         */
+        // If Edit Button is pressed, open EditBookFragment activity and pass it the book to edit its fields
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -345,9 +343,7 @@ public class BookDetailsFragment extends AppCompatActivity {
             }
         });
 
-        /**
-         *If receive button is pressed
-         */
+        // If receive button is pressed
         receiveButton.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
@@ -364,10 +360,7 @@ public class BookDetailsFragment extends AppCompatActivity {
             }
         });
 
-        /**
-         * If return button is pressed, check if the book brought to the exchange is the one that
-         * is to be returned.
-         */
+        // If return button is pressed, check if the book brought to the exchange is the one that is to be returned.
         returnButton.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
@@ -384,9 +377,7 @@ public class BookDetailsFragment extends AppCompatActivity {
             }
         });
 
-        /**
-         * If Request Button is pressed, create new Request object, save to firestore, change Book status to request, and change the button
-         */
+        // If Request Button is pressed, create new Request object, save to firestore, change Book status to request, and change the button
         requestButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -465,9 +456,7 @@ public class BookDetailsFragment extends AppCompatActivity {
             }
         });
 
-        /**
-         * Toggles view, shows request list and hides book details
-         */
+        // Toggles view, shows request list and hides book details
         requestsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -509,9 +498,7 @@ public class BookDetailsFragment extends AppCompatActivity {
             }
         });
 
-        /**
-         * Toggles view, hides request list and shows book details
-         */
+        // Toggles view, hides request list and shows book details
         detailsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -531,7 +518,7 @@ public class BookDetailsFragment extends AppCompatActivity {
             }
         });
 
-        //Opens the profile of the user who owns the book.
+        // Opens the profile of the user who owns the book.
         owner.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -712,7 +699,7 @@ public class BookDetailsFragment extends AppCompatActivity {
 
 
     /**
-     * Check if connnected to the internet
+     * Check if connected to the internet
      * @return boolean true if connected, false otherwise
      */
     private boolean isNetworkAvailable() {

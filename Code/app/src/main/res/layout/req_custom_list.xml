@@ -11,7 +11,7 @@
         android:layout_width="50dp"
         android:layout_height="0dp"
         android:layout_margin="5dp"
-        android:src="@drawable/pfp_og"
+        android:src="@drawable/pfp"
         app:civ_border_overlay="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
