@@ -18,6 +18,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.libraries.places.api.Places;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.WriteBatch;
 
 import java.io.IOException;
@@ -27,13 +28,15 @@ import java.util.Map;
 
 /**
  * @author Kimberly;
- *
+ * Can search map to find a location (to meet for request) when owner accepts book
+ * Confirm will save location in Firestore
  */
 public class requestMap extends FragmentActivity implements OnMapReadyCallback{
     private LatLng newLatLng;
     private String TAG = "requestMap";
     private GoogleMap map;
     private SearchView searchButton;
+    private static FirebaseFirestore db;
 
     /**
      * Used to create the map and setting up the search bar
@@ -44,6 +47,10 @@ public class requestMap extends FragmentActivity implements OnMapReadyCallback{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
+
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+        Book book = (Book) bundle.get("Book");
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -91,15 +98,19 @@ public class requestMap extends FragmentActivity implements OnMapReadyCallback{
             public void onClick(View v) {
                 WriteBatch batch = db.batch();
 
+                assert book != null;
                 DocumentReference bookDoc = db.collection("Books")
-                        .document(request.getBookID());
+                        .document(book.getFirestoreID());
 
                 Map<String, Object> newData = new HashMap<>();
                 //Add the user whose request has been accepted to the book
-                newData.put("AcceptedTo", request.getRequester());
+                newData.put("LatLang", newLatLng);
 
                 batch.update(bookDoc, newData);
                 batch.update(bookDoc, "Status", "accepted");
+                Intent mapIntent = new Intent();
+                mapIntent.putExtra("LatLang", newLatLng);
+                batch.commit();
                 finish();
             }
         });

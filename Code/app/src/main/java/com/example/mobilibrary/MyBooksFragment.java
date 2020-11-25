@@ -77,7 +77,7 @@ public class MyBooksFragment extends Fragment {
         /* we instantiate a new arraylist in case we have an empty firestore, if not we update this
         list later in updateBookList */
 
-        bookAdapter = new BookListAdaptor(getContext(), bookList);
+        bookAdapter = new customBookAdapter(getContext(), bookList);
         bookView.setAdapter(bookAdapter);
         updateBookList();
 

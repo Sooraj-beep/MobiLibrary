@@ -1,5 +1,6 @@
 package com.example.mobilibrary;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -19,6 +20,7 @@ import com.example.mobilibrary.DatabaseController.aRequest;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,6 +67,9 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.MyViewHo
         holder.acceptButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent mapIntent = new Intent(mContext, requestMap.class);
+                mapIntent.putExtra("book", (Serializable) mRequests.get(position));
+                ((Activity) mContext).startActivityForResult(mapIntent,1);
                 requestService.acceptRequest(mRequests.get(position))
                         .addOnCompleteListener(task -> {
                             if (task.isSuccessful()) {
@@ -114,8 +119,6 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.MyViewHo
         });
 
     }
-
-
 
     @Override
     public int getItemCount() {

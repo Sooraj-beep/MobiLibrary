@@ -78,9 +78,10 @@ import java.util.Objects;
 
 
 /**
- * @author Natalia;
+ * @author Natalia, Kimberly;
  * This class takes in a book and displays its details (Title, Author, Owner, ISBN and Status),
  * requests currently on the book, and, if available, the book's photograph.
+ * Will display image from AddBookFragment and EditBookFragment.
  * Additionally, this class can toggle between displaying the book details and the list of requests on the book
  */
 public class BookDetailsFragment extends AppCompatActivity {
@@ -136,7 +137,7 @@ public class BookDetailsFragment extends AppCompatActivity {
         reqView = findViewById(R.id.reqList);
         requestList = new ArrayList<>();
 
-        requestedButton = findViewById(R.id.requested_button);
+        requestedButton = findViewById(R.id.requested);
         requestButton = findViewById(R.id.request_button);
         Button returnButton = findViewById(R.id.return_button);
         receiveButton = findViewById(R.id.receive_button);
