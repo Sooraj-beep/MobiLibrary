@@ -28,6 +28,8 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
@@ -482,12 +484,14 @@ public class BookDetailsFragment extends AppCompatActivity {
                                     }
                                     System.out.println("Request list: "+requestList);
                                 }
-                                requestAdapter = new RequestAdapter(getApplicationContext(), requestList);
+                                requestAdapter = new RequestAdapter(BookDetailsFragment.this, requestList);
                                 reqView.setAdapter(requestAdapter);
 
                             }
                         });
+
                 reqView = (RecyclerView) findViewById(R.id.reqList);
+                reqView.addItemDecoration(new DividerItemDecoration(context, DividerItemDecoration.VERTICAL));
                 reqView.setVisibility(View.VISIBLE);
 
 

@@ -50,6 +50,7 @@
             android:textSize="15sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/my_book_title"
+            app:layout_constraintWidth_max="225dp"
             tools:layout_conversion_absoluteHeight="25dp"
             tools:layout_conversion_absoluteWidth="118dp" />
 
@@ -75,7 +76,7 @@
             android:layout_gravity="center_vertical|end"
             android:background="@drawable/rounded_bg_avail"
             android:fontFamily="@font/quicksand_bold"
-            android:paddingHorizontal="10dp"
+            android:paddingHorizontal="12dp"
             android:paddingVertical="2dp"
             android:text="Status"
             android:textColor="@color/colorText"

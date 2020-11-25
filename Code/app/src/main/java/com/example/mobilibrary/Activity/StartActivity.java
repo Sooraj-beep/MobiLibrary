@@ -60,8 +60,8 @@ public class StartActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // TODO: FILL WITH YOUR PERSONAL TEST USER INFO
-                String email = "test@mail.com";
-                String pass = "Pas5W0rd!";
+                String email = "";
+                String pass = "";
                 databaseHelper.validateUser(email, pass)
                         .addOnCompleteListener(task -> {
                             currentUser.login(task.getResult());

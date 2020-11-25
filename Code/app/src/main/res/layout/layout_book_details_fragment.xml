@@ -296,14 +296,14 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/reqList"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@color/colorAccent"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView"
-        tools:listitem="@layout/layout_request_list"/>
+        tools:listitem="@layout/layout_request_list" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
