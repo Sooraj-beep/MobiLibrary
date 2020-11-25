@@ -21,6 +21,11 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class bookMap extends FragmentActivity implements OnMapReadyCallback {
     private LatLng bookLatLng;
 
+    /**
+     * Used to create the map and set the marker
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,6 +46,11 @@ public class bookMap extends FragmentActivity implements OnMapReadyCallback {
 
     }
 
+    /**
+     * Used when the map is starting up or if the map is updated
+     *
+     * @param googleMap
+     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         float zoom = 16.0f;
