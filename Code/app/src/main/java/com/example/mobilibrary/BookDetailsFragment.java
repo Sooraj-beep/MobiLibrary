@@ -137,7 +137,7 @@ public class BookDetailsFragment extends AppCompatActivity {
         reqView = findViewById(R.id.reqList);
         requestList = new ArrayList<>();
 
-        requestedButton = findViewById(R.id.requested);
+        requestedButton = findViewById(R.id.request_button);
         requestButton = findViewById(R.id.request_button);
         Button returnButton = findViewById(R.id.return_button);
         receiveButton = findViewById(R.id.receive_button);

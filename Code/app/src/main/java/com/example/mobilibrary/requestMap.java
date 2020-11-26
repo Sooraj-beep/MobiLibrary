@@ -9,7 +9,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SearchView;
+import android.widget.Toast;
 
+import com.example.mobilibrary.DatabaseController.aRequest;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -50,7 +52,7 @@ public class requestMap extends FragmentActivity implements OnMapReadyCallback{
 
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
-        Book book = (Book) bundle.get("Book");
+        aRequest request  = (aRequest) bundle.get("Book");
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -96,22 +98,26 @@ public class requestMap extends FragmentActivity implements OnMapReadyCallback{
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                WriteBatch batch = db.batch();
+                if (newLatLng != null) {
+                    WriteBatch batch = db.batch();
 
-                assert book != null;
-                DocumentReference bookDoc = db.collection("Books")
-                        .document(book.getFirestoreID());
+                    assert request != null;
+                    DocumentReference bookDoc = db.collection("Books")
+                            .document(request.getBookID());
 
-                Map<String, Object> newData = new HashMap<>();
-                //Add the user whose request has been accepted to the book
-                newData.put("LatLang", newLatLng);
+                    Map<String, Object> newData = new HashMap<>();
+                    //Add the user whose request has been accepted to the book
+                    newData.put("LatLang", newLatLng);
 
-                batch.update(bookDoc, newData);
-                batch.update(bookDoc, "Status", "accepted");
-                Intent mapIntent = new Intent();
-                mapIntent.putExtra("LatLang", newLatLng);
-                batch.commit();
-                finish();
+                    batch.update(bookDoc, newData);
+                    batch.update(bookDoc, "Status", "accepted");
+                    Intent mapIntent = new Intent();
+                    mapIntent.putExtra("LatLang", newLatLng);
+                    batch.commit();
+                    finish();
+                } else {
+                    Toast.makeText(requestMap.this, "Please search for a location", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
