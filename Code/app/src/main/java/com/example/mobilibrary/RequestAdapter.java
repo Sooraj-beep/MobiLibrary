@@ -1,5 +1,6 @@
 package com.example.mobilibrary;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -27,6 +28,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -79,35 +81,35 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.MyViewHo
 
         //clicks listener
         holder.acceptButton.setOnClickListener(new View.OnClickListener() {
-           @Override
-           public void onClick(View v) {
+            @Override
+            public void onClick(View v) {
 
-               //send accepted notification
-               //may have to move this to when the geolocation is confirmed
-               String requestor = mRequests.get(position).getRequester();
-               String fireStoreID = mRequests.get(position).getBookID();
+                //send accepted notification
+                //may have to move this to when the geolocation is confirmed
+                String requestor = mRequests.get(position).getRequester();
+                String fireStoreID = mRequests.get(position).getBookID();
 
-               final FirebaseFirestore db = FirebaseFirestore.getInstance();
-               DocumentReference docRef = db.collection("Books").document(fireStoreID);
-               docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                   @Override
-                   public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                       DocumentSnapshot document = task.getResult();
-                       String title = document.getString("Title");
-                       String notification = "Has accepted your request for: " + title;
-                       String currUser = document.getString("Owner");
+                final FirebaseFirestore db = FirebaseFirestore.getInstance();
+                DocumentReference docRef = db.collection("Books").document(fireStoreID);
+                docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        DocumentSnapshot document = task.getResult();
+                        String title = document.getString("Title");
+                        String notification = "Has accepted your request for: " + title;
+                        String currUser = document.getString("Owner");
 
-                       HashMap<Object, String> hashMap = new HashMap<>();
-                       hashMap.put("otherUser", requestor);
-                       hashMap.put("user", currUser);
-                       hashMap.put("notification", notification);
-                       hashMap.put("type", "3");
-                       hashMap.put("bookFSID", fireStoreID);
+                        HashMap<Object, String> hashMap = new HashMap<>();
+                        hashMap.put("otherUser", requestor);
+                        hashMap.put("user", currUser);
+                        hashMap.put("notification", notification);
+                        hashMap.put("type", "3");
+                        hashMap.put("bookFSID", fireStoreID);
 
-                       final FirebaseFirestore db = FirebaseFirestore.getInstance();
-                       db.collection("Users").document(requestor).collection("Notifications").add(hashMap);
+                        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+                        db.collection("Users").document(requestor).collection("Notifications").add(hashMap);
 
-                       //delete all the notifications that involve others who had requested that book
+                        //delete all the notifications that involve others who had requested that book
                         db.collection("Users").document(currUser).collection("Notifications")
                                 .whereEqualTo("notification", "Has requested to borrow your book: " + title)
                                 .get()
@@ -119,40 +121,40 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.MyViewHo
                                         }
                                     }
                                 });
-                   }
-               });
+                    }
+                });
+                Intent mapIntent = new Intent(mContext, requestMap.class);
+                mapIntent.putExtra("book", (Serializable) mRequests.get(position));
+                ((Activity) mContext).startActivityForResult(mapIntent,1);
+                requestService.acceptRequest(mRequests.get(position))
+                        .addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(mContext, "Successfully accepted request from" + mRequests.get(position).getRequester(), Toast.LENGTH_SHORT).show();
+                                if (mRequests.size() > 0) {
+                                    List<String> deletedIDs = new ArrayList<>();
+                                    for (int i = 0; i < mRequests.size(); i++) {
+                                        deletedIDs.add(mRequests.get(i).getID());
+                                    }
+                                    requestService.deleteAll(deletedIDs).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            Log.e("BookDetailsFragment", "Successfully deletes al requests");
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.e("BookDatailsFragment", "Failed to delete requests: " + e.toString());
+                                        }
+                                    });
+                                }
+                                notifyDataSetChanged();
+                            } else {
+                                Toast.makeText(mContext, "Failed to accept the request", Toast.LENGTH_SHORT).show();
+                            }
 
-
-               requestService.acceptRequest(mRequests.get(position))
-                       .addOnCompleteListener(task -> {
-                           if (task.isSuccessful()) {
-                               Toast.makeText(mContext, "Successfully accepted request from" + mRequests.get(position).getRequester(), Toast.LENGTH_SHORT).show();
-                               if (mRequests.size() > 0) {
-                                   List<String> deletedIDs = new ArrayList<>();
-                                   for (int i = 0; i < mRequests.size(); i++) {
-                                       deletedIDs.add(mRequests.get(i).getID());
-                                   }
-                                   requestService.deleteAll(deletedIDs).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                       @Override
-                                       public void onSuccess(Void aVoid) {
-                                           Log.e("BookDetailsFragment", "Successfully deletes al requests");
-                                       }
-                                   }).addOnFailureListener(new OnFailureListener() {
-                                       @Override
-                                       public void onFailure(@NonNull Exception e) {
-                                           Log.e("BookDatailsFragment", "Failed to delete requests: " + e.toString());
-                                       }
-                                   });
-                               }
-                               notifyDataSetChanged();
-                           } else {
-                               Toast.makeText(mContext, "Failed to accept the request", Toast.LENGTH_SHORT).show();
-                           }
-
-                       });
-           }
-       });
-
+                        });
+            }
+        });
 
         holder.declineButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -201,33 +203,21 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.MyViewHo
 
 
                 });
-
-
-
-
                 RequestService.decline(mRequests.get(position).getID())
                         .addOnCompleteListener(task -> {
                             if (task.isSuccessful()) {
                                 Toast.makeText(mContext, "Succesfully declined request", Toast.LENGTH_SHORT).show();
                                 notifyDataSetChanged();
 
-
-
-
                             } else {
                                 Toast.makeText(mContext, "Failed to decline the request", Toast.LENGTH_SHORT).show();
                             }
                         });
-
-
             }
         });
 
 
     }
-
-
-
 
 
     @Override

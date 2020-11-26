@@ -9,7 +9,7 @@ import java.io.Serializable;
  * This is a class for Request objects.
  */
 
-public class aRequest {
+public class aRequest implements Serializable{
     private final String ID;//to be set only after pulling request from firestore
     private final String requester;
     private final String bookID; //book's firestoreID

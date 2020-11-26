@@ -1,6 +1,8 @@
 package com.example.mobilibrary.DatabaseController;
 
+import android.app.DownloadManager;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -73,9 +75,8 @@ public class RequestService {
         DocumentReference bookDoc = db.collection("Books")
                 .document(request.getBookID());
 
-
         Map<String, Object> newData = new HashMap<>();
-//Add the user whose request has been accepted to the book
+        //Add the user whose request has been accepted to the book
         newData.put("AcceptedTo", request.getRequester());
 
         batch.update(bookDoc, newData);

@@ -23,7 +23,7 @@ public class BookTest {
     @Test
     void getUserTest(){
         User mockOwner = new User("username", "email@example.com", "First Last", "123-123-1234");
-        Book mockBook = new Book("Song of the Lioness", "123456789","Tamora Pierce", "available", null, mockOwner);
+        Book mockBook = mockBook();
         User guessOwner = mockBook.getOwner();
         assertEquals(mockOwner.getUsername(), guessOwner.getUsername());
         assertEquals(mockOwner.getEmail(), guessOwner.getEmail());
@@ -67,5 +67,20 @@ public class BookTest {
         Book mockBook2 = mockBook();
 
         assertEquals(1, mockBook1.compareTo(mockBook2));
+    }
+
+    @Test
+    void testStatus() {
+        Book book = mockBook();
+        assertEquals("available",book.getStatus());
+    }
+
+    @Test
+    void testChangeStatus() {
+        Book book = mockBook();
+        book.setStatus("borrowed");
+        assertEquals("borrowed",book.getStatus());
+        book.setStatus("available");
+        assertEquals("available",book.getStatus());
     }
 }
