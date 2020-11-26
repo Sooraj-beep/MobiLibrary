@@ -37,7 +37,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * @author ;
+ * @author Nguyen, Kimberly;
  * This class interacts with the database to get books on the cloud
  * and do all the database related tasks for the books
  */

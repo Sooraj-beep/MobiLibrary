@@ -30,7 +30,11 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
+/**
+ * @author Nguyen, Jill;
+ * This is a request adapter to display all the requests grabbed from Firestore,
+ * to the selected book .
+ */
 public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.MyViewHolder> {
     private ArrayList<aRequest> mRequests;
     private Context mContext;

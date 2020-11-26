@@ -78,7 +78,7 @@ import java.util.Objects;
 
 
 /**
- * @author Natalia;
+ * @author Natalia, Nguyen;
  * This class takes in a book and displays its details (Title, Author, Owner, ISBN and Status),
  * requests currently on the book, and, if available, the book's photograph.
  * Additionally, this class can toggle between displaying the book details and the list of requests on the book
@@ -409,48 +409,6 @@ public class BookDetailsFragment extends AppCompatActivity {
                 //create notification
                 addToNotifications(viewBook.getOwner().getUsername(), getUsername(), "Has requested to borrow your book: " + viewBook.getTitle(), "1", viewBook.getFirestoreID());
 
-                //System.out.println("VIEWED BOOK FIRESTOREID: " + viewBook.getFirestoreID());
-                /*String username = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
-                db = FirebaseFirestore.getInstance();
-                db.collection("Requests").whereEqualTo("requester", username)
-                        .whereEqualTo("bookID", viewBook.getFirestoreID()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            Boolean requestExist = false;
-                            for (QueryDocumentSnapshot document : task.getResult()){
-                                requestExist = true;
-                        }
-                            if (requestExist) {
-                                Toast.makeText(getApplicationContext(), "You have already requested this book", Toast.LENGTH_SHORT).show();
-                            }
-                            else{
-                                viewBook.setStatus("requested");
-                                requestButton.setText("Requested");
-                                bookService.changeStatus(context, viewBook, "requested");
-
-                                com.example.mobilibrary.DatabaseController.Request request = new com.example.mobilibrary.DatabaseController.Request(username, viewBook.getFirestoreID());
-                                Log.d("SOORAJ", viewBook.getFirestoreID());
-                               requestService = requestService.getInstance();
-                                requestService.createRequest(request).addOnCompleteListener(task2 -> {
-                                    if(task2.isSuccessful()){
-                                        Log.d("SOORAJ", "ADDED NEW REQUEST");
-                                    }
-                                    else {
-                                        Log.d("SOORAJ", "FAILED");
-                                    }
-                                });
-                            }
-                    }else {
-                            Log.d("SOORAJ", "error");
-
-                            }
-
-
-                    }
-                });*/
-
-
 
                 //later add: make sure button text stays "requested" when user who already requested clicks on it again
 
@@ -545,10 +503,10 @@ public class BookDetailsFragment extends AppCompatActivity {
     }
 
 
-     /**
-      *  When the Scan Button is pressed the scan activity is initiated
-      * @param view the Scan Button
-      */
+    /**
+     *  When the Scan Button is pressed the scan activity is initiated
+     * @param view the Scan Button
+     */
     private void ScanButton(View view) {
         IntentIntegrator intentIntegrator = new IntentIntegrator(this);
         intentIntegrator.initiateScan();
@@ -569,9 +527,9 @@ public class BookDetailsFragment extends AppCompatActivity {
                     editBitMap = bitmap;
                     photo.setImageBitmap(bitmap);
                 }).addOnFailureListener(e -> {
-                    editBitMap = null;
-                    photo.setImageBitmap(null);
-                 });
+            editBitMap = null;
+            photo.setImageBitmap(null);
+        });
     }
 
     /**
