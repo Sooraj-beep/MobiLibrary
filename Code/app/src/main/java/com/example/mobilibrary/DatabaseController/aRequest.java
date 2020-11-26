@@ -5,7 +5,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.io.Serializable;
 
 /**
- * @author ;
+ * @author Nguyen ;
  * This is a class for Request objects.
  */
 

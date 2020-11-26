@@ -78,10 +78,9 @@ import java.util.Objects;
 
 
 /**
- * @author Natalia, Kimberly;
+ * @author Natalia, Nguyen;
  * This class takes in a book and displays its details (Title, Author, Owner, ISBN and Status),
  * requests currently on the book, and, if available, the book's photograph.
- * Will display image from AddBookFragment and EditBookFragment.
  * Additionally, this class can toggle between displaying the book details and the list of requests on the book
  */
 public class BookDetailsFragment extends AppCompatActivity {
@@ -137,7 +136,7 @@ public class BookDetailsFragment extends AppCompatActivity {
         reqView = findViewById(R.id.reqList);
         requestList = new ArrayList<>();
 
-        requestedButton = findViewById(R.id.request_button);
+        requestedButton = findViewById(R.id.requested_button);
         requestButton = findViewById(R.id.request_button);
         Button returnButton = findViewById(R.id.return_button);
         receiveButton = findViewById(R.id.receive_button);
@@ -408,45 +407,7 @@ public class BookDetailsFragment extends AppCompatActivity {
                 });
 
                 //create notification
-                addToNotifications(viewBook.getOwner().getUsername(), getUsername(), "Has requested to borrow your book.", "1", viewBook.getFirestoreID());
-
-                //System.out.println("VIEWED BOOK FIRESTOREID: " + viewBook.getFirestoreID());
-                /*String username = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
-                db = FirebaseFirestore.getInstance();
-                db.collection("Requests").whereEqualTo("requester", username)
-                        .whereEqualTo("bookID", viewBook.getFirestoreID()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            Boolean requestExist = false;
-                            for (QueryDocumentSnapshot document : task.getResult()){
-                                requestExist = true;
-                        }
-                            if (requestExist) {
-                                Toast.makeText(getApplicationContext(), "You have already requested this book", Toast.LENGTH_SHORT).show();
-                            }
-                            else{
-                                viewBook.setStatus("requested");
-                                requestButton.setText("Requested");
-                                bookService.changeStatus(context, viewBook, "requested");
-                                com.example.mobilibrary.DatabaseController.Request request = new com.example.mobilibrary.DatabaseController.Request(username, viewBook.getFirestoreID());
-                                Log.d("SOORAJ", viewBook.getFirestoreID());
-                               requestService = requestService.getInstance();
-                                requestService.createRequest(request).addOnCompleteListener(task2 -> {
-                                    if(task2.isSuccessful()){
-                                        Log.d("SOORAJ", "ADDED NEW REQUEST");
-                                    }
-                                    else {
-                                        Log.d("SOORAJ", "FAILED");
-                                    }
-                                });
-                            }
-                    }else {
-                            Log.d("SOORAJ", "error");
-                            }
-                    }
-                });*/
-
+                addToNotifications(viewBook.getOwner().getUsername(), getUsername(), "Has requested to borrow your book: " + viewBook.getTitle(), "1", viewBook.getFirestoreID());
 
 
                 //later add: make sure button text stays "requested" when user who already requested clicks on it again

@@ -16,23 +16,39 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mobilibrary.Activity.ProfileActivity;
 import com.example.mobilibrary.DatabaseController.RequestService;
+import com.example.mobilibrary.DatabaseController.User;
 import com.example.mobilibrary.DatabaseController.aRequest;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-
+/**
+ * @author Nguyen, Jill;
+ * This is a request adapter to display all the requests grabbed from Firestore,
+ * to the selected book .
+ */
 public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.MyViewHolder> {
     private ArrayList<aRequest> mRequests;
     private Context mContext;
     private RequestService requestService;
+    private User user;
+
 
     public RequestAdapter(Context context, ArrayList<aRequest> requests) {
         this.mContext = context;
         this.mRequests = requests;
         this.requestService = RequestService.getInstance();
+
     }
 
     // Create new views (invoked by the layout manager)
@@ -67,6 +83,46 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.MyViewHo
         holder.acceptButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                //send accepted notification
+                //may have to move this to when the geolocation is confirmed
+                String requestor = mRequests.get(position).getRequester();
+                String fireStoreID = mRequests.get(position).getBookID();
+
+                final FirebaseFirestore db = FirebaseFirestore.getInstance();
+                DocumentReference docRef = db.collection("Books").document(fireStoreID);
+                docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        DocumentSnapshot document = task.getResult();
+                        String title = document.getString("Title");
+                        String notification = "Has accepted your request for: " + title;
+                        String currUser = document.getString("Owner");
+
+                        HashMap<Object, String> hashMap = new HashMap<>();
+                        hashMap.put("otherUser", requestor);
+                        hashMap.put("user", currUser);
+                        hashMap.put("notification", notification);
+                        hashMap.put("type", "3");
+                        hashMap.put("bookFSID", fireStoreID);
+
+                        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+                        db.collection("Users").document(requestor).collection("Notifications").add(hashMap);
+
+                        //delete all the notifications that involve others who had requested that book
+                        db.collection("Users").document(currUser).collection("Notifications")
+                                .whereEqualTo("notification", "Has requested to borrow your book: " + title)
+                                .get()
+                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                        for (QueryDocumentSnapshot document : task.getResult()) {
+                                            document.getReference().delete();
+                                        }
+                                    }
+                                });
+                    }
+                });
                 Intent mapIntent = new Intent(mContext, requestMap.class);
                 mapIntent.putExtra("book", (Serializable) mRequests.get(position));
                 ((Activity) mContext).startActivityForResult(mapIntent,1);
@@ -100,25 +156,69 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.MyViewHo
             }
         });
 
-
         holder.declineButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                //send declined notification
+                String requestor = mRequests.get(position).getRequester();
+                String fireStoreID = mRequests.get(position).getBookID();
+                //get book title and owner
+                final FirebaseFirestore db = FirebaseFirestore.getInstance();
+                DocumentReference docRef = db.collection("Books").document(fireStoreID);
+                docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        DocumentSnapshot document = task.getResult();
+                        String title = document.getString("Title");
+                        String notification = "Has declined your request for: " + title;
+                        String currUser = document.getString("Owner");
+
+                        HashMap<Object, String> hashMap = new HashMap<>();
+                        hashMap.put("otherUser", requestor);
+                        hashMap.put("user", currUser);
+                        hashMap.put("notification", notification);
+                        hashMap.put("type", "2");
+                        hashMap.put("bookFSID", fireStoreID);
+
+                        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+                        db.collection("Users").document(requestor).collection("Notifications").add(hashMap);
+
+                        //delete the notification
+                        db.collection("Users").document(currUser).collection("Notifications")
+                                .whereEqualTo("notification", "Has requested to borrow your book: " + title)
+                                .whereEqualTo("user", requestor)
+                                .get()
+                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                        for (QueryDocumentSnapshot doc : task.getResult()) {
+                                            doc.getReference().delete();
+                                        }
+                                    }
+                                });
+
+
+                    }
+
+
+                });
                 RequestService.decline(mRequests.get(position).getID())
                         .addOnCompleteListener(task -> {
                             if (task.isSuccessful()) {
                                 Toast.makeText(mContext, "Succesfully declined request", Toast.LENGTH_SHORT).show();
                                 notifyDataSetChanged();
+
                             } else {
                                 Toast.makeText(mContext, "Failed to decline the request", Toast.LENGTH_SHORT).show();
                             }
                         });
-
-
             }
         });
 
+
     }
+
 
     @Override
     public int getItemCount() {
