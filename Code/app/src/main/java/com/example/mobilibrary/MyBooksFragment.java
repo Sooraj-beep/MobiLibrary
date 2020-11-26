@@ -145,7 +145,6 @@ public class MyBooksFragment extends Fragment {
                                 }
                                 bookAdapter.notifyDataSetChanged(); // Notifying the adapter to render any new data fetched from the cloud
 
-
                             }
                         }
                     });
