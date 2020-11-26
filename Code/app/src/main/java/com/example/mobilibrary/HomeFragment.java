@@ -1,5 +1,7 @@
 package com.example.mobilibrary;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -15,6 +17,7 @@ import android.widget.TextView;
 
 import com.example.mobilibrary.Activity.ProfileActivity;
 import com.example.mobilibrary.DatabaseController.DatabaseHelper;
+import com.example.mobilibrary.DatabaseController.User;
 import com.example.mobilibrary.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.Blob;
@@ -44,8 +47,8 @@ public class HomeFragment extends Fragment {
     private List<String> isbns = new ArrayList<>();
     private List<String> statuses = new ArrayList<>();
     private List<String> owners = new ArrayList<>();
-    private List<String> images = new ArrayList<>();
-    private List<String> ids = new ArrayList<>();
+    private List<String> imageIDs = new ArrayList<>();
+    private List<String> firestoreIDs = new ArrayList<>();
 
     public HomeFragment() {
         // Required empty public constructor
@@ -58,7 +61,6 @@ public class HomeFragment extends Fragment {
 
         //each time homepage is opened will show all available/requested books from other users from collection
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
-
         db.collection("Books").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
@@ -67,8 +69,8 @@ public class HomeFragment extends Fragment {
                 isbns.clear();
                 statuses.clear();
                 owners.clear();
-                images.clear();
-                ids.clear();
+                imageIDs.clear();
+                firestoreIDs.clear();
 
                 for (DocumentSnapshot snapshot : value) { //only add available/requested books and books that do not belong to the user
                     if ((snapshot.getString("Status").equals("available")) || (snapshot.getString("Status").equals("requested"))) {
@@ -78,12 +80,12 @@ public class HomeFragment extends Fragment {
                             isbns.add(snapshot.getString("ISBN"));
                             statuses.add(snapshot.getString("Status"));
                             owners.add(String.valueOf(snapshot.get("Owner")));
-                            images.add(snapshot.getString("Image"));
-                            ids.add(snapshot.getString("imageID"));
+                            imageIDs.add(snapshot.getString("imageID"));
+                            firestoreIDs.add(snapshot.getId());
                         }
                     }
                 }
-                mAdaptor = new BookListAdaptor(getContext(), titles, authors, isbns, statuses, owners, images, ids);
+                mAdaptor = new BookListAdaptor(getContext(), titles, authors, isbns, statuses, owners, imageIDs, firestoreIDs);
                 booksRV.setAdapter(mAdaptor);
             }
         });

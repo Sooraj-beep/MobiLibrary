@@ -19,13 +19,14 @@
         app:layout_constraintHorizontal_bias="0.064"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="0.586" />
 
     <Spinner
         android:id="@+id/spinner"
         android:layout_width="384dp"
         android:layout_height="61dp"
         android:layout_marginStart="16dp"
+        android:layout_marginBottom="28dp"
         android:background="#FFFFFF"
         android:backgroundTint="#FFFFFF"
         android:textAlignment="center"
@@ -48,18 +49,20 @@
         app:layout_constraintVertical_bias="0.81"
         app:maxImageSize="40dp" />
 
-    <ListView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/book_list"
         android:layout_width="409dp"
-        android:layout_height="484dp"
+        android:layout_height="415dp"
         android:layout_marginBottom="64dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:backgroundTint="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        tools:listitem="@layout/content">
 
-    </ListView>
+    </androidx.recyclerview.widget.RecyclerView>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

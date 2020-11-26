@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.SearchView;
 
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -24,14 +25,16 @@ import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.firebase.database.annotations.NotNull;
 
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 
 public class requestMap extends FragmentActivity implements OnMapReadyCallback{
     private LatLng newLatLng;
     private String TAG = "requestMap";
     private GoogleMap map;
     private Button confirmButton;
-    private AutocompleteSupportFragment searchButton;
+    private SearchView searchButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,33 +48,37 @@ public class requestMap extends FragmentActivity implements OnMapReadyCallback{
             Places.initialize(getApplicationContext(), "AIzaSyADFmERhLf1R3L2B1LDfe38bBcN4m1vtLo");
         }
 
-        confirmButton = findViewById(R.id.confirm_button);
-
-        mapFragment.getMapAsync(this);
-
-        // Initialize the AutocompleteSupportFragment.
-        searchButton = (AutocompleteSupportFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.autocomplete_fragment);
-
-        // Specify the types of place data to return.
-        searchButton.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME));
+        confirmButton = findViewById(R.id.confirm_request);
 
         // Set up a PlaceSelectionListener to handle the response.
-        searchButton.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+        searchButton.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public void onPlaceSelected(@NotNull Place place) {
-                newLatLng = new LatLng(place.getLatLng().latitude,place.getLatLng().longitude);
-                float zoom = 16.0f;
-                map.addMarker(new MarkerOptions().position(newLatLng).title("Location") );
-                map.animateCamera(CameraUpdateFactory.newLatLngZoom(newLatLng,zoom));
+            public boolean onQueryTextSubmit(String query) {
+                String location = searchButton.getQuery().toString();
+                List<Address> addresses = null;
+                if (location != null || location != "") {
+                    Geocoder geocoder = new Geocoder(requestMap.this);
+                    try {
+                        addresses = geocoder.getFromLocationName(location, 1);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    Address address = addresses.get(0);
+                    float zoom = 16.0f;
+                    newLatLng = new LatLng(address.getLatitude(), address.getLongitude());
+                    map.addMarker(new MarkerOptions().position(newLatLng).title("Meeting spot"));
+                    map.animateCamera(CameraUpdateFactory.newLatLngZoom(newLatLng, zoom));
+                }
+                return false;
             }
-
             @Override
-            public void onError(@NotNull Status status) {
-                // TODO: Handle the error.
-                Log.i(TAG, "An error occurred: " + status);
+            public boolean onQueryTextChange(String newText) {
+                return false;
             }
         });
+
+
+        mapFragment.getMapAsync(this);
 
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override

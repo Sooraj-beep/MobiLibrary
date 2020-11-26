@@ -25,7 +25,7 @@
         android:layout_marginBottom="1dp"
         android:background="#A18E6D"
         android:visibility="visible"
-        tools:srcCompat="@tools:sample/backgrounds/scenic" />
+        tools:srcCompat="@drawable/ic_books" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/back_to_books_button"
@@ -84,8 +84,8 @@
         android:layout_above="@+id/view_author"
         android:layout_alignParentStart="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginStart="180dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginStart="140dp"
+        android:layout_marginBottom="0dp"
         android:text="Title"
         android:textAlignment="center"
         android:textSize="25sp"
@@ -98,7 +98,7 @@
         android:layout_above="@+id/view_owner_title"
         android:layout_alignParentStart="true"
         android:layout_centerInParent="true"
-        android:layout_marginStart="175dp"
+        android:layout_marginStart="100dp"
         android:layout_marginTop="0dp"
         android:layout_marginBottom="20dp"
         android:text="Author"
@@ -211,6 +211,18 @@
         android:text="Receive" />
 
     <Button
+        android:id="@+id/requested"
+        android:layout_width="131dp"
+        android:layout_height="59dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="217dp"
+        android:layout_marginTop="520dp"
+        android:backgroundTint="#E6A489"
+        android:text="Requested" />
+
+    <Button
         android:id="@+id/reqBtn"
         android:layout_width="109dp"
         android:layout_height="wrap_content"
@@ -236,14 +248,20 @@
         android:background="#00FFFFFF"
         android:text="Details" />
 
-    <ListView
-        android:id="@+id/reqListView"
-        android:layout_width="match_parent"
-        android:layout_height="366dp"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/reqList"
+        android:layout_width="380dp"
+        android:layout_height="360dp"
+        android:layout_marginBottom="64dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginLeft="16dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:layout_below="@+id/imageView"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginTop="-8dp"
-        android:layout_marginBottom="0dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="8dp"
+        tools:listitem="@layout/layout_request_list"/>
 
 </RelativeLayout>

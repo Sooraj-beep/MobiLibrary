@@ -54,7 +54,7 @@ public class ProfileActivity extends AppCompatActivity implements reAuthFragment
         phoneText = findViewById(R.id.phone_text_view);
         editEmail = findViewById(R.id.edit_new_email);
         editPhone = findViewById(R.id.edit_phone);
-        confirmButton = findViewById(R.id.confirm_button);
+        confirmButton = findViewById(R.id.confirm_book);
         cancelButton = findViewById(R.id.cancel_button);
         signOutButton = findViewById(R.id.sign_out_button);
         context = getApplicationContext();
@@ -129,6 +129,7 @@ public class ProfileActivity extends AppCompatActivity implements reAuthFragment
      */
     private void setProfilePage() {
         // Set TextViews
+        System.out.println("In Set Profile Page");
         usernameText.setText(profileUser.getUsername());
         emailText.setText(profileUser.getEmail());
         phoneText.setText(profileUser.getPhoneNo());

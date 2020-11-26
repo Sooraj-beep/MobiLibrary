@@ -2,19 +2,18 @@ package com.example.mobilibrary;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.util.Log;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -35,7 +34,6 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.mobilibrary.DatabaseController.BookService;
 import com.example.mobilibrary.DatabaseController.User;
-import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -48,10 +46,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
-import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -72,6 +68,7 @@ public class AddBookFragment extends AppCompatActivity implements Serializable {
     private Button confirmButton;
     private FloatingActionButton backButton;
     private FloatingActionButton cameraButton;
+    private CurrentUser currentUser = CurrentUser.getInstance();
 
     private RequestQueue mRequestQueue;
     private FirebaseFirestore db;
@@ -125,39 +122,41 @@ public class AddBookFragment extends AppCompatActivity implements Serializable {
                 final String bookAuthor = newAuthor.getText().toString();
                 final String bookISBN = newIsbn.getText().toString();
                 if (checkInputs(bookTitle, bookAuthor, bookISBN)) {
-                    currentUser(new Callback() {
+                    User user = currentUser.getCurrentUser();
+                    String bookStatus = "available";
+                    String bookId = null;
+                    String bookBitmap = null;
+                    if (imageBitMap != null) {
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        imageBitMap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+                        byte[] b = baos.toByteArray();
+                        bookBitmap = Base64.encodeToString(b, Base64.DEFAULT);
+                    }
+                    Book newBook = new Book(bookId, bookTitle, bookISBN, bookAuthor, bookStatus, bookBitmap, user);
+                    System.out.println("new book was created");
+                    System.out.println("After book service adding book");
+                    bookService.addBook(context, newBook, new IdCallBack() {
                         @Override
-                        public void onCallback(User user) {
-                            String bookStatus = "available";
-                            String bookId = null;
-                            String bookBitmap = null;
-                            if(imageBitMap != null){
-                                bookBitmap = imageBitMap.toString();
-                            }
-                            Book newBook = new Book(bookId,bookTitle,bookISBN,bookAuthor,bookStatus,bookBitmap,user);
-                            System.out.println("new book was created");
-                            bookService.addBook(context, newBook); //add book to firestore
-                            System.out.println("After book service adding book");
-                            if (imageBitMap != null){ //upload to firestore storage
+                        public void IdCallback(String id) {
+                            if (imageBitMap != null) { //upload to firestore storage
                                 System.out.println("Uploading book, id: " + imageBitMap.toString());
-                                bookService.uploadImage(bookBitmap, imageBitMap, new OnSuccessListener<Void>() {
+                                bookService.uploadImage(id, imageBitMap, new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
                                     }
-                                }, new OnFailureListener() {
+                                    }, new OnFailureListener() {
                                     @Override
                                     public void onFailure(@NonNull Exception e) {
                                         Toast.makeText(AddBookFragment.this, "Failed to add image.", Toast.LENGTH_SHORT).show();
                                     }
                                 });
                             }
-                            Intent returnIntent = new Intent();
-                            returnIntent.putExtra("new book", newBook);
-                            setResult(RESULT_OK, returnIntent);
-                            finish();
                         }
-                    });
-
+                    }); //add book to firestore
+                    Intent returnIntent = new Intent();
+                    returnIntent.putExtra("new book", newBook);
+                    setResult(RESULT_OK, returnIntent);
+                    finish();
                 }
             }
         });
@@ -186,6 +185,27 @@ public class AddBookFragment extends AppCompatActivity implements Serializable {
                 startActivityForResult(cameraIntent, CAMERA_CODE);
             }
         });
+
+        newIsbn.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if((newIsbn.getText().toString().length() == 13)){
+                    Toast.makeText(AddBookFragment.this, "ISBN searched", Toast.LENGTH_SHORT).show();
+                    String bookInfo = getBookInfo(newIsbn.getText().toString().trim());
+                    parseJson(bookInfo);
+                }
+            }
+        });
     }
 
     /**
@@ -212,9 +232,6 @@ public class AddBookFragment extends AppCompatActivity implements Serializable {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        System.out.println("GOT CAMERA PHOTO");
-        System.out.println("Data: " + data);
-        System.out.println("get data: " + data.getData());
         if (requestCode == 1 && resultCode == Activity.RESULT_OK){
                 System.out.println("TOOK PHOTO I THINK");
                 Bitmap photo = (Bitmap) data.getExtras().get("data");
@@ -260,7 +277,6 @@ public class AddBookFragment extends AppCompatActivity implements Serializable {
      * @param key
      */
     private void parseJson(String key) {
-
         final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, key.toString(),
                 null,
                 new Response.Listener<JSONObject>() {
@@ -283,8 +299,13 @@ public class AddBookFragment extends AppCompatActivity implements Serializable {
                                 JSONArray authors = volumeInfo.getJSONArray("authors");
                                 if (authors.length() == 1) {
                                     author = authors.getString(0);
-                                } else { //if there are multiple authors
-                                    author = authors.getString(0) + "," + authors.getString(1);
+                                } else { //if there are multiple author
+                                    int i = 0;
+                                    while(i < authors.length()){
+                                        author = author + authors.getString(i) + ", ";
+                                        i++;
+                                    }
+                                    author = author.substring(0, author.length() - 2);
                                 }
                                 System.out.println("author: " + author);
                                 newAuthor.setText(author);
@@ -351,33 +372,21 @@ public class AddBookFragment extends AppCompatActivity implements Serializable {
         return inputsGood;
     }
 
-    /**
-     * currentUser uses the current instance of the firebase auth to get the information of the
-     * current user and create a User based on it. Because onComplete is asynchronous (so the info
-     * won't arrive until after the code completes) we need to use onCallBack interface. It will
-     * take the info and allow the information to be used (without null).
-     *
-     * @param cbh
-     */
-    public void currentUser(final Callback cbh) {
-        final FirebaseUser userInfo = FirebaseAuth.getInstance().getCurrentUser();
-        db = FirebaseFirestore.getInstance();
-        db.collection("Users").whereEqualTo("email", userInfo.getEmail()).get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (DocumentSnapshot document : task.getResult()) {
-                                String username = document.get("username").toString();
-                                String email = userInfo.getEmail();
-                                String name = document.get("name").toString();
-                                String Phone = document.get("phoneNo").toString();
-                                User currentUser = new User(username, email, name, Phone);
-                                cbh.onCallback(currentUser);
-                            }
-                        }
-                    }
-                });
+    private String getBookInfo(String isbn){
+        //Check if connected to internet
+        boolean isConnected = isNetworkAvailable();
+        Uri.Builder builder = null;
+        if (!isConnected) {
+            System.out.println("Check Internet Connection");
+            Toast.makeText(getApplicationContext(), "Please check Internet connection",
+                    Toast.LENGTH_LONG).show(); //Popup message for user
+        } else {
+            String url = "https://www.googleapis.com/books/v1/volumes?q=isbn:"; //base url
+            Uri uri = Uri.parse(url + isbn);
+            builder = uri.buildUpon();  // build url with ISBN
+        }
+        String bookInfo = builder.toString();
+        return bookInfo;
     }
 }
 

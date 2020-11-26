@@ -1,7 +1,5 @@
 package com.example.mobilibrary;
 
-import android.net.Uri;
-
-public interface IdCallBack {
+public interface  IdCallBack {
         void IdCallback(String id);
     }
