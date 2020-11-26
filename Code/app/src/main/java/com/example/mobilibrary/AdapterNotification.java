@@ -1,7 +1,9 @@
 package com.example.mobilibrary;
 
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.ColorSpace;
@@ -23,6 +25,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.zxing.oned.ITFReader;
 
 import java.util.ArrayList;
@@ -178,6 +182,55 @@ public class AdapterNotification extends RecyclerView.Adapter<AdapterNotificatio
                 Intent intent = new Intent(context, ProfileActivity.class);
                 intent.putExtra("profile", model.getUser());
                 context.startActivity(intent);
+            }
+        });
+
+        //long press to show delete notification option
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                //show confirmation dialog
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setTitle("Delete");
+                builder.setMessage("Are you sure you want to delete this notification?");
+                builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //delete notification
+                        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+                        System.out.println(model.getBookFSID());
+                        System.out.println(model.getNotification());
+                        System.out.println(model.getOtherUser());
+                        System.out.println(model.getType());
+                        System.out.println(model.getUser());
+                        db.collection("Users").document(model.getOtherUser()).collection("Notifications")
+                                //.whereEqualTo("BookFSID", model.getBookFSID())
+                                .whereEqualTo("notification", model.getNotification())
+                                //.whereEqualTo("otherUser", model.getOtherUser())
+                                //.whereEqualTo("type", model.getType())
+                                //.whereEqualTo("user", model.getUser())
+                                .get()
+                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                        for (QueryDocumentSnapshot doc : task.getResult()) {
+                                            doc.getReference().delete();
+                                        }
+                                    }
+                                });
+
+
+
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                builder.create().show();
+                return false;
             }
         });
     }
