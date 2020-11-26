@@ -24,6 +24,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.WriteBatch;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -70,7 +71,7 @@ public class requestMap extends FragmentActivity implements OnMapReadyCallback{
             @Override
             public boolean onQueryTextSubmit(String query) {
                 String location = searchButton.getQuery().toString();
-                List<Address> addresses = null;
+                List<Address> addresses = new ArrayList<>();
                 if (location != null || location != "") {
                     Geocoder geocoder = new Geocoder(requestMap.this);
                     try {
