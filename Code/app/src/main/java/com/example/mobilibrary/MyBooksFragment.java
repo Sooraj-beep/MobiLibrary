@@ -125,8 +125,8 @@ public class MyBooksFragment extends Fragment {
                     .addSnapshotListener(new EventListener<QuerySnapshot>() {
                         @Override
                         public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                            bookList.removeAll(bookList);
                             if (value != null ) {
-                                bookList.removeAll(bookList);
                                 for (final QueryDocumentSnapshot doc : value) {
                                     Log.d(TAG, String.valueOf(doc.getData().get("Owner")));
                                     String bookId = doc.getId();
@@ -149,13 +149,11 @@ public class MyBooksFragment extends Fragment {
                         }
                     });
         } else if (spinnerSelected.equals("requested")) {
-            System.out.println("REQUESTED");
-            System.out.println(bookList);
             db.collection("Books").addSnapshotListener(new EventListener<QuerySnapshot>() {
                 @Override
                 public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                     bookList.removeAll(bookList);
-                    if (value != null){
+                    if (value != null) {
                         for (final QueryDocumentSnapshot doc : value) {
                             String bookId = doc.getId();
                             String bookTitle = Objects.requireNonNull(doc.get("Title")).toString();
@@ -168,17 +166,14 @@ public class MyBooksFragment extends Fragment {
                             }
                             User otherUser = new User(bookOwner, "other", "other", "other");
                             Book currentBook = new Book(bookId, bookTitle, bookISBN, bookAuthor, bookStatus, bookImage, otherUser);
-                            //Log.d("SOORAJ", currentBook.getFirestoreID());
                             db.collection("Requests").whereEqualTo("requester", bookUser.getCurrentUser().getUsername())
                                     .addSnapshotListener(new EventListener<QuerySnapshot>() {
                                         @Override
                                         public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                                             if (value != null) {
                                                 for (final QueryDocumentSnapshot doc : value) {
-                                                    //Log.d("SOORAJ","REquest: " + Objects.requireNonNull(doc.get("bookID")).toString() );
                                                     if (currentBook.getFirestoreID().equals(Objects.requireNonNull(doc.get("bookID")).toString())) {
                                                         bookList.add(currentBook);
-                                                        Log.d("SOORAJ", currentBook.getFirestoreID());
                                                     }
                                                 }
                                                 bookAdapter.notifyDataSetChanged();
@@ -186,46 +181,34 @@ public class MyBooksFragment extends Fragment {
                                             }
                                         }
                                     });
-
                         }
                     }
-
-
                 }
             });
         } else if (spinnerSelected.equals("accepted")) {
-            System.out.println(bookList);
             db.collection("Books").whereEqualTo("AcceptedTo", bookUser.getCurrentUser().getUsername())
                     .addSnapshotListener(new EventListener<QuerySnapshot>() {
                         @Override
                         public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                            if (value != null)
-                                bookList.removeAll(bookList);
-                            for (QueryDocumentSnapshot doc:value) {
-                                String bookId = doc.getId();
-                                String bookTitle = Objects.requireNonNull(doc.get("Title")).toString();
-                                String bookAuthor = Objects.requireNonNull(doc.get("Author")).toString();
-                                String bookISBN = Objects.requireNonNull(doc.get("ISBN")).toString();
-                                String bookStatus = Objects.requireNonNull(doc.get("Status")).toString();
-                                String bookOwner = Objects.requireNonNull(doc.get("Owner")).toString();
-                                if (doc.get("imageID") != null) {
-                                    bookImage = Objects.requireNonNull(doc.get("imageID")).toString();
-                                }
-                                db.collection("Users").document(bookOwner).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                    @Override
-                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                        databaseHelper.getUserProfile(bookOwner, new Callback() {
-                                            @Override
-                                            public void onCallback(User user) {
-                                                bookList.add(new Book(bookId, bookTitle, bookISBN, bookAuthor, bookStatus, bookImage, user));
-                                                bookAdapter.notifyDataSetChanged();
-                                            }
-                                        });
+                            bookList.removeAll(bookList);
+                            if (value != null) {
+                                for (QueryDocumentSnapshot doc : value) {
+                                    String bookId = doc.getId();
+                                    String bookTitle = Objects.requireNonNull(doc.get("Title")).toString();
+                                    String bookAuthor = Objects.requireNonNull(doc.get("Author")).toString();
+                                    String bookISBN = Objects.requireNonNull(doc.get("ISBN")).toString();
+                                    String bookStatus = Objects.requireNonNull(doc.get("Status")).toString();
+                                    String bookOwner = Objects.requireNonNull(doc.get("Owner")).toString();
+                                    if (doc.get("imageID") != null) {
+                                        bookImage = Objects.requireNonNull(doc.get("imageID")).toString();
                                     }
-                                });
+                                    User owner = new User(bookOwner, "other", "other", "other");
+                                    Book currentBook = new Book(bookId, bookTitle, bookISBN, bookAuthor, bookStatus, bookImage, owner);
+                                    bookList.add(currentBook);
+                                }
+                                bookAdapter.notifyDataSetChanged();
                             }
                         }
-
                     });
 
 
@@ -243,14 +226,12 @@ public class MyBooksFragment extends Fragment {
 //                // ...
 //                // ...
 
-
-            System.out.println(bookList);
             db.collection("Books").whereEqualTo("BorrowedBy", bookUser.getCurrentUser().getUsername())
                     .addSnapshotListener(new EventListener<QuerySnapshot>() {
                         @Override
                         public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                             bookList.removeAll(bookList);
-                            if (value != null){
+                            if (value != null) {
                                 for (QueryDocumentSnapshot doc : value) {
                                     String bookId = doc.getId();
                                     String bookTitle = Objects.requireNonNull(doc.get("Title")).toString();
@@ -261,25 +242,13 @@ public class MyBooksFragment extends Fragment {
                                     if (doc.get("imageID") != null) {
                                         bookImage = Objects.requireNonNull(doc.get("imageID")).toString();
                                     }
-                                    db.collection("Users").document(bookOwner).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                        @Override
-                                        public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                            databaseHelper.getUserProfile(bookOwner, new Callback() {
-                                                @Override
-                                                public void onCallback(User user) {
-                                                    bookList.add(new Book(bookId, bookTitle, bookISBN, bookAuthor, bookStatus, bookImage, user));
-                                                    bookAdapter.notifyDataSetChanged();
-                                                }
-                                            });
-                                        }
-                                    });
+                                    User owner = new User(bookOwner, "other", "other", "other");
+                                    Book currentBook = new Book(bookId, bookTitle, bookISBN, bookAuthor, bookStatus, bookImage, owner);
+                                    bookList.add(currentBook);
                                 }
-
+                                bookAdapter.notifyDataSetChanged();
                             }
-
-
                         }
-
                     });
         }
     }
