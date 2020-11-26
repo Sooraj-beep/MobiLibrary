@@ -1,6 +1,9 @@
 package com.example.mobilibrary;
 
+
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.ColorSpace;
@@ -14,12 +17,16 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.mobilibrary.Activity.ProfileActivity;
 import com.example.mobilibrary.DatabaseController.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.zxing.oned.ITFReader;
 
 import java.util.ArrayList;
@@ -40,7 +47,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 5) The borrower is ready to return back User's book -> lead to map with already-picked location
  */
 
-public class AdapterNotification extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class AdapterNotification extends RecyclerView.Adapter<AdapterNotification.HolderNotification> {
 
     private Context context;
     private ArrayList<ModelNotification> notificationsList;
@@ -50,52 +57,30 @@ public class AdapterNotification extends RecyclerView.Adapter<RecyclerView.ViewH
         this.notificationsList = notificationsList;
     }
 
-    @Override
-    public int getItemViewType(int type) {
-        return type;
-    }
 
     @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public HolderNotification onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+
         //inflate view notifications_rows
-        View view;
-        if (viewType == 1) {
-            view = LayoutInflater.from(context).inflate(R.layout.notifications_rows, parent, false);
-            return new typeOne(view);
-        }
-        if (viewType == 2) {
-            view = LayoutInflater.from(context).inflate(R.layout.notifications_rows, parent, false);
-            return new typeTwo(view);
-        }
-        if (viewType == 3) {
-            view = LayoutInflater.from(context).inflate(R.layout.notifications_rows, parent, false);
-            return new typeThree(view);
-        }
-        if (viewType == 4) {
-            view = LayoutInflater.from(context).inflate(R.layout.notifications_rows, parent, false);
-            return new typeFour(view);
-        }
-        if (viewType == 5){
-            view = LayoutInflater.from(context).inflate(R.layout.notifications_rows, parent, false);
-            return new typeFive(view);
-        }
-        else {
-            view = LayoutInflater.from(context).inflate(R.layout.notifications_rows, parent, false);
-            return new typeOne(view);
-        }
+        View view = LayoutInflater.from(context).inflate(R.layout.notifications_rows, parent, false);
+        return new HolderNotification(view, viewType);
 
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        //get type
-        String type = notificationsList.get(position).getType();
-        Integer iType = Integer.parseInt(type);
+    public void onBindViewHolder(@NonNull HolderNotification holder, int position){
+        //get and set data to views
 
-        if (iType == 1) {
-            ((typeOne) holder).setOneDetails(notificationsList.get(position));
-            ((typeOne) holder).notifications.setOnClickListener(new View.OnClickListener() {
+        //set data
+        ModelNotification model = notificationsList.get(position);
+        holder.userName.setText(model.getUser());
+        holder.notification.setText(model.getNotification());
+
+        //get type, change views depending on the type
+        Integer type = Integer.parseInt(model.getType());
+        if (type == 1) {
+            holder.notifications.setOnClickListener(new View.OnClickListener() { //if this notification is clicked, will lead to owners own book details
                 @Override
                 public void onClick(View v) {
                     System.out.println("Notification type 1 Clicked");
@@ -158,43 +143,96 @@ public class AdapterNotification extends RecyclerView.Adapter<RecyclerView.ViewH
                 }
             });
         }
-        if(iType == 2) {
-            ((typeTwo) holder).setTwoDetails(notificationsList.get(position));
-            //onClick will do nothing
+        if (type == 2) {
+            holder.notifications.setCardBackgroundColor(Color.parseColor("#e6576a")); //red border
+            holder.arrow.setVisibility(View.INVISIBLE);
         }
+        if (type == 3) {
+            holder.notifications.setCardBackgroundColor(Color.parseColor("#57e65c")); //green border
+            holder.notifications.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //leads to a map with the location of the book
+                }
+            });
 
-        //*Since type 3, 4, and 5 are the same could combine them? Depending on how the geolocation works.
-        if (iType == 3) {
-            ((typeThree) holder).setThreeDetails(notificationsList.get(position));
-            ((typeThree) holder).notifications.setOnClickListener(new View.OnClickListener() {
+        }
+        if (type == 4) {
+            holder.notifications.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    System.out.println("Notification type 3 Clicked");
-                    //Lead to map with already picked location to meet
+                    //leads to a map with the location of the book
                 }
             });
+
         }
-        if (iType == 4) {
-            ((typeFour) holder).setFourDetails(notificationsList.get(position));
-            ((typeFour) holder).notifications.setOnClickListener(new View.OnClickListener() {
+        if (type == 5) {
+            holder.notifications.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    System.out.println("Notification type 4 Clicked");
-                    //Lead to map with already picked lozation to meet
-                }
-            });
-        }
-        else if (iType == 5) {
-            ((typeFive) holder).setFiveDetails(notificationsList.get(position));
-            ((typeFive) holder).notifications.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    System.out.println("Notification type 5 Clicked");
-                    //Lead to map with already picked location to meet
+                    //leads to a map with the location of the book
                 }
             });
         }
 
+        //onclick for username
+        holder.userName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, ProfileActivity.class);
+                intent.putExtra("profile", model.getUser());
+                context.startActivity(intent);
+            }
+        });
+
+        //long press to show delete notification option
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                //show confirmation dialog
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setTitle("Delete");
+                builder.setMessage("Are you sure you want to delete this notification?");
+                builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //delete notification
+                        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+                        System.out.println(model.getBookFSID());
+                        System.out.println(model.getNotification());
+                        System.out.println(model.getOtherUser());
+                        System.out.println(model.getType());
+                        System.out.println(model.getUser());
+                        db.collection("Users").document(model.getOtherUser()).collection("Notifications")
+                                //.whereEqualTo("BookFSID", model.getBookFSID())
+                                .whereEqualTo("notification", model.getNotification())
+                                //.whereEqualTo("otherUser", model.getOtherUser())
+                                //.whereEqualTo("type", model.getType())
+                                //.whereEqualTo("user", model.getUser())
+                                .get()
+                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                        for (QueryDocumentSnapshot doc : task.getResult()) {
+                                            doc.getReference().delete();
+                                        }
+                                    }
+                                });
+
+
+
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                builder.create().show();
+                return false;
+            }
+        });
     }
 
     @Override
@@ -204,7 +242,8 @@ public class AdapterNotification extends RecyclerView.Adapter<RecyclerView.ViewH
 
 
     //Create viewholder classes for each type of notificiation
-    class typeOne extends RecyclerView.ViewHolder { //someone has requested to borrow your book, arrow is visible, border is not there (color=background)
+
+    class HolderNotification extends RecyclerView.ViewHolder {
 
         CircleImageView profilePic;
         TextView userName;
@@ -212,7 +251,7 @@ public class AdapterNotification extends RecyclerView.Adapter<RecyclerView.ViewH
         TextView arrow;
         CardView notifications;
 
-        typeOne(@NonNull View itemView) {
+        public HolderNotification(@NonNull View itemView, int viewType) {
             super(itemView);
 
             profilePic = itemView.findViewById(R.id.profile_pic);
@@ -222,112 +261,7 @@ public class AdapterNotification extends RecyclerView.Adapter<RecyclerView.ViewH
             notifications = itemView.findViewById(R.id.notifications_border);
             notifications.setCardBackgroundColor(Color.parseColor("#00000000")); //border is invisible by default
         }
-
-        public void setOneDetails(ModelNotification modelNotification) {
-            userName.setText(modelNotification.getUser());
-            notification.setText(modelNotification.getNotification());
-        }
     }
 
-    //class typeTwo
-    class typeTwo extends RecyclerView.ViewHolder { //User has declined your request, border is red, no arrow
-
-        CircleImageView profilePic;
-        TextView userName;
-        TextView notification;
-        CardView notifications;
-
-        typeTwo(@NonNull View itemView) {
-            super(itemView);
-
-            profilePic = itemView.findViewById(R.id.profile_pic);
-            userName = itemView.findViewById(R.id.notifications_username);
-            notification = itemView.findViewById(R.id.notifications_text);
-            notifications = itemView.findViewById(R.id.notifications_border);
-            notifications.setCardBackgroundColor(Color.parseColor("#e6576a")); //border is red
-        }
-
-        public void setTwoDetails(ModelNotification modelNotification) {
-            userName.setText(modelNotification.getUser());
-            notification.setText(modelNotification.getNotification());
-        }
-    }
-
-    //class typeThree
-    class typeThree extends RecyclerView.ViewHolder { //User has accepted your request, border is green, show arrow
-
-        CircleImageView profilePic;
-        TextView userName;
-        TextView notification;
-        CardView notifications;
-        TextView arrow;
-
-        typeThree(@NonNull View itemView) {
-            super(itemView);
-
-            profilePic = itemView.findViewById(R.id.profile_pic);
-            userName = itemView.findViewById(R.id.notifications_username);
-            notification = itemView.findViewById(R.id.notifications_text);
-            notifications = itemView.findViewById(R.id.notifications_border);
-            arrow = itemView.findViewById(R.id.arrow);
-            notifications.setCardBackgroundColor(Color.parseColor("#57e65c")); //border is green
-        }
-
-        public void setThreeDetails(ModelNotification modelNotification) {
-            userName.setText(modelNotification.getUser());
-            notification.setText(modelNotification.getNotification());
-        }
-    }
-
-    //class typeFour
-    class typeFour extends RecyclerView.ViewHolder { //The location the current user has selected to meet with the other has been sent
-
-        CircleImageView profilePic;
-        TextView userName;
-        TextView notification;
-        CardView notifications;
-        TextView arrow;
-
-        typeFour(@NonNull View itemView) {
-            super(itemView);
-
-            profilePic = itemView.findViewById(R.id.profile_pic);
-            userName = itemView.findViewById(R.id.notifications_username);
-            notification = itemView.findViewById(R.id.notifications_text);
-            notifications = itemView.findViewById(R.id.notifications_border);
-            arrow = itemView.findViewById(R.id.arrow);
-            notifications.setCardBackgroundColor(Color.parseColor("#00000000")); //border is clear
-        }
-
-        public void setFourDetails(ModelNotification modelNotification) {
-            userName.setText(modelNotification.getUser());
-            notification.setText(modelNotification.getNotification());
-        }
-    }
-
-    //class typeFive
-    class typeFive extends RecyclerView.ViewHolder { //User has accepted your request, border is green, show arrow
-
-        CircleImageView profilePic;
-        TextView userName;
-        TextView notification;
-        CardView notifications;
-        TextView arrow;
-
-        typeFive(@NonNull View itemView) {
-            super(itemView);
-
-            profilePic = itemView.findViewById(R.id.profile_pic);
-            userName = itemView.findViewById(R.id.notifications_username);
-            notification = itemView.findViewById(R.id.notifications_text);
-            notifications = itemView.findViewById(R.id.notifications_border);
-            arrow = itemView.findViewById(R.id.arrow);
-            notifications.setCardBackgroundColor(Color.parseColor("#00000000")); //border is clear
-        }
-
-        public void setFiveDetails(ModelNotification modelNotification) {
-            userName.setText(modelNotification.getUser());
-            notification.setText(modelNotification.getNotification());
-        }
-    }
 }
+
