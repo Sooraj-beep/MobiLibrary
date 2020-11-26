@@ -52,7 +52,8 @@ public class requestMap extends FragmentActivity implements OnMapReadyCallback{
 
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
-        aRequest request  = (aRequest) bundle.get("Book");
+        aRequest request  = (aRequest) bundle.get("book");
+        System.out.println("BOOK ID: " + request.getBookID());
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -99,11 +100,16 @@ public class requestMap extends FragmentActivity implements OnMapReadyCallback{
             @Override
             public void onClick(View v) {
                 if (newLatLng != null) {
+                    System.out.println("LATLING: " + newLatLng);
+                    db = FirebaseFirestore.getInstance();
                     WriteBatch batch = db.batch();
-
+                    System.out.println("Wrote batch");
+                    System.out.println(request);
                     assert request != null;
+                    System.out.println("BOOK ID: " + request.getBookID());
                     DocumentReference bookDoc = db.collection("Books")
                             .document(request.getBookID());
+                    System.out.println("Got doc reference");
 
                     Map<String, Object> newData = new HashMap<>();
                     //Add the user whose request has been accepted to the book
