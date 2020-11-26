@@ -1,6 +1,7 @@
 package com.example.mobilibrary;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.mobilibrary.Activity.ProfileActivity;
 import com.example.mobilibrary.DatabaseController.RequestService;
 import com.example.mobilibrary.DatabaseController.aRequest;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -19,7 +21,11 @@ import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * @author Nguyen, Jill;
+ * This is a request adapter to display all the requests grabbed from Firestore,
+ * to the selected book .
+ */
 public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.MyViewHolder> {
     private ArrayList<aRequest> mRequests;
     private Context mContext;
@@ -49,6 +55,15 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.MyViewHo
         // replace the contents of the view with that element
         System.out.println(mRequests);
         holder.requester.setText(mRequests.get(position).getRequester());
+
+        holder.requester.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, ProfileActivity.class);
+                intent.putExtra("profile", holder.requester.getText().toString());
+                mContext.startActivity(intent);
+            }
+        });
 
         //clicks listener
         holder.acceptButton.setOnClickListener(new View.OnClickListener() {

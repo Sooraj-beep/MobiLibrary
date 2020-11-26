@@ -36,7 +36,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * @author ;
+ * @author Nguyen ;
  * Class to work with all requests in Firestore.
  */
 
