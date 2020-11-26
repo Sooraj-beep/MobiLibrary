@@ -78,6 +78,7 @@ public class requestMap extends FragmentActivity implements OnMapReadyCallback{
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                    assert addresses != null;
                     Address address = addresses.get(0);
                     float zoom = 16.0f;
                     newLatLng = new LatLng(address.getLatitude(), address.getLongitude());
