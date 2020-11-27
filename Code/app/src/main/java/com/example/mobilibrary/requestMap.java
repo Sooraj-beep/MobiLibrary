@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.SearchView;
 import android.widget.Toast;
 
-import com.example.mobilibrary.DatabaseController.aRequest;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -58,10 +57,8 @@ public class requestMap extends FragmentActivity implements OnMapReadyCallback{
         setContentView(R.layout.activity_map);
 
         Intent intent = getIntent();
-        //Bundle bundle = intent.getExtras();
         String bookID = intent.getExtras().getString("bookID");
         String otherUser = intent.getExtras().getString("otherUser");
-        //aRequest request  = (aRequest) bundle.get("book");
         System.out.println("BOOK ID: " + bookID);
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -104,6 +101,7 @@ public class requestMap extends FragmentActivity implements OnMapReadyCallback{
         });
 
 
+        assert mapFragment != null;
         mapFragment.getMapAsync(this);
 
         confirmButton.setOnClickListener(new View.OnClickListener() {
@@ -114,6 +112,7 @@ public class requestMap extends FragmentActivity implements OnMapReadyCallback{
                     WriteBatch batch = db.batch();
 
                     //assert request != null;
+                    assert bookID != null;
                     DocumentReference bookDoc = db.collection("Books")
                             .document(bookID);
                     Map<String, Object> newData = new HashMap<>();
@@ -139,6 +138,7 @@ public class requestMap extends FragmentActivity implements OnMapReadyCallback{
                             String currUser = document.getString("Owner");
 
                             String bookStatus = document.getString("Status");
+                            assert bookStatus != null;
                             if (bookStatus.equals("borrowed")) { //borrower has clicked return button and is choosing location to return the book
 
                                 //String acceptedTo = document.getString("AcceptedTo"); //book will have an accepted to field
