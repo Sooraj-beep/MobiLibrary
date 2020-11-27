@@ -32,7 +32,7 @@ import android.app.Fragment;
 public class BookDetailsTest {
     private Solo solo;
 
-        @Rule
+    @Rule
     public ActivityTestRule<MainActivity> rule =
             new ActivityTestRule<>(MainActivity.class, true, true);
 
@@ -91,7 +91,7 @@ public class BookDetailsTest {
                 drawable = null;
             }
         }
-        
+
         // get displayed information
         String title = ((TextView) solo.getView(R.id.view_title)).getText().toString();
         String author = ((TextView) solo.getView(R.id.view_author)).getText().toString();
@@ -192,4 +192,3 @@ public class BookDetailsTest {
         solo.finishOpenedActivities();
     }
 }
-
