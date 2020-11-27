@@ -37,22 +37,27 @@ jobs:
         run: chmod +x ./Code/gradlew
 
       - name: Build the app
-        run: ./Code/gradlew build
+        run: ./gradlew build
+        working-directory: Code
         
+  #Run instrumental tests     
   test:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
         uses: actions/checkout@v2
       
+      #used to allow gradlew to be executable (permission issues)
       - name: Make gradlew executable
         run: chmod +x ./Code/gradlew
-
+        
+      # sets up the android environment (UI) and which files to run
       - name: run tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 29
-          script: ./Code/gradlew
+          script: ./gradlew
+          working-directory: Code
           
   Unit-test:
     runs-on: ubuntu-latest
@@ -63,6 +68,7 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./Code/gradlew
         
+        # Working directory states which directory to start in (used since multiple files)
       - name: Run unit tests
         run: ./gradlew test
         working-directory: Code
