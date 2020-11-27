@@ -6,6 +6,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.rule.ActivityTestRule;
 
@@ -71,8 +72,8 @@ public class SpinnerTest{
 
         solo.pressSpinnerItem(0,1);
         solo.sleep(5000);
-        ListView bookView = (ListView) solo.getView(R.id.book_list); // Get the listview
-        assertEquals(0,bookView.getCount());
+        RecyclerView bookView = (RecyclerView) solo.getView(R.id.book_list); // Get the listview
+        assertEquals(0,bookView.getAdapter().getItemCount());
 
     }
 

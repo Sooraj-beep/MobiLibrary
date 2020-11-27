@@ -8,6 +8,7 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
@@ -38,7 +39,7 @@ public class SearchTest {
     private final String email = "test@mail.com";
     private final String password = "Pas5W0rd!";
     private View searchView;
-    private ListView booksListView;
+    private RecyclerView booksListView;
     private final DatabaseHelper databaseHelper = new DatabaseHelper(InstrumentationRegistry.getInstrumentation().getContext());
 
     @Rule
@@ -77,7 +78,7 @@ public class SearchTest {
         solo.waitForActivity(MainActivity.class);
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
         searchView = solo.getView(R.id.search_view);
-        booksListView = (ListView) solo.getView(R.id.all_books_list_view);
+        booksListView = (RecyclerView) solo.getView(R.id.all_books_recycler_view);
         // Enters query and submits
         solo.clickOnView(searchView);
         solo.enterText(0, "Found Book Title");
@@ -97,7 +98,7 @@ public class SearchTest {
         solo.waitForActivity(MainActivity.class);
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
         searchView = solo.getView(R.id.search_view);
-        booksListView = (ListView) solo.getView(R.id.all_books_list_view);
+        booksListView = (RecyclerView) solo.getView(R.id.all_books_recycler_view);
         // Enters query and submits
         solo.clickOnView(searchView);
         solo.enterText(0, "Found Book Title");
@@ -119,7 +120,7 @@ public class SearchTest {
         solo.waitForActivity(MainActivity.class);
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
         searchView = solo.getView(R.id.search_view);
-        booksListView = (ListView) solo.getView(R.id.all_books_list_view);
+        booksListView = (RecyclerView) solo.getView(R.id.all_books_recycler_view);
         // Enters query and submits
         solo.clickOnView(searchView);
         solo.enterText(0, "Search Test Author");
@@ -138,7 +139,7 @@ public class SearchTest {
         solo.waitForActivity(MainActivity.class);
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
         searchView = solo.getView(R.id.search_view);
-        booksListView = (ListView) solo.getView(R.id.all_books_list_view);
+        booksListView = (RecyclerView) solo.getView(R.id.all_books_recycler_view);
         // Enters query and submits
         // Enters query and submits
         solo.clickOnView(searchView);
@@ -158,12 +159,12 @@ public class SearchTest {
         solo.waitForActivity(MainActivity.class);
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
         searchView = solo.getView(R.id.search_view);
-        booksListView = (ListView) solo.getView(R.id.all_books_list_view);
+        booksListView = (RecyclerView) solo.getView(R.id.all_books_recycler_view);
         // Enters query and submits
         solo.clickOnView(searchView);
         solo.enterText(0, "SearchQueryNotAbleToBeFoundAsRealBook");
         solo.sleep(2000);
-        assertTrue("List has items!",booksListView.getAdapter().getCount() == 0);
+        assertTrue("List has items!",booksListView.getAdapter().getItemCount() == 0);
     }
 
     /**
