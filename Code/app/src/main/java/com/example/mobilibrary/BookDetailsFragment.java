@@ -409,10 +409,6 @@ public class BookDetailsFragment extends AppCompatActivity {
                 //create notification
                 addToNotifications(viewBook.getOwner().getUsername(), getUsername(), "Has requested to borrow your book: " + viewBook.getTitle(), "1", viewBook.getFirestoreID());
 
-
-                //later add: make sure button text stays "requested" when user who already requested clicks on it again
-
-
             }
         });
 
@@ -454,8 +450,6 @@ public class BookDetailsFragment extends AppCompatActivity {
 
 
                 //reqAdapter =  new ArrayAdapter<String>(this,R.layout.req_custom_list, R.id.textView, reqDataList);
-
-
 
             }
         });

@@ -1,13 +1,17 @@
 package com.example.mobilibrary;
 
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.ColorSpace;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mobilibrary.Activity.ProfileActivity;
 import com.example.mobilibrary.DatabaseController.User;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -29,10 +34,15 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.zxing.oned.ITFReader;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * @author ;
@@ -83,8 +93,6 @@ public class AdapterNotification extends RecyclerView.Adapter<AdapterNotificatio
             holder.notifications.setOnClickListener(new View.OnClickListener() { //if this notification is clicked, will lead to owners own book details
                 @Override
                 public void onClick(View v) {
-                    System.out.println("Notification type 1 Clicked");
-                    System.out.println("Book Firestore ID: " + notificationsList.get(position).getBookFSID());
 
                     //Lead to the book details (of your own book)
                     String fsID = notificationsList.get(position).getBookFSID();
@@ -152,28 +160,105 @@ public class AdapterNotification extends RecyclerView.Adapter<AdapterNotificatio
             holder.notifications.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    //get the latitude and longitude of the book
+                    final FirebaseFirestore db = FirebaseFirestore.getInstance();
+                    DocumentReference docRef = db.collection("Books").document(notificationsList.get(position).getBookFSID());
+                    System.out.println("Got doc ref");
+                    docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot document = task.getResult();
+                                System.out.println(document);
+                                if (document.exists()) {
+                                    System.out.println("About to get latlang");
+                                    //bookLatLng = (LatLng) document.getData().get("LatLang");
+
+                                    HashMap<String, Object> newData = (HashMap<String, Object>) document.getData().get("LatLang");
+                                    System.out.println("NEW DATA: " + newData);
+                                    Object latitude = newData.get("latitude");
+                                    Object longitude = newData.get("longitude");
+                                    Double dLatitude = new Double(latitude.toString());
+                                    Double dLongitude = new Double(longitude.toString());
+
+                                    //leads to a map with the location of the book
+                                    Intent mapIntent = new Intent(context, bookMap.class);
+                                    Bundle b = new Bundle();
+                                    b.putDouble("latitude", dLatitude);
+                                    b.putDouble("longitude", dLongitude);
+                                    mapIntent.putExtras(b);
+                                    ((Activity) context).startActivityForResult(mapIntent,1);
+
+                                    Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                                } else {
+                                    Log.d(TAG, "No such document");
+                                }
+                            } else {
+                                Log.d(TAG, "get failed with ", task.getException());
+                            }
+                        }
+                    });
+
+                }
+
+
+            });
+
+        }
+        if ((type == 4) || (type == 5)) {
+            holder.notifications.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
                     //leads to a map with the location of the book
+                    final FirebaseFirestore db = FirebaseFirestore.getInstance();
+                    DocumentReference docRef = db.collection("Books").document(notificationsList.get(position).getBookFSID());
+                    System.out.println("Got doc ref");
+                    docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot document = task.getResult();
+                                System.out.println(document);
+                                if (document.exists()) {
+                                    System.out.println("About to get latlang");
+                                    //bookLatLng = (LatLng) document.getData().get("LatLang");
+
+                                    HashMap<String, Object> newData = (HashMap<String, Object>) document.getData().get("LatLang");
+                                    System.out.println("NEW DATA: " + newData);
+                                    Object latitude = newData.get("latitude");
+                                    Object longitude = newData.get("longitude");
+                                    Double dLatitude = new Double(latitude.toString());
+                                    Double dLongitude = new Double(longitude.toString());
+
+                                    //leads to a map with the location of the book
+                                    Intent mapIntent = new Intent(context, bookMap.class);
+                                    Bundle b = new Bundle();
+                                    b.putDouble("latitude", dLatitude);
+                                    b.putDouble("longitude", dLongitude);
+                                    mapIntent.putExtras(b);
+                                    ((Activity) context).startActivityForResult(mapIntent,1);
+
+                                    Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                                } else {
+                                    Log.d(TAG, "No such document");
+                                }
+                            } else {
+                                Log.d(TAG, "get failed with ", task.getException());
+                            }
+                        }
+                    });
                 }
             });
 
         }
-        if (type == 4) {
+        /*if (type == 5) {
             holder.notifications.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     //leads to a map with the location of the book
                 }
             });
-
-        }
-        if (type == 5) {
-            holder.notifications.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //leads to a map with the location of the book
-                }
-            });
-        }
+        }*/
 
         //onclick for username
         holder.userName.setOnClickListener(new View.OnClickListener() {
@@ -204,11 +289,7 @@ public class AdapterNotification extends RecyclerView.Adapter<AdapterNotificatio
                         System.out.println(model.getType());
                         System.out.println(model.getUser());
                         db.collection("Users").document(model.getOtherUser()).collection("Notifications")
-                                //.whereEqualTo("BookFSID", model.getBookFSID())
                                 .whereEqualTo("notification", model.getNotification())
-                                //.whereEqualTo("otherUser", model.getOtherUser())
-                                //.whereEqualTo("type", model.getType())
-                                //.whereEqualTo("user", model.getUser())
                                 .get()
                                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                     @Override
