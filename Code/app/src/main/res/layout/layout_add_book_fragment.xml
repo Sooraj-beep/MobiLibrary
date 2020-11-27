@@ -9,12 +9,10 @@
 
     <EditText
         android:id="@+id/book_title"
-        android:layout_width="0dp"
-        android:layout_height="40dp"
+        android:layout_width="380dp"
+        android:layout_height="39dp"
         android:layout_centerHorizontal="false"
         android:layout_centerVertical="false"
-        android:layout_marginStart="35dp"
-        android:layout_marginEnd="35dp"
         android:background="@color/colorFillInBox"
         android:fontFamily="@font/quicksand_medium"
         android:hint="Book title"
@@ -25,16 +23,15 @@
         android:textColorHighlight="@color/colorPrimaryDark"
         android:textColorLink="@color/colorPrimaryDark"
         android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/book_author"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/author_label"
         app:layout_constraintTop_toBottomOf="@id/book_title_label" />
 
     <EditText
         android:id="@+id/book_author"
-        android:layout_width="0dp"
+        android:layout_width="380dp"
         android:layout_height="40dp"
-        android:layout_marginLeft="35dp"
-        android:layout_marginRight="35dp"
         android:background="@color/colorFillInBox"
         android:fontFamily="@font/quicksand_medium"
         android:hint="Author"
@@ -44,14 +41,16 @@
         android:textColorHighlight="@color/colorPrimaryDark"
         android:textColorLink="@color/colorPrimaryDark"
         android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="@+id/book_isbn"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/isbn_label"
         app:layout_constraintTop_toBottomOf="@+id/author_label" />
 
     <EditText
         android:id="@+id/book_isbn"
-        android:layout_width="0dp"
-        android:layout_height="40dp"
+        android:layout_width="380dp"
+        android:layout_height="41dp"
         android:layout_marginStart="35dp"
         android:layout_marginEnd="35dp"
         android:background="@color/colorFillInBox"
@@ -119,9 +118,8 @@
 
     <TextView
         android:id="@+id/book_title_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="35dp"
+        android:layout_width="159dp"
+        android:layout_height="47dp"
         android:layout_marginTop="16dp"
         android:fontFamily="@font/quicksand_bold"
         android:text="Book Title"
@@ -130,14 +128,13 @@
         android:textColorLink="@color/colorPrimaryDark"
         android:textSize="30sp"
         android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/book_title"
         app:layout_constraintTop_toBottomOf="@+id/book_image" />
 
     <TextView
         android:id="@+id/author_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="35dp"
         android:layout_marginTop="16dp"
         android:fontFamily="@font/quicksand_bold"
         android:text="Author"
@@ -147,14 +144,13 @@
         android:textSize="30sp"
         android:textStyle="bold"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/book_author"
         app:layout_constraintTop_toBottomOf="@+id/book_title" />
 
     <TextView
         android:id="@+id/isbn_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="35dp"
         android:layout_marginTop="16dp"
         android:fontFamily="@font/quicksand_bold"
         android:text="ISBN"
@@ -163,7 +159,7 @@
         android:textColorLink="@color/colorPrimaryDark"
         android:textSize="30sp"
         android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/book_isbn"
         app:layout_constraintTop_toBottomOf="@+id/book_author" />
 
     <Button
