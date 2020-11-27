@@ -1,5 +1,6 @@
 package com.example.mobilibrary;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 
 import android.content.Intent;
@@ -18,9 +19,14 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
 
 import java.io.IOException;
@@ -52,9 +58,11 @@ public class requestMap extends FragmentActivity implements OnMapReadyCallback{
         setContentView(R.layout.activity_map);
 
         Intent intent = getIntent();
-        Bundle bundle = intent.getExtras();
-        aRequest request  = (aRequest) bundle.get("book");
-        System.out.println("BOOK ID: " + request.getBookID());
+        //Bundle bundle = intent.getExtras();
+        String bookID = intent.getExtras().getString("bookID");
+        String otherUser = intent.getExtras().getString("otherUser");
+        //aRequest request  = (aRequest) bundle.get("book");
+        System.out.println("BOOK ID: " + bookID);
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -102,17 +110,12 @@ public class requestMap extends FragmentActivity implements OnMapReadyCallback{
             @Override
             public void onClick(View v) {
                 if (newLatLng != null) {
-                    System.out.println("LATLING: " + newLatLng);
                     db = FirebaseFirestore.getInstance();
                     WriteBatch batch = db.batch();
-                    System.out.println("Wrote batch");
-                    System.out.println(request);
-                    assert request != null;
-                    System.out.println("BOOK ID: " + request.getBookID());
-                    DocumentReference bookDoc = db.collection("Books")
-                            .document(request.getBookID());
-                    System.out.println("Got doc reference");
 
+                    //assert request != null;
+                    DocumentReference bookDoc = db.collection("Books")
+                            .document(bookID);
                     Map<String, Object> newData = new HashMap<>();
                     //Add the user whose request has been accepted to the book
                     newData.put("LatLang", newLatLng);
@@ -122,6 +125,76 @@ public class requestMap extends FragmentActivity implements OnMapReadyCallback{
                     Intent mapIntent = new Intent();
                     mapIntent.putExtra("LatLang", newLatLng);
                     batch.commit();
+
+                    //create notifications
+
+                    final FirebaseFirestore db = FirebaseFirestore.getInstance();
+                    DocumentReference docRef = db.collection("Books").document(bookID);
+
+                    docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            DocumentSnapshot document = task.getResult();
+                            String title = document.getString("Title");
+                            String currUser = document.getString("Owner");
+
+                            String bookStatus = document.getString("Status");
+                            if (bookStatus.equals("borrowed")) { //borrower has clicked return button and is choosing location to return the book
+
+                                //String acceptedTo = document.getString("AcceptedTo"); //book will have an accepted to field
+                                HashMap<Object, String> hashMap = new HashMap<>();
+                                hashMap.put("otherUser", otherUser);
+                                hashMap.put("user", currUser);
+                                hashMap.put("notification", "Is ready to return back your book: " + title);
+                                hashMap.put("type", "5");
+                                hashMap.put("bookFSID", bookID);
+
+                                final FirebaseFirestore db = FirebaseFirestore.getInstance();
+                                db.collection("Users").document(otherUser).collection("Notifications").add(hashMap);
+
+
+                            } else { //owner is choosing location to lend book
+
+                                HashMap<Object, String> hashMap = new HashMap<>();
+                                hashMap.put("otherUser", otherUser);
+                                hashMap.put("user", currUser);
+                                hashMap.put("notification", "Has accepted your request for: " + title);
+                                hashMap.put("type", "3");
+                                hashMap.put("bookFSID", bookID);
+
+                                final FirebaseFirestore db = FirebaseFirestore.getInstance();
+                                db.collection("Users").document(otherUser).collection("Notifications").add(hashMap);
+
+                            }
+                            //send notification to current user (#4), saying the location you have chosen has been sent
+                            HashMap<Object, String> userMap = new HashMap<>();
+                            userMap.put("otherUser", currUser);
+                            userMap.put("user", otherUser);
+                            userMap.put("notification", "Has received the location you have chosen to meet for: " + title);
+                            userMap.put("type", "4");
+                            userMap.put("bookFSID", bookID);
+
+                            db.collection("Users").document(currUser).collection("Notifications").add(userMap);
+
+                            //delete all the notifications that involve others who had requested that book
+                            db.collection("Users").document(currUser).collection("Notifications")
+                                    .whereEqualTo("notification", "Has requested to borrow your book: " + title)
+                                    .get()
+                                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                                document.getReference().delete();
+                                            }
+                                        }
+                                    });
+                        }
+
+                    });
+
+
+
+
                     finish();
                 } else {
                     Toast.makeText(requestMap.this, "Please search for a location", Toast.LENGTH_SHORT).show();
