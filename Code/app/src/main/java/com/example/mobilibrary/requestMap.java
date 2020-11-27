@@ -57,9 +57,11 @@ public class requestMap extends FragmentActivity implements OnMapReadyCallback{
         setContentView(R.layout.activity_map);
 
         Intent intent = getIntent();
-        Bundle bundle = intent.getExtras();
-        aRequest request  = (aRequest) bundle.get("book");
-        System.out.println("BOOK ID: " + request.getBookID());
+        //Bundle bundle = intent.getExtras();
+        String bookID = intent.getExtras().getString("bookID");
+        String otherUser = intent.getExtras().getString("otherUser");
+        //aRequest request  = (aRequest) bundle.get("book");
+        System.out.println("BOOK ID: " + bookID);
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -109,9 +111,9 @@ public class requestMap extends FragmentActivity implements OnMapReadyCallback{
                     db = FirebaseFirestore.getInstance();
                     WriteBatch batch = db.batch();
 
-                    assert request != null;
+                    //assert request != null;
                     DocumentReference bookDoc = db.collection("Books")
-                            .document(request.getBookID());
+                            .document(bookID);
                     Map<String, Object> newData = new HashMap<>();
                     //Add the user whose request has been accepted to the book
                     newData.put("LatLang", newLatLng);
@@ -122,31 +124,55 @@ public class requestMap extends FragmentActivity implements OnMapReadyCallback{
                     mapIntent.putExtra("LatLang", newLatLng);
                     batch.commit();
 
-                    //create notification
-                    //send accepted notification
-                    //may have to move this to when the geolocation is confirmed
-                    String requestor = request.getRequester();
-                    String fireStoreID = request.getBookID();
+                    //create notifications
 
                     final FirebaseFirestore db = FirebaseFirestore.getInstance();
-                    DocumentReference docRef = db.collection("Books").document(fireStoreID);
+                    DocumentReference docRef = db.collection("Books").document(bookID);
+
                     docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                             DocumentSnapshot document = task.getResult();
                             String title = document.getString("Title");
-                            String notification = "Has accepted your request for: " + title;
                             String currUser = document.getString("Owner");
 
-                            HashMap<Object, String> hashMap = new HashMap<>();
-                            hashMap.put("otherUser", requestor);
-                            hashMap.put("user", currUser);
-                            hashMap.put("notification", notification);
-                            hashMap.put("type", "3");
-                            hashMap.put("bookFSID", fireStoreID);
+                            String bookStatus = document.getString("Status");
+                            if (bookStatus.equals("borrowed")) { //borrower has clicked return button and is choosing location to return the book
 
-                            final FirebaseFirestore db = FirebaseFirestore.getInstance();
-                            db.collection("Users").document(requestor).collection("Notifications").add(hashMap);
+                                //String acceptedTo = document.getString("AcceptedTo"); //book will have an accepted to field
+                                HashMap<Object, String> hashMap = new HashMap<>();
+                                hashMap.put("otherUser", otherUser);
+                                hashMap.put("user", currUser);
+                                hashMap.put("notification", "Is ready to return back your book: " + title);
+                                hashMap.put("type", "5");
+                                hashMap.put("bookFSID", bookID);
+
+                                final FirebaseFirestore db = FirebaseFirestore.getInstance();
+                                db.collection("Users").document(otherUser).collection("Notifications").add(hashMap);
+
+
+                            } else { //owner is choosing location to lend book
+
+                                HashMap<Object, String> hashMap = new HashMap<>();
+                                hashMap.put("otherUser", otherUser);
+                                hashMap.put("user", currUser);
+                                hashMap.put("notification", "Has accepted your request for: " + title);
+                                hashMap.put("type", "3");
+                                hashMap.put("bookFSID", bookID);
+
+                                final FirebaseFirestore db = FirebaseFirestore.getInstance();
+                                db.collection("Users").document(otherUser).collection("Notifications").add(hashMap);
+
+                            }
+                            //send notification to current user (#4), saying the location you have chosen has been sent
+                            HashMap<Object, String> userMap = new HashMap<>();
+                            userMap.put("otherUser", currUser);
+                            userMap.put("user", otherUser);
+                            userMap.put("notification", "Has received the location you have chosen to meet.");
+                            userMap.put("type", "4");
+                            userMap.put("bookFSID", bookID);
+
+                            db.collection("Users").document(currUser).collection("Notifications").add(userMap);
 
                             //delete all the notifications that involve others who had requested that book
                             db.collection("Users").document(currUser).collection("Notifications")
@@ -161,7 +187,11 @@ public class requestMap extends FragmentActivity implements OnMapReadyCallback{
                                         }
                                     });
                         }
+
                     });
+
+
+
 
                     finish();
                 } else {

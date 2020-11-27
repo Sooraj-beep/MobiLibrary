@@ -91,7 +91,8 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.MyViewHo
 
                                 //go to map activity
                                 Intent mapIntent = new Intent(mContext, requestMap.class);
-                                mapIntent.putExtra("book", (Serializable) mRequests.get(position));
+                                mapIntent.putExtra("bookID", mRequests.get(position).getBookID());
+                                mapIntent.putExtra("otherUser", mRequests.get(position).getRequester());
                                 ((Activity) mContext).startActivityForResult(mapIntent,1);
 
                                 //delete rest of requests
