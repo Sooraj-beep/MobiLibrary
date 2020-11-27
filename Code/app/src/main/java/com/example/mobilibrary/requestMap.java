@@ -169,7 +169,7 @@ public class requestMap extends FragmentActivity implements OnMapReadyCallback{
                             HashMap<Object, String> userMap = new HashMap<>();
                             userMap.put("otherUser", currUser);
                             userMap.put("user", otherUser);
-                            userMap.put("notification", "Has received the location you have chosen to meet.");
+                            userMap.put("notification", "Has received the location you have chosen to meet for: " + title);
                             userMap.put("type", "4");
                             userMap.put("bookFSID", bookID);
 
