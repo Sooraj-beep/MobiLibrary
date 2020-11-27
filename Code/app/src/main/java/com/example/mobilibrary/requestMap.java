@@ -1,5 +1,6 @@
 package com.example.mobilibrary;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 
 import android.content.Intent;
@@ -18,9 +19,14 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
 
 import java.io.IOException;
@@ -100,17 +106,12 @@ public class requestMap extends FragmentActivity implements OnMapReadyCallback{
             @Override
             public void onClick(View v) {
                 if (newLatLng != null) {
-                    System.out.println("LATLING: " + newLatLng);
                     db = FirebaseFirestore.getInstance();
                     WriteBatch batch = db.batch();
-                    System.out.println("Wrote batch");
-                    System.out.println(request);
+
                     assert request != null;
-                    System.out.println("BOOK ID: " + request.getBookID());
                     DocumentReference bookDoc = db.collection("Books")
                             .document(request.getBookID());
-                    System.out.println("Got doc reference");
-
                     Map<String, Object> newData = new HashMap<>();
                     //Add the user whose request has been accepted to the book
                     newData.put("LatLang", newLatLng);
@@ -120,6 +121,48 @@ public class requestMap extends FragmentActivity implements OnMapReadyCallback{
                     Intent mapIntent = new Intent();
                     mapIntent.putExtra("LatLang", newLatLng);
                     batch.commit();
+
+                    //create notification
+                    //send accepted notification
+                    //may have to move this to when the geolocation is confirmed
+                    String requestor = request.getRequester();
+                    String fireStoreID = request.getBookID();
+
+                    final FirebaseFirestore db = FirebaseFirestore.getInstance();
+                    DocumentReference docRef = db.collection("Books").document(fireStoreID);
+                    docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            DocumentSnapshot document = task.getResult();
+                            String title = document.getString("Title");
+                            String notification = "Has accepted your request for: " + title;
+                            String currUser = document.getString("Owner");
+
+                            HashMap<Object, String> hashMap = new HashMap<>();
+                            hashMap.put("otherUser", requestor);
+                            hashMap.put("user", currUser);
+                            hashMap.put("notification", notification);
+                            hashMap.put("type", "3");
+                            hashMap.put("bookFSID", fireStoreID);
+
+                            final FirebaseFirestore db = FirebaseFirestore.getInstance();
+                            db.collection("Users").document(requestor).collection("Notifications").add(hashMap);
+
+                            //delete all the notifications that involve others who had requested that book
+                            db.collection("Users").document(currUser).collection("Notifications")
+                                    .whereEqualTo("notification", "Has requested to borrow your book: " + title)
+                                    .get()
+                                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                                document.getReference().delete();
+                                            }
+                                        }
+                                    });
+                        }
+                    });
+
                     finish();
                 } else {
                     Toast.makeText(requestMap.this, "Please search for a location", Toast.LENGTH_SHORT).show();

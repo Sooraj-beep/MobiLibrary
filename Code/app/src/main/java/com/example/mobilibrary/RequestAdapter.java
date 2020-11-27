@@ -84,52 +84,17 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.MyViewHo
             @Override
             public void onClick(View v) {
 
-                //send accepted notification
-                //may have to move this to when the geolocation is confirmed
-                String requestor = mRequests.get(position).getRequester();
-                String fireStoreID = mRequests.get(position).getBookID();
-
-                final FirebaseFirestore db = FirebaseFirestore.getInstance();
-                DocumentReference docRef = db.collection("Books").document(fireStoreID);
-                docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        DocumentSnapshot document = task.getResult();
-                        String title = document.getString("Title");
-                        String notification = "Has accepted your request for: " + title;
-                        String currUser = document.getString("Owner");
-
-                        HashMap<Object, String> hashMap = new HashMap<>();
-                        hashMap.put("otherUser", requestor);
-                        hashMap.put("user", currUser);
-                        hashMap.put("notification", notification);
-                        hashMap.put("type", "3");
-                        hashMap.put("bookFSID", fireStoreID);
-
-                        final FirebaseFirestore db = FirebaseFirestore.getInstance();
-                        db.collection("Users").document(requestor).collection("Notifications").add(hashMap);
-
-                        //delete all the notifications that involve others who had requested that book
-                        db.collection("Users").document(currUser).collection("Notifications")
-                                .whereEqualTo("notification", "Has requested to borrow your book: " + title)
-                                .get()
-                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                        for (QueryDocumentSnapshot document : task.getResult()) {
-                                            document.getReference().delete();
-                                        }
-                                    }
-                                });
-                    }
-                });
-                Intent mapIntent = new Intent(mContext, requestMap.class);
-                mapIntent.putExtra("book", (Serializable) mRequests.get(position));
-                ((Activity) mContext).startActivityForResult(mapIntent,1);
                 requestService.acceptRequest(mRequests.get(position))
                         .addOnCompleteListener(task -> {
                             if (task.isSuccessful()) {
                                 Toast.makeText(mContext, "Successfully accepted request from" + mRequests.get(position).getRequester(), Toast.LENGTH_SHORT).show();
+
+                                //go to map activity
+                                Intent mapIntent = new Intent(mContext, requestMap.class);
+                                mapIntent.putExtra("book", (Serializable) mRequests.get(position));
+                                ((Activity) mContext).startActivityForResult(mapIntent,1);
+
+                                //delete rest of requests
                                 if (mRequests.size() > 0) {
                                     List<String> deletedIDs = new ArrayList<>();
                                     for (int i = 0; i < mRequests.size(); i++) {

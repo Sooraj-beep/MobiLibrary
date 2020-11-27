@@ -21,6 +21,9 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author Kimberly;
  * When book is borrowed, both the other and the borrower will be able to see location
@@ -28,6 +31,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
  */
 public class bookMap extends FragmentActivity implements OnMapReadyCallback {
     private LatLng bookLatLng;
+
     private String TAG = "bookMap";
     private static FirebaseFirestore db;
 
@@ -42,33 +46,20 @@ public class bookMap extends FragmentActivity implements OnMapReadyCallback {
         setContentView(R.layout.activity_book_map);
 
         Intent intent = getIntent();
-        Bundle bundle = intent.getExtras();
-        Book book = (Book) bundle.get("Book");
-        String bookId = book.getFirestoreID();
+        Bundle b = getIntent().getExtras();
+        double latitude = b.getDouble("latitude");
+        double longitude = b.getDouble("longitude");
+
+        bookLatLng = new LatLng(latitude, longitude);
 
         Button confirmButton = findViewById(R.id.confirm_location);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
 
         Bundle locationBundle = getIntent().getExtras();
+
         assert locationBundle != null;
-        DocumentReference docRef = db.collection("Books").document(bookId);
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        bookLatLng = (LatLng) document.getData().get("LatLang");
-                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-                    } else {
-                        Log.d(TAG, "No such document");
-                    }
-                } else {
-                    Log.d(TAG, "get failed with ", task.getException());
-                }
-            }
-        });
+
 
         confirmButton.setOnClickListener(v -> finish());
 
@@ -84,9 +75,16 @@ public class bookMap extends FragmentActivity implements OnMapReadyCallback {
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        float zoom = 16.0f;
-        googleMap.addMarker(new MarkerOptions().position(bookLatLng)
-                .title("Marker"));
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(bookLatLng,zoom));
+        System.out.println("IN ONMAP LATLANG: " + bookLatLng);
+        if (bookLatLng == null) {
+            return;
+        } else {
+            float zoom = 16.0f;
+            googleMap.addMarker(new MarkerOptions().position(bookLatLng)
+                    .title("Marker"));
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(bookLatLng,zoom));
+        }
+
     }
+
 }
