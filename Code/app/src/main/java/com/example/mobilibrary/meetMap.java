@@ -2,16 +2,23 @@ package com.example.mobilibrary;
 
 import androidx.fragment.app.FragmentActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 
+import com.example.mobilibrary.DatabaseController.User;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 
 /**
@@ -25,6 +32,8 @@ public class meetMap extends FragmentActivity implements OnMapReadyCallback {
 
     private String TAG = "bookMap";
     private FirebaseFirestore db;
+    private String bookDetails = null;
+    private int type;
 
     /**
      * Used to create the map and set the marker
@@ -39,7 +48,10 @@ public class meetMap extends FragmentActivity implements OnMapReadyCallback {
         Bundle b = getIntent().getExtras();
         double latitude = b.getDouble("latitude");
         double longitude = b.getDouble("longitude");
-
+        type = b.getInt("");
+        if(type == 3 || type == 5) {
+            bookDetails = b.getString("");
+        }
         bookLatLng = new LatLng(latitude, longitude);
 
         Button confirmButton = findViewById(R.id.confirm_location);
@@ -50,8 +62,30 @@ public class meetMap extends FragmentActivity implements OnMapReadyCallback {
 
         assert locationBundle != null;
 
-
-        confirmButton.setOnClickListener(v -> finish());
+        confirmButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if((type == 3) || (type == 5)){
+                    db.collection("Books").document(bookDetails).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                            String author = documentSnapshot.getString("Author");
+                            String ISBN = documentSnapshot.getString("ISBN");
+                            User bookOwner = (User) documentSnapshot.get("User");
+                            String status = documentSnapshot.getString("Status");
+                            String title = documentSnapshot.getString("Title");
+                            String imageId = documentSnapshot.getString("imageId");
+                            Book newBook = new Book(title,ISBN,author,status,imageId,bookOwner);
+                            Intent viewBook = new Intent(meetMap.this, BookDetailsFragment.class);
+                            viewBook.putExtra("view book", newBook);
+                            (meetMap.this).startActivity(viewBook);
+                        }
+                    });
+                } else {
+                    finish();
+                }
+            }
+        });
 
         assert mapFragment != null;
         mapFragment.getMapAsync(this);

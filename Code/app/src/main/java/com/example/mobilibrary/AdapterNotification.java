@@ -178,6 +178,7 @@ public class AdapterNotification extends RecyclerView.Adapter<AdapterNotificatio
                                     Bundle b = new Bundle();
                                     b.putDouble("latitude", dLatitude);
                                     b.putDouble("longitude", dLongitude);
+                                    b.putString("bookDetails", notificationsList.get(position).getBookFSID());
                                     mapIntent.putExtras(b);
                                     ((Activity) context).startActivityForResult(mapIntent,1);
 
@@ -227,6 +228,7 @@ public class AdapterNotification extends RecyclerView.Adapter<AdapterNotificatio
                                     Bundle b = new Bundle();
                                     b.putDouble("latitude", dLatitude);
                                     b.putDouble("longitude", dLongitude);
+                                    b.putString("bookDetails", notificationsList.get(position).getBookFSID());
                                     mapIntent.putExtras(b);
                                     ((Activity) context).startActivityForResult(mapIntent,1);
 
