@@ -1,39 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.mobilibrary.HomeFragment"
-    android:background = "@color/colorBackgroundLight">
+    android:background="@color/colorPrimary"
+    android:clickable="true"
+    android:focusableInTouchMode="true"
+    tools:context="com.example.mobilibrary.HomeFragment">
 
     <TextView
         android:id="@+id/home_title"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:textColor = "@color/colorText"
-        android:textSize="35dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="MobiLibrary"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
-
-    <EditText
-        android:id="@+id/searchbar"
-        android:layout_width="342dp"
-        android:layout_height="30dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:background="@drawable/rounded_searchbar"
-        android:paddingLeft="10dp"
-        android:text="Search Books..."
+        android:fontFamily="@font/quicksand_bold"
+        android:text="MobiLibrary"
         android:textColor="@color/colorText"
-        android:textSize="20dp"
+        android:textSize="35sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <SearchView
+        android:id="@+id/search_view"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/rounded_button"
+        android:iconifiedByDefault="false"
+        android:paddingRight="10dp"
+        android:queryHint="Search books..."
+        app:iconifiedByDefault="false"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/home_title" />
 
@@ -44,54 +45,25 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:clickable="true"
-        android:foreground="@drawable/pfp"
-        app:backgroundTint="#FFFFFF"
+        android:foreground="@drawable/ic_profile"
+        app:backgroundTint="@color/colorPrimaryDark"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/searchButton"
-        app:backgroundTint="#FFFFFF"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        app:fabCustomSize="30dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:clickable="true"
-        android:src="@drawable/ic_search"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/profile" />
-
-
-    <TextView
-        android:id="@+id/other_profile"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:clickable="true"
-        android:text="Test123"
-        android:textColor="@color/design_default_color_primary_variant"
-        android:textColorHighlight="@color/colorPrimaryDark"
-        android:textColorLink="@color/colorText"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/searchbar" />
-
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/booksRV"
-        android:layout_width="414dp"
-        android:layout_height="415dp"
-        android:layout_marginBottom="64dp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:id="@+id/all_books_recycler_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="55dp"
+        android:backgroundTint="#FFFFFF"
+        android:divider="#00000000"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0"
-        tools:listitem="@layout/books_rows" />
+        app:layout_constraintTop_toBottomOf="@id/search_view">
+
+    </androidx.recyclerview.widget.RecyclerView>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

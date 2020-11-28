@@ -1,6 +1,7 @@
 package com.example.mobilibrary;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -58,7 +59,9 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 
 /**
+ * @author Natalia, Chloe, Kimberly;
  * This class takes in a book and edits it Title, Author, ISBN and photograph. The first three
+ * Can also delete and edit book image.
  * can be done manually or via scanning the book's ISBN
  */
 public class EditBookFragment extends AppCompatActivity {
@@ -153,6 +156,7 @@ public class EditBookFragment extends AppCompatActivity {
 
                             // edit book in firestore
                             bookService.editBook(context, book);
+                            System.out.println("book was edited");
 
                             deleteImageRef(book);
                             if(!(nullPhoto())) {
@@ -174,9 +178,9 @@ public class EditBookFragment extends AppCompatActivity {
             }
         });
 
-        /**
-         * When the Scan Button is pressed, a new activity intent opens to take a picture of the
-         * book's barcode
+        /*
+          When the Scan Button is pressed, a new activity intent opens to take a picture of the
+          book's barcode
          */
         scanButton.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.M)
@@ -186,8 +190,8 @@ public class EditBookFragment extends AppCompatActivity {
             }
         });
 
-        /**
-         * When the Delete Image Button is pressed, the book's photograph's bitmap is set to null
+        /*
+          When the Delete Image Button is pressed, the book's photograph's bitmap is set to null
          */
         deleteImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -198,9 +202,9 @@ public class EditBookFragment extends AppCompatActivity {
             }
         });
 
-        /**
-         * When the Edit Image Button is pressed a new activity intent opens to take a picture to
-         * attach to the book
+        /*
+          When the Edit Image Button is pressed a new activity intent opens to take a picture to
+          attach to the book
          */
         editImageButton.setOnClickListener(view -> {
             Intent camera_intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -297,13 +301,14 @@ public class EditBookFragment extends AppCompatActivity {
      * If requestCode is 2, the image's bitmap is set as the book photograph's bitmap, otherwise the ISBN is
      * set as the book's ISBN and the author and title fields are filled based on information from ISBN
      * @param requestCode 2 if picture was taken for the book photograph, otherwise return from scan activity
-     * @param resultCode
+     * @param resultCode result code from finished activity
      * @param data image bitmap if requestCode is 2, isbn information otherwise
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 2) {
+        if (requestCode == 2 && resultCode == Activity.RESULT_OK) {
+            System.out.println("Photo taken");
             Bitmap book_photo = (Bitmap) data.getExtras().get("data");
             imageBitMap = book_photo;
             photo.setImageBitmap(imageBitMap);
@@ -326,7 +331,7 @@ public class EditBookFragment extends AppCompatActivity {
                     boolean isConnected = isNetworkAvailable();
                     if (!isConnected) {
                         System.out.println("Check Internet Connection");
-                        Toast.makeText(getApplicationContext(), "Please check Internet conncetion", Toast.LENGTH_LONG).show(); //Popup message for user
+                        Toast.makeText(getApplicationContext(), "Please check Internet connection", Toast.LENGTH_LONG).show(); //Popup message for user
                         return;
                     }
 
@@ -367,10 +372,16 @@ public class EditBookFragment extends AppCompatActivity {
                                 JSONArray authors = volumeInfo.getJSONArray("authors");
                                 if (authors.length() == 1) {
                                     editAuthor = authors.getString(0);
-                                } else { //if there are multiple authors
-                                    editAuthor = authors.getString(0) + "," + authors.getString(1);
+                                } else {
+                                    //if there are multiple authors
+                                    int i = 0;
+                                    while(i < authors.length()){
+                                        editAuthor = editAuthor + authors.getString(i) + ", ";
+                                        i++;
+                                    }
+                                    editAuthor = editAuthor.substring(0, editAuthor.length() - 2);
                                 }
-                                System.out.println("author: " + author);
+                                System.out.println("author: " + editAuthor);
                                 author.setText(editAuthor);
 
                             } catch (Exception e) { //the book info in database does not contain a title or author
@@ -416,7 +427,7 @@ public class EditBookFragment extends AppCompatActivity {
      * won't arrive until after the code completes) we need to use onCallBack interface. It will
      * take the info and allow the information to be used (without null).
      *
-     * @param cbh
+     * @param cbh callback of the user
      */
     public void currentUser(final Callback cbh) {
         final FirebaseUser userInfo = FirebaseAuth.getInstance().getCurrentUser();

@@ -1,6 +1,8 @@
 package com.example.mobilibrary.DatabaseController;
 
+import android.app.DownloadManager;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -35,6 +37,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+/**
+ * @author Nguyen ;
+ * Class to work with all requests in Firestore.
+ */
+
 public class RequestService {
     //Singleton class implementation
     private static RequestService requestDb = null;
@@ -68,9 +75,8 @@ public class RequestService {
         DocumentReference bookDoc = db.collection("Books")
                 .document(request.getBookID());
 
-
         Map<String, Object> newData = new HashMap<>();
-//Add the user whose request has been accepted to the book
+        //Add the user whose request has been accepted to the book
         newData.put("AcceptedTo", request.getRequester());
 
         batch.update(bookDoc, newData);

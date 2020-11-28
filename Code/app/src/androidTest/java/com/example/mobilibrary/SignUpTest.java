@@ -84,14 +84,15 @@ public class SignUpTest {
         //Select Sign Up button
         solo.clickOnButton("Sign Up");
         //Clear the EditTexts
-        solo.clearEditText(nameField);
-        solo.clearEditText(usernameField);
-        solo.clearEditText(emailField);
-        solo.clearEditText(phoneField);
-        solo.clearEditText(passField);
-        solo.clearEditText(confirmField);
+        //solo.clearEditText(nameField);
+        //solo.clearEditText(usernameField);
+        //solo.clearEditText(emailField);
+        //solo.clearEditText(phoneField);
+        //solo.clearEditText(passField);
+        //solo.clearEditText(confirmField);
         //Check for current activity
         //assertTrue(solo.waitForText("Loading",1, 1000));
+        solo.waitForActivity(LogIn.class);
         solo.assertCurrentActivity("Wrong activity", LogIn.class);
     }
 

@@ -36,13 +36,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static android.app.Activity.RESULT_OK;
 
 /**
+ * @author Nguyen, Sooraj, Kimberly;
  * My Books fragment that is navigated to using notification bar. Contains a dropdown that organizes the User's books into status:
  * Owned, Requested, Accepted, and Borrowed. The user is able to see book title, author, isbn, and status.
- * The user is also able to add and edit their books in this Fragment
- *
+ * The user is also able to add and edit their books opened from this Fragment
  */
 public class MyBooksFragment extends Fragment {
     private static final String TAG = "MyBooksFragment";
@@ -70,8 +69,8 @@ public class MyBooksFragment extends Fragment {
         System.out.println("In MyBooks Fragment");
         // Inflate the layout for this fragment
         View v =  inflater.inflate(R.layout.fragment_my_books, container, false);
-        addButton = (FloatingActionButton) v.findViewById(R.id.addButton);
-        bookView = (RecyclerView) v.findViewById(R.id.book_list);
+        addButton = v.findViewById(R.id.addButton);
+        bookView = v.findViewById(R.id.book_list);
         db = FirebaseFirestore.getInstance();
         databaseHelper = new DatabaseHelper(this.getContext());
         /* we instantiate a new arraylist in case we have an empty firestore, if not we update this
@@ -92,7 +91,7 @@ public class MyBooksFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent addIntent = new Intent(getActivity(), AddBookFragment.class);
-                startActivityForResult(addIntent, 0);
+                startActivity(addIntent);
             }
         });
 
@@ -112,13 +111,11 @@ public class MyBooksFragment extends Fragment {
         return v;
     }
 
-
     /**
      * Used to fill bookList with firestore items, will get the information from the current User
-     *Call back and use it to instantiate a new book object from the firesotre information and add
+     * Call back and use it to instantiate a new book object from the firestore information and add
      * it to the bookList (clears it in case we have new items and want to count them) and updates
      * adapter
-     *
      */
     public void updateBookList() {
         CurrentUser bookUser = CurrentUser.getInstance();
@@ -128,8 +125,8 @@ public class MyBooksFragment extends Fragment {
                     .addSnapshotListener(new EventListener<QuerySnapshot>() {
                         @Override
                         public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                            bookList.removeAll(bookList);
                             if (value != null ) {
-                                bookList.removeAll(bookList);
                                 for (final QueryDocumentSnapshot doc : value) {
                                     Log.d(TAG, String.valueOf(doc.getData().get("Owner")));
                                     String bookId = doc.getId();
@@ -147,18 +144,15 @@ public class MyBooksFragment extends Fragment {
                                 }
                                 bookAdapter.notifyDataSetChanged(); // Notifying the adapter to render any new data fetched from the cloud
 
-
                             }
                         }
                     });
         } else if (spinnerSelected.equals("requested")) {
-            System.out.println("REQUESTED");
-            System.out.println(bookList);
             db.collection("Books").addSnapshotListener(new EventListener<QuerySnapshot>() {
                 @Override
                 public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                    bookList.removeAll(bookList);
                     if (value != null) {
-                        bookList.removeAll(bookList);
                         for (final QueryDocumentSnapshot doc : value) {
                             String bookId = doc.getId();
                             String bookTitle = Objects.requireNonNull(doc.get("Title")).toString();
@@ -171,17 +165,14 @@ public class MyBooksFragment extends Fragment {
                             }
                             User otherUser = new User(bookOwner, "other", "other", "other");
                             Book currentBook = new Book(bookId, bookTitle, bookISBN, bookAuthor, bookStatus, bookImage, otherUser);
-                            //Log.d("SOORAJ", currentBook.getFirestoreID());
                             db.collection("Requests").whereEqualTo("requester", bookUser.getCurrentUser().getUsername())
                                     .addSnapshotListener(new EventListener<QuerySnapshot>() {
                                         @Override
                                         public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                                             if (value != null) {
                                                 for (final QueryDocumentSnapshot doc : value) {
-                                                    //Log.d("SOORAJ","REquest: " + Objects.requireNonNull(doc.get("bookID")).toString() );
                                                     if (currentBook.getFirestoreID().equals(Objects.requireNonNull(doc.get("bookID")).toString())) {
                                                         bookList.add(currentBook);
-                                                        Log.d("SOORAJ", currentBook.getFirestoreID());
                                                     }
                                                 }
                                                 bookAdapter.notifyDataSetChanged();
@@ -194,88 +185,56 @@ public class MyBooksFragment extends Fragment {
                 }
             });
         } else if (spinnerSelected.equals("accepted")) {
-            System.out.println(bookList);
             db.collection("Books").whereEqualTo("AcceptedTo", bookUser.getCurrentUser().getUsername())
                     .addSnapshotListener(new EventListener<QuerySnapshot>() {
                         @Override
                         public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                            if (value != null)
-                                bookList.removeAll(bookList);
-                            for (QueryDocumentSnapshot doc:value) {
-                                String bookId = doc.getId();
-                                String bookTitle = Objects.requireNonNull(doc.get("Title")).toString();
-                                String bookAuthor = Objects.requireNonNull(doc.get("Author")).toString();
-                                String bookISBN = Objects.requireNonNull(doc.get("ISBN")).toString();
-                                String bookStatus = Objects.requireNonNull(doc.get("Status")).toString();
-                                String bookOwner = Objects.requireNonNull(doc.get("Owner")).toString();
-                                if (doc.get("imageID") != null) {
-                                    bookImage = Objects.requireNonNull(doc.get("imageID")).toString();
-                                }
-                                db.collection("Users").document(bookOwner).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                    @Override
-                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                        databaseHelper.getUserProfile(bookOwner, new Callback() {
-                                            @Override
-                                            public void onCallback(User user) {
-                                                bookList.add(new Book(bookId, bookTitle, bookISBN, bookAuthor, bookStatus, bookImage, user));
-                                                bookAdapter.notifyDataSetChanged();
-                                            }
-                                        });
+                            bookList.removeAll(bookList);
+                            if (value != null) {
+                                for (QueryDocumentSnapshot doc : value) {
+                                    String bookId = doc.getId();
+                                    String bookTitle = Objects.requireNonNull(doc.get("Title")).toString();
+                                    String bookAuthor = Objects.requireNonNull(doc.get("Author")).toString();
+                                    String bookISBN = Objects.requireNonNull(doc.get("ISBN")).toString();
+                                    String bookStatus = Objects.requireNonNull(doc.get("Status")).toString();
+                                    String bookOwner = Objects.requireNonNull(doc.get("Owner")).toString();
+                                    if (doc.get("imageID") != null) {
+                                        bookImage = Objects.requireNonNull(doc.get("imageID")).toString();
                                     }
-                                });
+                                    User owner = new User(bookOwner, "other", "other", "other");
+                                    Book currentBook = new Book(bookId, bookTitle, bookISBN, bookAuthor, bookStatus, bookImage, owner);
+                                    bookList.add(currentBook);
+                                }
+                                bookAdapter.notifyDataSetChanged();
                             }
                         }
-
                     });
 
 
         } else if (spinnerSelected.equals("borrowed")) {
-            //To do: add the borrower's username to field "BorrowedBy" of the book in firestore, delete or empty "AcceptedTo" field.
-
-            //Example to delete a field
-//            DocumentReference docRef = db.collection("cities").document("BJ");
-//
-//                  // Remove the 'capital' field from the document
-//            Map<String,Object> updates = new HashMap<>();
-//            updates.put("capital", FieldValue.delete());
-//
-//            docRef.update(updates).addOnCompleteListener(new OnCompleteListener<Void>() {
-//                // ...
-//                // ...
-
-
-            System.out.println(bookList);
             db.collection("Books").whereEqualTo("BorrowedBy", bookUser.getCurrentUser().getUsername())
                     .addSnapshotListener(new EventListener<QuerySnapshot>() {
                         @Override
                         public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                            if (value != null)
-                                bookList.removeAll(bookList);
-                            for (QueryDocumentSnapshot doc : value) {
-                                String bookId = doc.getId();
-                                String bookTitle = Objects.requireNonNull(doc.get("Title")).toString();
-                                String bookAuthor = Objects.requireNonNull(doc.get("Author")).toString();
-                                String bookISBN = Objects.requireNonNull(doc.get("ISBN")).toString();
-                                String bookStatus = Objects.requireNonNull(doc.get("Status")).toString();
-                                String bookOwner = Objects.requireNonNull(doc.get("Owner")).toString();
-                                if (doc.get("imageID") != null) {
-                                    bookImage = Objects.requireNonNull(doc.get("imageID")).toString();
-                                }
-                                db.collection("Users").document(bookOwner).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                    @Override
-                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                        databaseHelper.getUserProfile(bookOwner, new Callback() {
-                                            @Override
-                                            public void onCallback(User user) {
-                                                bookList.add(new Book(bookId, bookTitle, bookISBN, bookAuthor, bookStatus, bookImage, user));
-                                                bookAdapter.notifyDataSetChanged();
-                                            }
-                                        });
+                            bookList.removeAll(bookList);
+                            if (value != null) {
+                                for (QueryDocumentSnapshot doc : value) {
+                                    String bookId = doc.getId();
+                                    String bookTitle = Objects.requireNonNull(doc.get("Title")).toString();
+                                    String bookAuthor = Objects.requireNonNull(doc.get("Author")).toString();
+                                    String bookISBN = Objects.requireNonNull(doc.get("ISBN")).toString();
+                                    String bookStatus = Objects.requireNonNull(doc.get("Status")).toString();
+                                    String bookOwner = Objects.requireNonNull(doc.get("Owner")).toString();
+                                    if (doc.get("imageID") != null) {
+                                        bookImage = Objects.requireNonNull(doc.get("imageID")).toString();
                                     }
-                                });
+                                    User owner = new User(bookOwner, "other", "other", "other");
+                                    Book currentBook = new Book(bookId, bookTitle, bookISBN, bookAuthor, bookStatus, bookImage, owner);
+                                    bookList.add(currentBook);
+                                }
+                                bookAdapter.notifyDataSetChanged();
                             }
                         }
-
                     });
         }
     }

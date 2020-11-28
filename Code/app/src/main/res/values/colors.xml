@@ -1,12 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#F1EFE8</color>
-    <color name="colorPrimaryDark">#CCBFB2</color>
+    <color name="colorPrimaryDark">#B7AB9B</color>
     <color name="colorText">#54514A</color>
-    <color name="colorNav">#684740</color>
+    <color name="colorNav">#684940</color>
+    <color name="colorAccent">#CFC1B1</color>
+    <color name="colorDetails">#E8DCCE</color>
     <color name="colorConfirm">#2DB954</color>
-    <color name="colorAccent">#03DAC5</color>
-    <color name="colorBackgroundLight">#F1EFE8</color>
-
+    <color name="colorLink">#1C4A93</color>
+    <color name="colorFillInBox">#E0DDD1</color>
+    <color name="colorSignUpButton">#E5D5C1</color>
+    <color name="colorCCButton">#CACACA</color>
+    <color name="colorRequest">#FCB38A</color>
+    <color name="colorRequested">#EAA37A</color>
+    <color name="colorAccepted">#A0CDE7</color>
+    <color name="colorAvailable">#BDE8AE</color>
+    <color name="colorBorrow">#FFA296</color>
+    <color name="colorBorrowed">#EA8B7F</color>
     <color name="black_overlay">#66000000</color>
 </resources>

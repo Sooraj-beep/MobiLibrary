@@ -48,8 +48,10 @@ import java.util.concurrent.Executor;
 
 import static com.google.firebase.firestore.DocumentChange.Type.MODIFIED;
 import static com.google.firebase.firestore.DocumentChange.Type.REMOVED;
+
 /**
-* This class handles the database related tasks that are requested from other activities
+ * @author Nguyen, Jill;
+ * This class handles the database related tasks that are requested from other activities.
  */
 
 public class DatabaseHelper {
@@ -140,6 +142,7 @@ public class DatabaseHelper {
                                                             Toast.makeText(context, ("Account created for " + username), Toast.LENGTH_SHORT).show();
                                                             //go back to login screen so the user can log in
                                                             context.startActivity(new Intent(context, LogIn.class));
+                                                            ((Activity) (context)).finish();
                                                         }
                                                     }).addOnFailureListener(new OnFailureListener() {
                                                 @Override
@@ -208,7 +211,6 @@ public class DatabaseHelper {
 
     /**
      * Gets profile to be looked at in the profile activity
-     * https://stackoverflow.com/questions/48499310/how-to-return-a-documentsnapshot-as-a-result-of-a-method
      *
      * @param username username of the profile to be looked for
      * @param callback callback to profile
@@ -282,7 +284,6 @@ public class DatabaseHelper {
 
     /**
      * Updates the contact of the currently logged in user
-     * https://stackoverflow.com/questions/55129887/problem-converting-documentsnapshot-to-custom-object
      *
      * @param username username of the current user
      * @param newEmail email to be updated
