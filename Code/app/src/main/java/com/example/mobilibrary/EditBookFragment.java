@@ -251,7 +251,7 @@ public class EditBookFragment extends AppCompatActivity {
      * When the Scan Button is pressed the scan activity is initiated
      * @param view the Scan Button
      */
-    private void ScanButton(View view) {
+    public void ScanButton(View view) {
         IntentIntegrator intentIntegrator = new IntentIntegrator(this);
         intentIntegrator.initiateScan();
     }
