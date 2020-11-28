@@ -48,9 +48,9 @@ public class meetMap extends FragmentActivity implements OnMapReadyCallback {
         Bundle b = getIntent().getExtras();
         double latitude = b.getDouble("latitude");
         double longitude = b.getDouble("longitude");
-        type = b.getInt("");
+        type = b.getInt("type");
         if(type == 3 || type == 5) {
-            bookDetails = b.getString("");
+            bookDetails = b.getString("bookFSID");
         }
         bookLatLng = new LatLng(latitude, longitude);
 
