@@ -47,12 +47,13 @@ public class RequestService {
         DocumentReference bookDoc = db.collection("Books")
                 .document(request.getBookID());
 
+        batch.update(bookDoc, "Status", "accepted");
+
         Map<String, Object> newData = new HashMap<>();
         //Add the user whose request has been accepted to the book
         newData.put("AcceptedTo", request.getRequester());
 
         batch.update(bookDoc, newData);
-        batch.update(bookDoc, "Status", "accepted");
         return batch.commit();
     }
 
@@ -65,11 +66,20 @@ public class RequestService {
         return batch.commit();
     }
 
-    public static Task<Void> decline(String requestID){
-        return db.collection("Requests").document(requestID).delete();
+    public static Task<Void> decline(aRequest request, boolean declineAll) {
+        WriteBatch batch = db.batch();
+        DocumentReference bookDoc = db.collection("Books")
+                .document(request.getBookID());
+
+        DocumentReference requestDoc = db.collection("Requests")
+                .document(request.getID());
+        if (declineAll)
+            batch.update(bookDoc, "Status", "available");
+
+        batch.delete(requestDoc);
+        return batch.commit();
+
     }
-
-
 }
 
 
