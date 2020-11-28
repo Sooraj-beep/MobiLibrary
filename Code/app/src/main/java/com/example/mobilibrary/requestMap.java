@@ -44,7 +44,7 @@ public class requestMap extends FragmentActivity implements OnMapReadyCallback{
     private String TAG = "requestMap";
     private GoogleMap map;
     private SearchView searchButton;
-    private static FirebaseFirestore db;
+    private FirebaseFirestore db;
 
     /**
      * Used to create the map and setting up the search bar

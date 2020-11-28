@@ -40,7 +40,7 @@ import java.util.Objects;
  */
 public class NotificationsFragment extends Fragment {
 
-    RecyclerView notificationsRv;
+    private RecyclerView notificationsRv;
     private ArrayList<ModelNotification> notificationsList;
     private AdapterNotification adapterNotification;
 

@@ -71,7 +71,6 @@ public class EditBookFragment extends AppCompatActivity {
     private Bitmap imageBitMap;
 
     private RequestQueue mRequestQueue;
-    private FirebaseFirestore db;
     private BookService bookService;
     private Context context;
 
@@ -422,7 +421,7 @@ public class EditBookFragment extends AppCompatActivity {
      */
     public void currentUser(final Callback cbh) {
         final FirebaseUser userInfo = FirebaseAuth.getInstance().getCurrentUser();
-        db = FirebaseFirestore.getInstance();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("Users").whereEqualTo("email", userInfo.getEmail()).get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
