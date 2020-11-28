@@ -44,7 +44,7 @@ public class requestMap extends FragmentActivity implements OnMapReadyCallback{
     private String TAG = "requestMap";
     private GoogleMap map;
     private SearchView searchButton;
-    private static FirebaseFirestore db;
+    private FirebaseFirestore db;
 
     /**
      * Used to create the map and setting up the search bar
@@ -120,7 +120,6 @@ public class requestMap extends FragmentActivity implements OnMapReadyCallback{
                     newData.put("LatLang", newLatLng);
 
                     batch.update(bookDoc, newData);
-                    batch.update(bookDoc, "Status", "accepted");
                     Intent mapIntent = new Intent();
                     mapIntent.putExtra("LatLang", newLatLng);
                     batch.commit();

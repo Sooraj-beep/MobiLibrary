@@ -326,42 +326,6 @@ public class DatabaseHelper {
                 });
     }
 
-    /**
-     * Deletes a user from both the Firebase User Auth side and the Firestore side.
-     *
-     * @param username username of the user to be deleted
-     */
-    public void deleteUser(String username) {
-        db.collection("Users").document(username)
-                .delete()
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "DocumentSnapshot successfully deleted!");
-                        user.delete()
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d(TAG, "User deleted!");
-                                        context.startActivity(new Intent(context, SignUp.class));
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w(TAG, "Error deleting user", e);
-                                    }
-                                });
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error deleting document", e);
-                    }
-                });
-    }
-
     //function get borrowed books
 
 }

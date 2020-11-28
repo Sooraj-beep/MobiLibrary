@@ -37,8 +37,6 @@ public class LogIn extends AppCompatActivity {
     private EditText inputEmail;
     private EditText inputPassword;
 
-    private Button login;
-    private TextView signup;
     public Context context;
     public User user;
     private CurrentUser currentUser;
@@ -58,8 +56,8 @@ public class LogIn extends AppCompatActivity {
         //gets id of layouts
         inputEmail = findViewById(R.id.email_editText);
         inputPassword = findViewById(R.id.password_editText);
-        login = findViewById(R.id.login_button);
-        signup = findViewById(R.id.signup_bar2);
+        Button login = findViewById(R.id.login_button);
+        TextView signup = findViewById(R.id.signup_bar2);
         //navigate to SignUp activity
         signup.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -45,18 +45,14 @@ import java.util.Objects;
  */
 public class MyBooksFragment extends Fragment {
     private static final String TAG = "MyBooksFragment";
-    private RecyclerView bookView;
     private RecyclerView.Adapter bookAdapter;
     private ArrayList<Book> bookList = new ArrayList<>();
-    private FloatingActionButton addButton;
 
     private Spinner statesSpin;
     private String spinnerSelected = "owned";
     private static final String[] states = new String[]{"Owned", "Requested", "Accepted", "Borrowed"};
     private FirebaseFirestore db;
-    private DatabaseHelper databaseHelper;
     private String bookImage;
-    private RequestService requestService;
 
 
     public MyBooksFragment() {
@@ -69,10 +65,10 @@ public class MyBooksFragment extends Fragment {
         System.out.println("In MyBooks Fragment");
         // Inflate the layout for this fragment
         View v =  inflater.inflate(R.layout.fragment_my_books, container, false);
-        addButton = v.findViewById(R.id.addButton);
-        bookView = v.findViewById(R.id.book_list);
+        FloatingActionButton addButton = v.findViewById(R.id.addButton);
+        RecyclerView bookView = v.findViewById(R.id.book_list);
         db = FirebaseFirestore.getInstance();
-        databaseHelper = new DatabaseHelper(this.getContext());
+        DatabaseHelper databaseHelper = new DatabaseHelper(this.getContext());
         /* we instantiate a new arraylist in case we have an empty firestore, if not we update this
         list later in updateBookList */
 
@@ -85,7 +81,7 @@ public class MyBooksFragment extends Fragment {
         SpinAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         statesSpin.setAdapter(SpinAdapter);
 
-        requestService = RequestService.getInstance();
+        RequestService requestService = RequestService.getInstance();
 
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -212,19 +208,6 @@ public class MyBooksFragment extends Fragment {
 
 
         } else if (spinnerSelected.equals("borrowed")) {
-            //To do: add the borrower's username to field "BorrowedBy" of the book in firestore, delete or empty "AcceptedTo" field.
-
-            //Example to delete a field
-//            DocumentReference docRef = db.collection("cities").document("BJ");
-//
-//                  // Remove the 'capital' field from the document
-//            Map<String,Object> updates = new HashMap<>();
-//            updates.put("capital", FieldValue.delete());
-//
-//            docRef.update(updates).addOnCompleteListener(new OnCompleteListener<Void>() {
-//                // ...
-//                // ...
-
             db.collection("Books").whereEqualTo("BorrowedBy", bookUser.getCurrentUser().getUsername())
                     .addSnapshotListener(new EventListener<QuerySnapshot>() {
                         @Override

@@ -20,9 +20,6 @@ import com.example.mobilibrary.R;
  */
 public class StartActivity extends AppCompatActivity {
 
-    private Button logInButton;
-    private Button signUpButton;
-    private Button testUserButton; // TODO: Remove by end of part 4
     private DatabaseHelper databaseHelper;
     private Context context;
     private CurrentUser currentUser;
@@ -32,9 +29,10 @@ public class StartActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
 
-        logInButton = findViewById(R.id.home_log_in_button);
-        signUpButton = findViewById(R.id.home_sign_up_button);
-        testUserButton = findViewById(R.id.testing_button);
+        Button logInButton = findViewById(R.id.home_log_in_button);
+        Button signUpButton = findViewById(R.id.home_sign_up_button);
+        // TODO: Remove by end of part 4
+        Button testUserButton = findViewById(R.id.testing_button);
         context = this;
         databaseHelper = new DatabaseHelper(context);
         currentUser = CurrentUser.getInstance();

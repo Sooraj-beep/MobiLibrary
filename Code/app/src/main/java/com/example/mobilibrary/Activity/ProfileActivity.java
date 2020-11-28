@@ -43,7 +43,6 @@ import java.util.List;
 public class ProfileActivity extends AppCompatActivity implements reAuthFragment.OnFragmentInteractionListener {
 
     private ImageButton editButton;
-    private ImageView profileImage;
     //private FloatingActionButton editProfileImage;
     private TextView usernameText;
     private TextView emailText;
@@ -70,7 +69,7 @@ public class ProfileActivity extends AppCompatActivity implements reAuthFragment
 
         // Set variables
         editButton = findViewById(R.id.edit_button);
-        profileImage = findViewById(R.id.profile_image_view);
+        ImageView profileImage = findViewById(R.id.profile_image_view);
         usernameText = findViewById(R.id.username_text_view);
         emailText = findViewById(R.id.email_text_view);
         phoneText = findViewById(R.id.phone_text_view);
