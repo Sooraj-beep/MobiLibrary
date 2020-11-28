@@ -212,6 +212,7 @@ public class BookDetailsFragment extends AppCompatActivity {
             requestsBtn.setVisibility(View.GONE);
             reqView.setVisibility(View.GONE);
 
+            System.out.println("LOOKING AT OTHERS BOOK");
             // determine status of book based on whether there is a borrower yet or not
             db.collection("Books").document(viewBook.getFirestoreID()).get()
                     .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -221,14 +222,19 @@ public class BookDetailsFragment extends AppCompatActivity {
                                 if (task.getResult().get("BorrowedBy") != null) {
                                     if (task.getResult().get("AcceptedTo") != null) {
                                         // book has been accepted but not yet confirmed by borrower
-                                        borrowButton.setVisibility(View.VISIBLE);
+                                        if (task.getResult().getString("AcceptedTo") == userName) {
+                                            // show button to borrower only
+                                            borrowButton.setVisibility(View.VISIBLE);
+                                        }
                                     } else {
                                         // book is borrowed and needs to be returned
-                                        returnButton.setVisibility(View.VISIBLE);
+                                        if (task.getResult().getString("BorrowedBy") == userName) {
+                                            // show button to borrower only
+                                            returnButton.setVisibility(View.VISIBLE);
+                                        }
                                     }
                                 } else {
                                     //if book is available or has requests (and also make sure user hasn't requested it before) display request button
-
                                     //check is user has requested this book before
                                     if (viewBook.getStatus().equals("requested")) {
                                         //get all requesting users
@@ -253,6 +259,7 @@ public class BookDetailsFragment extends AppCompatActivity {
                                                                 //if requester is equal to user then show requested button and exit
                                                                 if (bookRequester.equals(getUsername())) {
                                                                     alreadyRequested[0] = true;
+                                                                    //requestButton.setVisibility(View.INVISIBLE);
                                                                     requestedButton.setVisibility(View.VISIBLE);
                                                                     return;
                                                                 }
@@ -376,12 +383,16 @@ public class BookDetailsFragment extends AppCompatActivity {
                     aRequest request = new aRequest(getUsername(), viewBook.getFirestoreID());
                     HandoverService.lendBook(request);
                     viewBook.setStatus("borrowed");
+                    status.setText(viewBook.getStatus());
+                    Toast.makeText(getApplicationContext(), "Successfully lent book!", Toast.LENGTH_LONG)
 
                     // return the book with its changed status
                     Intent editedIntent = new Intent();
                     editedIntent.putExtra("loaned book", viewBook);
                     setResult(2, editedIntent);
                     finish();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Failed to lend book!", Toast.LENGTH_LONG)
                 }
             }
         });
@@ -401,12 +412,16 @@ public class BookDetailsFragment extends AppCompatActivity {
                     aRequest request = new aRequest(getUsername(), viewBook.getFirestoreID());
                     HandoverService.borrowBook(request);
                     viewBook.setStatus("borrowed");
+                    status.setText(viewBook.getStatus());
+                    Toast.makeText(getApplicationContext(), "Successfully borrowed book!", Toast.LENGTH_LONG)
 
                     // return the book with its changed status
                     Intent editedIntent = new Intent();
                     editedIntent.putExtra("borrowed book", viewBook);
                     setResult(2, editedIntent);
                     finish();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Failed to borrow book!", Toast.LENGTH_LONG)
                 }
             }
         });
@@ -426,12 +441,16 @@ public class BookDetailsFragment extends AppCompatActivity {
                     aRequest request = new aRequest(getUsername(), viewBook.getFirestoreID());
                     HandoverService.receiveBook(request);
                     viewBook.setStatus("available");
+                    status.setText(viewBook.getStatus());
+                    Toast.makeText(getApplicationContext(), "Successfully recieved book!", Toast.LENGTH_LONG)
 
                     // return the book with its changed status
                     Intent editedIntent = new Intent();
                     editedIntent.putExtra("recieved book", viewBook);
                     setResult(2, editedIntent);
                     finish();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Failed to receive book!", Toast.LENGTH_LONG)
                 }
             }
         });
@@ -465,12 +484,16 @@ public class BookDetailsFragment extends AppCompatActivity {
                                             aRequest request = new aRequest(getUsername(), viewBook.getFirestoreID());
                                             HandoverService.returnBook(request);
                                             viewBook.setStatus("available");
+                                            status.setText(viewBook.getStatus());
+                                            Toast.makeText(getApplicationContext(), "Successfully returned book!", Toast.LENGTH_LONG)
 
                                             // return the book with its changed status
                                             Intent editedIntent = new Intent();
                                             editedIntent.putExtra("returned book", viewBook);
                                             setResult(2, editedIntent);
                                             finish();
+                                        } else {
+                                            Toast.makeText(getApplicationContext(), "Failed to return book!", Toast.LENGTH_LONG)
                                         }
                                     }
                                 }

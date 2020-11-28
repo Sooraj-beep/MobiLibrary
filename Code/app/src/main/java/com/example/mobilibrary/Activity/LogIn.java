@@ -110,7 +110,5 @@ public class LogIn extends AppCompatActivity {
                     inputPassword.setText("");
                 }
             });
-
-
     }
 }

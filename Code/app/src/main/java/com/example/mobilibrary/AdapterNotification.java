@@ -147,7 +147,7 @@ public class AdapterNotification extends RecyclerView.Adapter<AdapterNotificatio
             holder.notifications.setCardBackgroundColor(Color.parseColor("#e6576a")); //red border
             holder.arrow.setVisibility(View.INVISIBLE);
         }
-        if (type == 3) {
+        if (type == 3) { //meetmap confirm leads to bookdetails, need bookfsid
             holder.notifications.setCardBackgroundColor(Color.parseColor("#57e65c")); //green border
             holder.notifications.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -178,6 +178,9 @@ public class AdapterNotification extends RecyclerView.Adapter<AdapterNotificatio
                                     Bundle b = new Bundle();
                                     b.putDouble("latitude", dLatitude);
                                     b.putDouble("longitude", dLongitude);
+                                    b.putString("bookFSID", notificationsList.get(position).getBookFSID());
+                                    b.putString("bookOwner", notificationsList.get(position).getUser());
+                                    b.putInt("type", type);
                                     mapIntent.putExtras(b);
                                     ((Activity) context).startActivityForResult(mapIntent,1);
 
@@ -197,7 +200,7 @@ public class AdapterNotification extends RecyclerView.Adapter<AdapterNotificatio
             });
 
         }
-        if ((type == 4) || (type == 5)) {
+        if (type == 4) { //meet map confirm leads back to notifications
             holder.notifications.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -243,14 +246,55 @@ public class AdapterNotification extends RecyclerView.Adapter<AdapterNotificatio
             });
 
         }
-        /*if (type == 5) {
+        if (type == 5) { //meetmap confirm leads to bookdetails, need bookfsid
             holder.notifications.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     //leads to a map with the location of the book
+                    //get the latitude and longitude of the book
+                    final FirebaseFirestore db = FirebaseFirestore.getInstance();
+                    DocumentReference docRef = db.collection("Books").document(notificationsList.get(position).getBookFSID());
+                    System.out.println("Got doc ref");
+                    docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot document = task.getResult();
+                                System.out.println(document);
+                                if (document.exists()) {
+                                    System.out.println("About to get latlang");
+                                    //bookLatLng = (LatLng) document.getData().get("LatLang");
+
+                                    HashMap<String, Object> newData = (HashMap<String, Object>) document.getData().get("LatLang");
+                                    System.out.println("NEW DATA: " + newData);
+                                    Object latitude = newData.get("latitude");
+                                    Object longitude = newData.get("longitude");
+                                    Double dLatitude = new Double(latitude.toString());
+                                    Double dLongitude = new Double(longitude.toString());
+
+                                    //leads to a map with the location of the book
+                                    Intent mapIntent = new Intent(context, meetMap.class);
+                                    Bundle b = new Bundle();
+                                    b.putDouble("latitude", dLatitude);
+                                    b.putDouble("longitude", dLongitude);
+                                    b.putString("bookFSID", notificationsList.get(position).getBookFSID());
+                                    b.putString("bookOwner", notificationsList.get(position).getUser());
+                                    b.putInt("type", type);
+                                    mapIntent.putExtras(b);
+                                    ((Activity) context).startActivityForResult(mapIntent,1);
+
+                                    Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                                } else {
+                                    Log.d(TAG, "No such document");
+                                }
+                            } else {
+                                Log.d(TAG, "get failed with ", task.getException());
+                            }
+                        }
+                    });
                 }
             });
-        }*/
+        }
 
         //onclick for username
         holder.userName.setOnClickListener(new View.OnClickListener() {
