@@ -69,7 +69,7 @@ public class HandoverService {
 
         Map<String, Object> newData = new HashMap<>();
         //Add the user whose request has been allowed to borrow the book
-        newData.put("BorrowedTo", lendRequest.getRequester());
+        newData.put("BorrowedBy", lendRequest.getRequester());
         batch.update(bookDoc, newData);
         batch.update(bookDoc, "Status", "borrowed");
         return batch.commit();
@@ -99,7 +99,7 @@ public class HandoverService {
 
         Map<String, Object> newData = new HashMap<>();
         // Borrower field is deleted as book is back with owner
-        newData.put("BorrowedTo", FieldValue.delete());
+        newData.put("BorrowedBy", FieldValue.delete());
         batch.update(bookDoc, newData);
         batch.update(bookDoc, "Status", "available");
         return batch.commit();
