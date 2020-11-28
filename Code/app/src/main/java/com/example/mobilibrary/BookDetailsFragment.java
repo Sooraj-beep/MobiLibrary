@@ -209,7 +209,7 @@ public class BookDetailsFragment extends AppCompatActivity {
                     .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            if (task.getResult().get("BorrowedTo") != null) {
+                            if (task.getResult().get("BorrowedBy") != null) {
                                 // borrower exists so book needs to be taken back
                                 receiveButton.setVisibility(View.VISIBLE);
                             } else if (task.getResult().get("AcceptedTo") != null) {
@@ -232,7 +232,7 @@ public class BookDetailsFragment extends AppCompatActivity {
                     .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            if (task.getResult().get("BorrowedTo") != null) {
+                            if (task.getResult().get("BorrowedBy") != null) {
                                 if (task.getResult().get("AcceptedTo") != null){
                                     // book has been accepted but not yet confirmed by borrower
                                     borrowButton.setVisibility(View.VISIBLE);
