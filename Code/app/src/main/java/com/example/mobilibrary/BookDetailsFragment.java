@@ -383,12 +383,15 @@ public class BookDetailsFragment extends AppCompatActivity {
                     HandoverService.lendBook(request);
                     viewBook.setStatus("borrowed");
                     status.setText(viewBook.getStatus());
+                    Toast.makeText(getApplicationContext(), "Successfully lent book!", Toast.LENGTH_LONG)
 
                     // return the book with its changed status
                     Intent editedIntent = new Intent();
                     editedIntent.putExtra("loaned book", viewBook);
                     setResult(2, editedIntent);
                     finish();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Failed to lend book!", Toast.LENGTH_LONG)
                 }
             }
         });
@@ -409,12 +412,15 @@ public class BookDetailsFragment extends AppCompatActivity {
                     HandoverService.borrowBook(request);
                     viewBook.setStatus("borrowed");
                     status.setText(viewBook.getStatus());
+                    Toast.makeText(getApplicationContext(), "Successfully borrowed book!", Toast.LENGTH_LONG)
 
                     // return the book with its changed status
                     Intent editedIntent = new Intent();
                     editedIntent.putExtra("borrowed book", viewBook);
                     setResult(2, editedIntent);
                     finish();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Failed to borrow book!", Toast.LENGTH_LONG)
                 }
             }
         });
@@ -435,12 +441,15 @@ public class BookDetailsFragment extends AppCompatActivity {
                     HandoverService.receiveBook(request);
                     viewBook.setStatus("available");
                     status.setText(viewBook.getStatus());
+                    Toast.makeText(getApplicationContext(), "Successfully recieved book!", Toast.LENGTH_LONG)
 
                     // return the book with its changed status
                     Intent editedIntent = new Intent();
                     editedIntent.putExtra("recieved book", viewBook);
                     setResult(2, editedIntent);
                     finish();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Failed to receive book!", Toast.LENGTH_LONG)
                 }
             }
         });
@@ -475,12 +484,15 @@ public class BookDetailsFragment extends AppCompatActivity {
                                             HandoverService.returnBook(request);
                                             viewBook.setStatus("available");
                                             status.setText(viewBook.getStatus());
+                                            Toast.makeText(getApplicationContext(), "Successfully returned book!", Toast.LENGTH_LONG)
 
                                             // return the book with its changed status
                                             Intent editedIntent = new Intent();
                                             editedIntent.putExtra("returned book", viewBook);
                                             setResult(2, editedIntent);
                                             finish();
+                                        } else {
+                                            Toast.makeText(getApplicationContext(), "Failed to return book!", Toast.LENGTH_LONG)
                                         }
                                     }
                                 }
