@@ -221,10 +221,16 @@ public class BookDetailsFragment extends AppCompatActivity {
                                 if (task.getResult().get("BorrowedBy") != null) {
                                     if (task.getResult().get("AcceptedTo") != null) {
                                         // book has been accepted but not yet confirmed by borrower
-                                        borrowButton.setVisibility(View.VISIBLE);
+                                        if (task.getResult().getString("AcceptedTo") == userName) {
+                                            // show button to borrower only
+                                            borrowButton.setVisibility(View.VISIBLE);
+                                        }
                                     } else {
                                         // book is borrowed and needs to be returned
-                                        returnButton.setVisibility(View.VISIBLE);
+                                        if (task.getResult().getString("BorrowedBy") == userName) {
+                                            // show button to borrower only
+                                            returnButton.setVisibility(View.VISIBLE);
+                                        }
                                     }
                                 } else {
                                     //if book is available or has requests (and also make sure user hasn't requested it before) display request button
@@ -376,6 +382,7 @@ public class BookDetailsFragment extends AppCompatActivity {
                     aRequest request = new aRequest(getUsername(), viewBook.getFirestoreID());
                     HandoverService.lendBook(request);
                     viewBook.setStatus("borrowed");
+                    status.setText(viewBook.getStatus());
 
                     // return the book with its changed status
                     Intent editedIntent = new Intent();
@@ -401,6 +408,7 @@ public class BookDetailsFragment extends AppCompatActivity {
                     aRequest request = new aRequest(getUsername(), viewBook.getFirestoreID());
                     HandoverService.borrowBook(request);
                     viewBook.setStatus("borrowed");
+                    status.setText(viewBook.getStatus());
 
                     // return the book with its changed status
                     Intent editedIntent = new Intent();
@@ -426,6 +434,7 @@ public class BookDetailsFragment extends AppCompatActivity {
                     aRequest request = new aRequest(getUsername(), viewBook.getFirestoreID());
                     HandoverService.receiveBook(request);
                     viewBook.setStatus("available");
+                    status.setText(viewBook.getStatus());
 
                     // return the book with its changed status
                     Intent editedIntent = new Intent();
@@ -465,6 +474,7 @@ public class BookDetailsFragment extends AppCompatActivity {
                                             aRequest request = new aRequest(getUsername(), viewBook.getFirestoreID());
                                             HandoverService.returnBook(request);
                                             viewBook.setStatus("available");
+                                            status.setText(viewBook.getStatus());
 
                                             // return the book with its changed status
                                             Intent editedIntent = new Intent();
