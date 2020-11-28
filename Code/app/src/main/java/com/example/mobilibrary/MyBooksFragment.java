@@ -208,19 +208,6 @@ public class MyBooksFragment extends Fragment {
 
 
         } else if (spinnerSelected.equals("borrowed")) {
-            //To do: add the borrower's username to field "BorrowedBy" of the book in firestore, delete or empty "AcceptedTo" field.
-
-            //Example to delete a field
-//            DocumentReference docRef = db.collection("cities").document("BJ");
-//
-//                  // Remove the 'capital' field from the document
-//            Map<String,Object> updates = new HashMap<>();
-//            updates.put("capital", FieldValue.delete());
-//
-//            docRef.update(updates).addOnCompleteListener(new OnCompleteListener<Void>() {
-//                // ...
-//                // ...
-
             db.collection("Books").whereEqualTo("BorrowedBy", bookUser.getCurrentUser().getUsername())
                     .addSnapshotListener(new EventListener<QuerySnapshot>() {
                         @Override

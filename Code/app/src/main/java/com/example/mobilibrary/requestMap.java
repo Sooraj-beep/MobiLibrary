@@ -120,7 +120,6 @@ public class requestMap extends FragmentActivity implements OnMapReadyCallback{
                     newData.put("LatLang", newLatLng);
 
                     batch.update(bookDoc, newData);
-                    batch.update(bookDoc, "Status", "accepted");
                     Intent mapIntent = new Intent();
                     mapIntent.putExtra("LatLang", newLatLng);
                     batch.commit();

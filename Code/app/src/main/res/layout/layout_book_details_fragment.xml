@@ -253,9 +253,41 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="32dp"
             android:background="@drawable/rounded_button_less"
-            android:backgroundTint="@color/colorRequest"
+            android:backgroundTint="@color/colorBorrow"
             android:fontFamily="@font/quicksand_bold"
             android:text="Request"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/view_status" />
+
+        <Button
+            android:id="@+id/lend_button"
+            android:layout_width="131dp"
+            android:layout_height="40dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="32dp"
+            android:background="@drawable/rounded_button_less"
+            android:backgroundTint="@color/colorAccepted"
+            android:fontFamily="@font/quicksand_bold"
+            android:text="Lend"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/view_status" />
+
+        <Button
+            android:id="@+id/borrow_button"
+            android:layout_width="131dp"
+            android:layout_height="40dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="32dp"
+            android:background="@drawable/rounded_button_less"
+            android:backgroundTint="@color/colorAccepted"
+            android:fontFamily="@font/quicksand_bold"
+            android:text="Borrow"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/view_status" />
