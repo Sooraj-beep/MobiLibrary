@@ -25,7 +25,6 @@ public class SignUp extends AppCompatActivity {
     private EditText inputPhone;
     private EditText inputPassword;
     private EditText inputConfirmPassword;
-    private Button signUp;
 
     /**
      * Defines UI and sets up listeners
@@ -49,7 +48,7 @@ public class SignUp extends AppCompatActivity {
         inputPhone = findViewById(R.id.edit_phoneNo);
         inputPassword = findViewById(R.id.edit_password);
         inputConfirmPassword = findViewById(R.id.edit_password2);
-        signUp = findViewById(R.id.sign_up);
+        Button signUp = findViewById(R.id.sign_up);
 
         signUp.setOnClickListener(new View.OnClickListener(){
             @Override

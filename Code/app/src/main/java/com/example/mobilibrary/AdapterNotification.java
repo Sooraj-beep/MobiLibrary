@@ -7,10 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.ColorSpace;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,21 +20,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mobilibrary.Activity.ProfileActivity;
 import com.example.mobilibrary.DatabaseController.User;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.zxing.oned.ITFReader;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -182,7 +174,7 @@ public class AdapterNotification extends RecyclerView.Adapter<AdapterNotificatio
                                     Double dLongitude = new Double(longitude.toString());
 
                                     //leads to a map with the location of the book
-                                    Intent mapIntent = new Intent(context, bookMap.class);
+                                    Intent mapIntent = new Intent(context, meetMap.class);
                                     Bundle b = new Bundle();
                                     b.putDouble("latitude", dLatitude);
                                     b.putDouble("longitude", dLongitude);
@@ -231,7 +223,7 @@ public class AdapterNotification extends RecyclerView.Adapter<AdapterNotificatio
                                     Double dLongitude = new Double(longitude.toString());
 
                                     //leads to a map with the location of the book
-                                    Intent mapIntent = new Intent(context, bookMap.class);
+                                    Intent mapIntent = new Intent(context, meetMap.class);
                                     Bundle b = new Bundle();
                                     b.putDouble("latitude", dLatitude);
                                     b.putDouble("longitude", dLongitude);

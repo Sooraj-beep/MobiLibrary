@@ -8,7 +8,7 @@ import java.io.Serializable;
  * @author Sooraj;
  * Class for Book objects.
  */
-public class Book implements Serializable, Comparable<Book> {
+public class Book implements Serializable {
     private String firestoreID;
     private static int nextID = 0;
     private String title;
@@ -16,13 +16,10 @@ public class Book implements Serializable, Comparable<Book> {
     private String author;
     private String status;
     private User owner;
-    // location variable?
     private String imageId;
-    private int id;
 
    public Book(String title, String ISBN, String author, String status, String image, User user){
         this.firestoreID = null;
-        this.id = nextID;
         this.title = title;
         this.ISBN = ISBN;
         this.author = author;
@@ -40,10 +37,6 @@ public class Book implements Serializable, Comparable<Book> {
         this.status = status;
         this.imageId = imageId;
         this.owner = user;
-    }
-
-    public int getId() {
-        return id;
     }
 
     public String getTitle() {
@@ -100,21 +93,5 @@ public class Book implements Serializable, Comparable<Book> {
 
     public void setFirestoreID(String firestoreID) {
         this.firestoreID = firestoreID;
-    }
-
-    /**
-     * Compares a book the book passed in the parameter by comparing their IDs,
-     * if they are the same return 0, otherwise return 1
-     * @param book
-     * @return int value, 0 if the books are the same, 1 otherwise
-     */
-    @Override
-    public int compareTo(Book book){
-        if (this.id == book.getId()){
-            return 0;
-        }
-        else {
-            return 1;
-        }
     }
 }

@@ -101,10 +101,7 @@ public class BookDetailsFragment extends AppCompatActivity {
     private RequestService requestService;
     private Context context;
     private RequestQueue mRequestQueue;
-    private CurrentUser currentUser;
 
-    private Button detailsBtn;
-    private Button requestsBtn;
     private Button requestedButton;
     private Button requestButton;
     private Button receiveButton;
@@ -131,8 +128,8 @@ public class BookDetailsFragment extends AppCompatActivity {
         ImageButton editButton = findViewById(R.id.edit_button);
         FloatingActionButton deleteButton = findViewById(R.id.delete_button);
         photo = findViewById(R.id.imageView);
-        detailsBtn = findViewById(R.id.detailsBtn);
-        requestsBtn = findViewById(R.id.reqBtn);
+        Button detailsBtn = findViewById(R.id.detailsBtn);
+        Button requestsBtn = findViewById(R.id.reqBtn);
         reqView = findViewById(R.id.reqList);
         requestList = new ArrayList<>();
 
@@ -173,7 +170,7 @@ public class BookDetailsFragment extends AppCompatActivity {
         convertImage(viewBook.getFirestoreID());
 
         //get current user name and book owners name, check if they match
-        currentUser = CurrentUser.getInstance();
+        CurrentUser currentUser = CurrentUser.getInstance();
         String userName = currentUser.getCurrentUser().getUsername();
         String bookOwner = viewBook.getOwner().getUsername();
         System.out.println(userName);

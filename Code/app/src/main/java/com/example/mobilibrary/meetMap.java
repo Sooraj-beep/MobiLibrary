@@ -29,11 +29,11 @@ import java.util.Map;
  * When book is borrowed, both the other and the borrower will be able to see location
  * Confirm button will return to previous screen
  */
-public class bookMap extends FragmentActivity implements OnMapReadyCallback {
+public class meetMap extends FragmentActivity implements OnMapReadyCallback {
     private LatLng bookLatLng;
 
     private String TAG = "bookMap";
-    private static FirebaseFirestore db;
+    private FirebaseFirestore db;
 
     /**
      * Used to create the map and set the marker
