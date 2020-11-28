@@ -1,14 +1,11 @@
 package com.example.mobilibrary;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -17,11 +14,9 @@ import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
@@ -30,7 +25,6 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
@@ -75,9 +69,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import java.util.HashMap;
-
-import java.util.Objects;
-
 
 /**
  * @author Natalia, Nguyen;
@@ -818,6 +809,16 @@ public class BookDetailsFragment extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Adds a notification to the user collection in cloud firestore, so that it can be added to the
+     * notification fragment for the specific user
+     *
+     * @param otherUser
+     * @param user
+     * @param notification
+     * @param type
+     * @param fireStoreID
+     */
     private void addToNotifications(String otherUser, String user, String notification, String type, String fireStoreID){
 
         HashMap<Object, String> hashMap = new HashMap<>();

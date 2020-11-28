@@ -5,13 +5,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.example.mobilibrary.DatabaseController.User;
-import com.example.mobilibrary.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 /**
@@ -43,6 +40,9 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Used to create the navigation view at the bottom (with three different menu items)
+     */
     private BottomNavigationView.OnNavigationItemSelectedListener bottomNavMethod = new
             BottomNavigationView.OnNavigationItemSelectedListener() {
                 @Override

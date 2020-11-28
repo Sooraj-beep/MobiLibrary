@@ -1,12 +1,9 @@
 package com.example.mobilibrary;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -15,20 +12,15 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author Kimberly;
- * When book is borrowed, both the other and the borrower will be able to see location
- * Confirm button will return to previous screen
+ * When book is borrowed (or being returned), both the other and the borrower will be able to
+ * see location of meeting spot. Confirm button will return to previous screen
  */
+
 public class meetMap extends FragmentActivity implements OnMapReadyCallback {
     private LatLng bookLatLng;
 
