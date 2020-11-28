@@ -217,24 +217,30 @@ public class BookDetailsFragment extends AppCompatActivity {
                     db = FirebaseFirestore.getInstance();
                     //CollectionReference requestsRef = db.collection("Requests");
                     requestsRef = db.collection("Requests");
-                    System.out.println("Got collection reference");
                     Query query = requestsRef.whereEqualTo("bookID", viewBook.getFirestoreID());
                     query.get()
                             .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                 @Override
                                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                     if (task.isSuccessful()) {
-                                        requestors.clear();
+                                        //requestors.clear();
                                         alreadyRequested[0] = false;
                                         for (QueryDocumentSnapshot document : task.getResult()) {
-                                            System.out.println("In query document snapshot: " + document.getData());
-                                            requestors.add(document.getData().toString());
+                                            //requestors.add(document.getData().toString());
+                                            //System.out.println("REQUESTORS: " + requestors);
                                             String bookRequester = document.getString("requester");
-                                            //if requester is equal to user then show requested button and exit
+                                            System.out.println("REQUESTOR: " + bookRequester);
+                                            //if requestor is equal to user then show requested button and exit
                                             if (bookRequester.equals(getUsername())) {
+                                                System.out.println("User already requested this book");
                                                 alreadyRequested[0] = true;
+                                                requestButton.setVisibility(View.INVISIBLE);
                                                 requestedButton.setVisibility(View.VISIBLE);
                                                 return;
+                                            }
+                                            else {
+                                                System.out.println("Has not requested this book");
+                                                requestButton.setVisibility(View.VISIBLE);
                                             }
 
                                         }
@@ -244,13 +250,13 @@ public class BookDetailsFragment extends AppCompatActivity {
                             });
 
                     if (alreadyRequested[0] == false) {
+                        System.out.println("User has not requested this book before");
                         requestButton.setVisibility(View.VISIBLE);
                     }
 
                 }else {
                     requestButton.setVisibility(View.VISIBLE);
                 }
-                //requestButton.setVisibility(View.VISIBLE);
 
             }
             else if (viewBook.getStatus().equals("borrowed")){
