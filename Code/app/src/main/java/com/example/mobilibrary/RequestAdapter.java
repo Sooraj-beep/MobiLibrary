@@ -42,7 +42,11 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.MyViewHo
     private RequestService requestService;
     private User user;
 
-
+    /**
+     *
+     * @param context
+     * @param requests
+     */
     public RequestAdapter(Context context, ArrayList<aRequest> requests) {
         this.mContext = context;
         this.mRequests = requests;
@@ -50,7 +54,12 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.MyViewHo
 
     }
 
-    // Create new views (invoked by the layout manager)
+    /**
+     * Create new views (invoked by the layout manager)
+     * @param parent ViewGrou[
+     * @param viewType Int type
+     * @return
+     */
     @NonNull
     @Override
     public RequestAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -61,7 +70,11 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.MyViewHo
         return vh;
     }
 
-    // Replace the contents of a view (invoked by the layout manager)
+    /**
+     * Replace the contents of a view (invoked by the layout manager)
+     * @param holder the viewHolder we bind the data on
+     * @param position global position
+     */
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         // get element from your dataset at this position
@@ -184,7 +197,10 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.MyViewHo
 
     }
 
-
+    /**
+     * This method overrides the default one with the list's count
+     * @return 0 if the list is null , or total number of requests in the data set held by the adapter
+     */
     @Override
     public int getItemCount() {
         return (mRequests == null) ? 0 : mRequests.size();
