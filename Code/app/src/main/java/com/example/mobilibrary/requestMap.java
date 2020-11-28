@@ -54,7 +54,7 @@ public class requestMap extends FragmentActivity implements OnMapReadyCallback{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_map);
+        setContentView(R.layout.activity_request_map);
 
         Intent intent = getIntent();
         String bookID = intent.getExtras().getString("bookID");
