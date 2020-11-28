@@ -16,6 +16,8 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+import java.security.SecureRandom;
+
 import static org.junit.Assert.assertTrue;
 
 public class SignUpTest {
@@ -26,6 +28,17 @@ public class SignUpTest {
     private EditText phoneField;
     private EditText passField;
     private EditText confirmField;
+
+    static final String AB = "abcdefghijklmnopqrstuvwxyz0123456789";
+    static SecureRandom rnd = new SecureRandom();
+
+    private String getNewUsername(){
+        StringBuilder stringBuilder = new StringBuilder(7);
+        for (int i = 0; i < 7; i++)
+            stringBuilder.append(AB.charAt(rnd.nextInt(AB.length())));
+        return "n" + stringBuilder.toString();
+
+    }
 
     @Rule
     public ActivityTestRule<SignUp> rule = new ActivityTestRule<>(SignUp.class, true, true);
@@ -52,8 +65,9 @@ public class SignUpTest {
         solo.assertCurrentActivity("Wrong Activity", SignUp.class);
         //Enter inputs
         solo.enterText(nameField, "Test User");
-        solo.enterText(usernameField, "test_user");
-        solo.enterText(emailField, "testuser@gmail.com");
+        String newUser = getNewUsername();
+        solo.enterText(usernameField, newUser);
+        solo.enterText(emailField, newUser + "@gmail.com");
         solo.enterText(phoneField, "7801112222");
         solo.enterText(passField, "testpass");
         solo.enterText(confirmField, "testpass");
@@ -76,22 +90,23 @@ public class SignUpTest {
         solo.assertCurrentActivity("Wrong Activity", SignUp.class);
         //Enter inputs
         solo.enterText(nameField, "New User");
-        solo.enterText(usernameField, "new_user");
-        solo.enterText(emailField, "newuser@gmail.com");
+        String newUser = getNewUsername();
+        solo.enterText(usernameField, newUser);
+        solo.enterText(emailField, newUser + "@gmail.com");
         solo.enterText(phoneField, "7801118888");
         solo.enterText(passField, "testpass");
         solo.enterText(confirmField, "testpass");
         //Select Sign Up button
         solo.clickOnButton("Sign Up");
         //Clear the EditTexts
-        //solo.clearEditText(nameField);
-        //solo.clearEditText(usernameField);
-        //solo.clearEditText(emailField);
-        //solo.clearEditText(phoneField);
-        //solo.clearEditText(passField);
-        //solo.clearEditText(confirmField);
+        solo.clearEditText(nameField);
+        solo.clearEditText(usernameField);
+        solo.clearEditText(emailField);
+        solo.clearEditText(phoneField);
+        solo.clearEditText(passField);
+        solo.clearEditText(confirmField);
         //Check for current activity
-        //assertTrue(solo.waitForText("Loading",1, 1000));
+        assertTrue(solo.waitForText("Loading",1, 1000));
         solo.waitForActivity(LogIn.class);
         solo.assertCurrentActivity("Wrong activity", LogIn.class);
     }
