@@ -143,7 +143,6 @@ public class meetMap extends FragmentActivity implements OnMapReadyCallback {
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        System.out.println("IN ONMAP LATLANG: " + bookLatLng);
         if (bookLatLng == null) {
             return;
         } else {

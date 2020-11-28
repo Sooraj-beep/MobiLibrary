@@ -212,6 +212,7 @@ public class BookDetailsFragment extends AppCompatActivity {
             requestsBtn.setVisibility(View.GONE);
             reqView.setVisibility(View.GONE);
 
+            System.out.println("LOOKING AT OTHERS BOOK");
             // determine status of book based on whether there is a borrower yet or not
             db.collection("Books").document(viewBook.getFirestoreID()).get()
                     .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -234,7 +235,6 @@ public class BookDetailsFragment extends AppCompatActivity {
                                     }
                                 } else {
                                     //if book is available or has requests (and also make sure user hasn't requested it before) display request button
-
                                     //check is user has requested this book before
                                     if (viewBook.getStatus().equals("requested")) {
                                         //get all requesting users
@@ -259,6 +259,7 @@ public class BookDetailsFragment extends AppCompatActivity {
                                                                 //if requester is equal to user then show requested button and exit
                                                                 if (bookRequester.equals(getUsername())) {
                                                                     alreadyRequested[0] = true;
+                                                                    //requestButton.setVisibility(View.INVISIBLE);
                                                                     requestedButton.setVisibility(View.VISIBLE);
                                                                     return;
                                                                 }
