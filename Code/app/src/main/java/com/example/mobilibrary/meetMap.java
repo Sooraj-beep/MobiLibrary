@@ -1,5 +1,6 @@
 package com.example.mobilibrary;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 
 import android.content.Intent;
@@ -14,11 +15,16 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.Objects;
 
 
 /**
@@ -33,6 +39,7 @@ public class meetMap extends FragmentActivity implements OnMapReadyCallback {
     private String TAG = "bookMap";
     private FirebaseFirestore db;
     private String bookDetails = null;
+    private String bookOwner = null;
     private int type;
 
     /**
@@ -51,6 +58,7 @@ public class meetMap extends FragmentActivity implements OnMapReadyCallback {
         type = b.getInt("type");
         if(type == 3 || type == 5) {
             bookDetails = b.getString("bookFSID");
+            bookOwner = b.getString("bookOwner");
         }
         bookLatLng = new LatLng(latitude, longitude);
 
@@ -66,21 +74,105 @@ public class meetMap extends FragmentActivity implements OnMapReadyCallback {
             @Override
             public void onClick(View v) {
                 if((type == 3) || (type == 5)){
-                    db.collection("Books").document(bookDetails).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+
+                    final FirebaseFirestore db = FirebaseFirestore.getInstance();
+                    DocumentReference docRef = db.collection("Users").document(bookOwner);
+                    docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         @Override
-                        public void onSuccess(DocumentSnapshot documentSnapshot) {
-                            String author = documentSnapshot.getString("Author");
-                            String ISBN = documentSnapshot.getString("ISBN");
-                            User bookOwner = (User) documentSnapshot.get("User");
-                            String status = documentSnapshot.getString("Status");
-                            String title = documentSnapshot.getString("Title");
-                            String imageId = documentSnapshot.getString("imageId");
-                            Book newBook = new Book(title,ISBN,author,status,imageId,bookOwner);
-                            Intent viewBook = new Intent(meetMap.this, BookDetailsFragment.class);
-                            viewBook.putExtra("view book", newBook);
-                            (meetMap.this).startActivity(viewBook);
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            DocumentSnapshot document = task.getResult();
+                            System.out.println("GOT USER DOCUMENT");
+                            String username = Objects.requireNonNull(document.get("username")).toString();
+                            String email = Objects.requireNonNull(document.get("email")).toString();
+                            String name = Objects.requireNonNull(document.get("name")).toString();
+                            String phoneNo = Objects.requireNonNull(document.get("phoneNo")).toString();
+
+                            User user = new User(username, email, name, phoneNo);
+                            System.out.println("CREATED NEW USER");
+                            initIntent(user);
                         }
+                        public void initIntent(User user){
+                            //get the book details of currently clicked item
+                            final FirebaseFirestore db = FirebaseFirestore.getInstance();
+                            DocumentReference docRef = db.collection("Books").document(bookDetails);
+                            docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                    DocumentSnapshot document = task.getResult();
+                                    String title = Objects.requireNonNull(document.get("Title")).toString();
+                                    String isbn = Objects.requireNonNull(document.get("ISBN")).toString();
+                                    String author = Objects.requireNonNull(document.get("Author")).toString();
+                                    String status = Objects.requireNonNull(document.get("Status")).toString();
+                                    //String image = Objects.requireNonNull(document.get("imageID")).toString();
+                                    String image;
+                                    try {
+                                        image = Objects.requireNonNull(document.get("imageID")).toString();
+                                    }
+                                    catch(Exception e) {
+                                        image = "";
+                                    }
+
+                                    System.out.println("CREATED NEW BOOK");
+                                    Book clickedBook = new Book(bookDetails, title, isbn, author, status, image, user);
+                                    Intent viewBook = new Intent(meetMap.this, BookDetailsFragment.class);
+                                    viewBook.putExtra("view book", clickedBook);
+                                    meetMap.this.startActivity(viewBook);
+
+                                }
+                            });
+
+                        }
+
                     });
+
+
+
+
+                    /*final FirebaseFirestore db = FirebaseFirestore.getInstance();
+                    DocumentReference docRef = db.collection("Books").document(bookDetails);
+                    docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            DocumentSnapshot document = task.getResult();
+                            String author = document.getString("Author");
+                            String ISBN = document.getString("ISBN");
+                            //User bookOwner = (User) document.get("User");
+                            String bookOwner = document.getString("User");
+                            String status = document.getString("Status");
+                            String title = document.getString("Title");
+                            String imageId = document.getString("imageId");
+
+                            initIntent(title, ISBN, author, status, imageId, bookOwner);
+                            //Book newBook = new Book(title,ISBN,author,status,imageId,bookOwner);
+                            //Intent viewBook = new Intent(meetMap.this, BookDetailsFragment.class);
+                            //viewBook.putExtra("view book", newBook);
+                            //(meetMap.this).startActivity(viewBook);
+                        }
+
+                        private void initIntent(String title, String isbn, String author, String status, String imageId, String bookOwner) {
+                            //get user object
+                            final FirebaseFirestore db = FirebaseFirestore.getInstance();
+                            DocumentReference docRef = db.collection("Users").document(bookOwner);
+                            docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                    DocumentSnapshot document = task.getResult();
+                                    String username = document.get("username").toString();
+                                    String email = document.get("email").toString();
+                                    String name = document.get("name").toString();
+                                    String phoneNo = document.get("phoneNo").toString();
+
+                                    User user = new User(username, email, name, phoneNo);
+                                    Book newBook = new Book(title,isbn,author,status,imageId,user);
+                                    Intent viewBook = new Intent(meetMap.this, BookDetailsFragment.class);
+                                    viewBook.putExtra("view book", newBook);
+                                    (meetMap.this).startActivity(viewBook);
+
+                                }
+                            });
+                        }
+
+                    });*/
                 } else {
                     finish();
                 }
