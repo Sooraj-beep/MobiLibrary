@@ -75,11 +75,11 @@ public class HandoverService {
         return batch.commit();
     }
 
-    public static Task<Void> borrowBook(aRequest request){
+    public static Task<Void> borrowBook(aRequest borrowRequest){
         WriteBatch batch = db.batch();
 
         DocumentReference bookDoc = db.collection("Books")
-                .document(request.getBookID());
+                .document(borrowRequest.getBookID());
 
         Map<String, Object> updates = new HashMap<>();
         //remove AcceptedTo field as book has been borrowed
@@ -91,11 +91,11 @@ public class HandoverService {
         return batch.commit();
     }
 
-    public static Task<Void> receiveBook(aRequest request){
+    public static Task<Void> receiveBook(aRequest receiveRequest){
         WriteBatch batch = db.batch();
 
         DocumentReference bookDoc = db.collection("Books")
-                .document(request.getBookID());
+                .document(receiveRequest.getBookID());
 
         Map<String, Object> newData = new HashMap<>();
         // Borrower field is deleted as book is back with owner
@@ -105,11 +105,11 @@ public class HandoverService {
         return batch.commit();
     }
 
-    public static Task<Void> returnBook(aRequest request){
+    public static Task<Void> returnBook(aRequest returnRequest){
         WriteBatch batch = db.batch();
 
         DocumentReference bookDoc = db.collection("Books")
-                .document(request.getBookID());
+                .document(returnRequest.getBookID());
 
         // change status to indicate handover
         batch.update(bookDoc, "Status", "available");
