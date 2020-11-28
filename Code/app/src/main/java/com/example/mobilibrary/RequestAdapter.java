@@ -31,6 +31,8 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 /**
  * @author Nguyen, Jill;
  * This is a request adapter to display all the requests grabbed from Firestore,
@@ -141,8 +143,10 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.MyViewHo
                 //send declined notification
                 String requestor = mRequests.get(position).getRequester();
                 String fireStoreID = mRequests.get(position).getBookID();
-                //get book title and owner
                 final FirebaseFirestore db = FirebaseFirestore.getInstance();
+                boolean declineAll = false;
+                //
+                //get book title and owner
                 DocumentReference docRef = db.collection("Books").document(fireStoreID);
                 docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
@@ -181,7 +185,10 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.MyViewHo
 
 
                 });
-                RequestService.decline(mRequests.get(position).getID())
+                if (mRequests.size() == 1){
+                    declineAll = true;
+                }
+                RequestService.decline(mRequests.get(position), declineAll)
                         .addOnCompleteListener(task -> {
                             if (task.isSuccessful()) {
                                 Toast.makeText(mContext, "Succesfully declined request", Toast.LENGTH_SHORT).show();
