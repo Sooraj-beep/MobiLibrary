@@ -2,6 +2,8 @@ package com.example.mobilibrary;
 
 /**
  * @author Chloe;
+ * Used as the model for how the notifications will appear (who it's from and
+ * what notification it corresponds to ex. requested)
  */
 public class ModelNotification {
 
@@ -13,7 +15,6 @@ public class ModelNotification {
 
     //empty constructor is required for firebase
     public ModelNotification() {
-
     }
 
     public ModelNotification(String otherUser, String user, String notification, String type, String bookFSID) {
@@ -22,7 +23,6 @@ public class ModelNotification {
         this.notification = notification;
         this.type = type;
         this.bookFSID = bookFSID;
-
     }
 
     public String getOtherUser() {

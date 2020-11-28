@@ -3,23 +3,13 @@ package com.example.mobilibrary.DatabaseController;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.telecom.Call;
-import android.util.Base64;
-import android.util.EventLog;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.example.mobilibrary.Activity.LogIn;
-import com.example.mobilibrary.Activity.ProfileActivity;
-import com.example.mobilibrary.Activity.SignUp;
 import com.example.mobilibrary.Callback;
-import com.example.mobilibrary.DatabaseController.User;
-import com.example.mobilibrary.MainActivity;
-import com.google.android.gms.common.api.Batch;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -28,26 +18,15 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.EmailAuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
-import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.Executor;
-
-import static com.google.firebase.firestore.DocumentChange.Type.MODIFIED;
-import static com.google.firebase.firestore.DocumentChange.Type.REMOVED;
 
 /**
  * @author Nguyen, Jill;

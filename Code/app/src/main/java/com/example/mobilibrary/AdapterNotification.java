@@ -313,9 +313,9 @@ public class AdapterNotification extends RecyclerView.Adapter<AdapterNotificatio
         return notificationsList.size();
     }
 
-
-    //Create viewholder classes for each type of notificiation
-
+    /**
+     * Create viewholder classes for each type of notificiation
+     */
     class HolderNotification extends RecyclerView.ViewHolder {
 
         CircleImageView profilePic;

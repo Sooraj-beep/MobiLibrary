@@ -36,8 +36,9 @@ import java.util.Map;
 
 /**
  * @author Kimberly;
- * Can search map to find a location (to meet for request) when owner accepts book
- * Confirm will save location in Firestore
+ * Can search map to find a location (to meet for request or return) when owner accepts book
+ * or borrower wants to return book. Confirm will save location in Firestore and return to
+ * previous screen
  */
 public class requestMap extends FragmentActivity implements OnMapReadyCallback{
     private LatLng newLatLng;
@@ -54,7 +55,7 @@ public class requestMap extends FragmentActivity implements OnMapReadyCallback{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_map);
+        setContentView(R.layout.activity_request_map);
 
         Intent intent = getIntent();
         String bookID = intent.getExtras().getString("bookID");
@@ -190,10 +191,6 @@ public class requestMap extends FragmentActivity implements OnMapReadyCallback{
                         }
 
                     });
-
-
-
-
                     finish();
                 } else {
                     Toast.makeText(requestMap.this, "Please search for a location", Toast.LENGTH_SHORT).show();
@@ -203,9 +200,7 @@ public class requestMap extends FragmentActivity implements OnMapReadyCallback{
     }
 
     /**
-     * When the map is ready on start or is updated (from the search bar). This will
-     * change the map on change when it's ready
-     *
+     * When the map is ready on start, this function will set it up
      * @param googleMap
      */
     @Override

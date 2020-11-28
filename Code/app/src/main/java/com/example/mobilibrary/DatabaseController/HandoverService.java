@@ -1,41 +1,13 @@
 package com.example.mobilibrary.DatabaseController;
 
-import android.app.DownloadManager;
-import android.content.Context;
-import android.content.Intent;
-import android.util.Log;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-import com.example.mobilibrary.Book;
-import com.google.android.gms.tasks.Continuation;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.TaskCompletionSource;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.ListenerRegistration;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
 
-import java.time.chrono.IsoChronology;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * @author Natalia
@@ -75,11 +47,11 @@ public class HandoverService {
         return batch.commit();
     }
 
-    public static Task<Void> borrowBook(aRequest request){
+    public static Task<Void> borrowBook(aRequest borrowRequest){
         WriteBatch batch = db.batch();
 
         DocumentReference bookDoc = db.collection("Books")
-                .document(request.getBookID());
+                .document(borrowRequest.getBookID());
 
         Map<String, Object> updates = new HashMap<>();
         //remove AcceptedTo field as book has been borrowed
@@ -91,11 +63,11 @@ public class HandoverService {
         return batch.commit();
     }
 
-    public static Task<Void> receiveBook(aRequest request){
+    public static Task<Void> receiveBook(aRequest receiveRequest){
         WriteBatch batch = db.batch();
 
         DocumentReference bookDoc = db.collection("Books")
-                .document(request.getBookID());
+                .document(receiveRequest.getBookID());
 
         Map<String, Object> newData = new HashMap<>();
         // Borrower field is deleted as book is back with owner
@@ -105,11 +77,11 @@ public class HandoverService {
         return batch.commit();
     }
 
-    public static Task<Void> returnBook(aRequest request){
+    public static Task<Void> returnBook(aRequest returnRequest){
         WriteBatch batch = db.batch();
 
         DocumentReference bookDoc = db.collection("Books")
-                .document(request.getBookID());
+                .document(returnRequest.getBookID());
 
         // change status to indicate handover
         batch.update(bookDoc, "Status", "available");
