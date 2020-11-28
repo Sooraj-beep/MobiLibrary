@@ -2,7 +2,6 @@ package com.example.mobilibrary;
 
 import androidx.fragment.app.FragmentActivity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 
@@ -37,7 +36,6 @@ public class meetMap extends FragmentActivity implements OnMapReadyCallback {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_map);
 
-        Intent intent = getIntent();
         Bundle b = getIntent().getExtras();
         double latitude = b.getDouble("latitude");
         double longitude = b.getDouble("longitude");

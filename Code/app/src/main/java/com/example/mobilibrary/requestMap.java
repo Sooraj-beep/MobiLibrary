@@ -112,7 +112,6 @@ public class requestMap extends FragmentActivity implements OnMapReadyCallback{
                     db = FirebaseFirestore.getInstance();
                     WriteBatch batch = db.batch();
 
-                    //assert request != null;
                     assert bookID != null;
                     DocumentReference bookDoc = db.collection("Books")
                             .document(bookID);
