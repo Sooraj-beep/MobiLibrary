@@ -2,12 +2,8 @@ package com.example.mobilibrary.Activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.Matrix;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
@@ -19,7 +15,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mobilibrary.Callback;
@@ -29,8 +24,6 @@ import com.example.mobilibrary.R;
 import com.example.mobilibrary.reAuthFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +36,6 @@ import java.util.List;
 public class ProfileActivity extends AppCompatActivity implements reAuthFragment.OnFragmentInteractionListener {
 
     private ImageButton editButton;
-    //private FloatingActionButton editProfileImage;
     private TextView usernameText;
     private TextView emailText;
     private TextView phoneText;

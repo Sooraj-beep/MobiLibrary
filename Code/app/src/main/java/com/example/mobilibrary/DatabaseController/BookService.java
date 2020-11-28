@@ -1,6 +1,5 @@
 package com.example.mobilibrary.DatabaseController;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -17,11 +16,9 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.Blob;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -32,9 +29,7 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author Nguyen, Kimberly;
@@ -208,6 +203,13 @@ public class BookService {
                 });
     }
 
+    /**
+     * Changes the status when anything new happens, general class that takes in the
+     * new status and changes the status variable in the book
+     * @param context
+     * @param book
+     * @param newStatus
+     */
     public void changeStatus(Context context, final Book book, final String newStatus){
         System.out.println("Book title clicked is: " + book.getTitle());
         //Map<String, Object> data = new HashMap<>();

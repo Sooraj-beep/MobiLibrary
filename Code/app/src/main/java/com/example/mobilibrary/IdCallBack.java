@@ -1,7 +1,8 @@
 package com.example.mobilibrary;
 
 /**
- * Used to return the ID from an asynchronous task
+ * @author Kimberly;
+ * Used for returning a Id of the image for the asyncronous task in AddBookFragment
  */
 // Callback used for images
 public interface  IdCallBack {

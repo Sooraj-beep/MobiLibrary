@@ -6,7 +6,6 @@ import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,19 +15,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.mobilibrary.DatabaseController.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.Blob;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-
-import org.w3c.dom.Text;
 
 import java.util.List;
 import java.util.Objects;
 
 /**
- * @author ;
- *
+ * @author Nyugen;
+ * used as an adaptor for the bookList on myBooks (all current users books).
  */
 public class BookListAdaptor extends RecyclerView.Adapter<BookListAdaptor.MyViewHolder> {
 

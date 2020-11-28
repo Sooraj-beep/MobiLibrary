@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.Spinner;
 
 import androidx.annotation.Nullable;
@@ -19,21 +18,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.mobilibrary.DatabaseController.DatabaseHelper;
 import com.example.mobilibrary.DatabaseController.RequestService;
 import com.example.mobilibrary.DatabaseController.User;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 
@@ -111,7 +104,8 @@ public class MyBooksFragment extends Fragment {
      * Used to fill bookList with firestore items, will get the information from the current User
      * Call back and use it to instantiate a new book object from the firestore information and add
      * it to the bookList (clears it in case we have new items and want to count them) and updates
-     * adapter
+     * adapter. As well as added a spinned functions (which lets you filter your books based on
+     * status)
      */
     public void updateBookList() {
         CurrentUser bookUser = CurrentUser.getInstance();

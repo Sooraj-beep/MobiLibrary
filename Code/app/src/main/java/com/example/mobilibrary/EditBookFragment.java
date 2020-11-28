@@ -38,7 +38,6 @@ import com.android.volley.toolbox.Volley;
 import com.example.mobilibrary.DatabaseController.BookService;
 import com.example.mobilibrary.DatabaseController.User;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -212,6 +211,12 @@ public class EditBookFragment extends AppCompatActivity {
         });
     }
 
+    /**
+     * Used to convert an image bitmap to a string so it can be stored
+     * in firrestore
+     *
+     * @return temp string
+     */
     private String convertBitmap() {
         ByteArrayOutputStream baos=new ByteArrayOutputStream();
         imageBitMap.compress(Bitmap.CompressFormat.PNG,100, baos);
@@ -220,6 +225,11 @@ public class EditBookFragment extends AppCompatActivity {
         return temp;
     }
 
+    /**
+     * If book image is deleted, we removed it from firebase storage
+     * since it no longer exists (but only if confirm is pressed).
+     * @param book
+     */
     private void deleteImageRef(Book book) {
         StorageReference storageReference = FirebaseStorage.getInstance().getReference();
         storageReference.child("books/" + book.getFirestoreID() + ".jpg").delete()
@@ -232,6 +242,11 @@ public class EditBookFragment extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Used to convert to get an image bitmap from firebase storage (using
+     * the firestore id of the book) and setting the image to that
+     * @param imageId
+     */
     private void convertImage(String imageId) {
         final long ONE_MEGABYTE = 1024 * 1024;
         StorageReference storageRef = FirebaseStorage.getInstance().getReference();
