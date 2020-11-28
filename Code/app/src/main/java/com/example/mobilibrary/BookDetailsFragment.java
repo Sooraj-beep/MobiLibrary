@@ -91,7 +91,6 @@ public class BookDetailsFragment extends AppCompatActivity {
     private TextView author;
     private TextView owner;
     private TextView ISBN;
-    private TextView status;
     private TextView[] requestAssets;
     private ImageView photo;
 
@@ -103,7 +102,6 @@ public class BookDetailsFragment extends AppCompatActivity {
     private FirebaseFirestore db;
     private BookService bookService;
     private RequestService requestService;
-    private HandoverService handoverService;
     private Context context;
     private RequestQueue mRequestQueue;
 
@@ -113,9 +111,6 @@ public class BookDetailsFragment extends AppCompatActivity {
     private Button borrowButton;
     private Button returnButton;
     private Button receiveButton;
-    private FloatingActionButton backButton;
-    private ImageButton editButton;
-    private FloatingActionButton deleteButton;
 
     private boolean checkTitle = false;
     private boolean checkAuthor = false;
@@ -134,11 +129,11 @@ public class BookDetailsFragment extends AppCompatActivity {
         title =  findViewById(R.id.view_title);
         author = findViewById(R.id.view_author);
         owner = findViewById(R.id.view_owner);
-        status = findViewById(R.id.view_status);
+        TextView status = findViewById(R.id.view_status);
         ISBN = findViewById(R.id.view_isbn);
-        backButton = findViewById(R.id.back_to_books_button);
-        editButton = findViewById(R.id.edit_button);
-        deleteButton = findViewById(R.id.delete_button);
+        FloatingActionButton backButton = findViewById(R.id.back_to_books_button);
+        ImageButton editButton = findViewById(R.id.edit_button);
+        FloatingActionButton deleteButton = findViewById(R.id.delete_button);
         photo = findViewById(R.id.imageView);
         Button detailsBtn = findViewById(R.id.detailsBtn);
         Button requestsBtn = findViewById(R.id.reqBtn);
@@ -163,7 +158,7 @@ public class BookDetailsFragment extends AppCompatActivity {
         // set up firestore instance
         bookService = BookService.getInstance();
         requestService = RequestService.getInstance();
-        handoverService = HandoverService.getInstance();
+        HandoverService handoverService = HandoverService.getInstance();
         context = getApplicationContext();
 
         // set up permissions for scanning intent
