@@ -1,6 +1,7 @@
 package com.example.mobilibrary;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -154,6 +155,7 @@ public class EditBookFragment extends AppCompatActivity {
 
                             // edit book in firestore
                             bookService.editBook(context, book);
+                            System.out.println("book was edited");
 
                             deleteImageRef(book);
                             if(!(nullPhoto())) {
@@ -248,7 +250,7 @@ public class EditBookFragment extends AppCompatActivity {
      * When the Scan Button is pressed the scan activity is initiated
      * @param view the Scan Button
      */
-    private void ScanButton(View view) {
+    public void ScanButton(View view) {
         IntentIntegrator intentIntegrator = new IntentIntegrator(this);
         intentIntegrator.initiateScan();
     }
@@ -304,7 +306,8 @@ public class EditBookFragment extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 2) {
+        if (requestCode == 2 && resultCode == Activity.RESULT_OK) {
+            System.out.println("Photo taken");
             Bitmap book_photo = (Bitmap) data.getExtras().get("data");
             imageBitMap = book_photo;
             photo.setImageBitmap(imageBitMap);
@@ -327,7 +330,7 @@ public class EditBookFragment extends AppCompatActivity {
                     boolean isConnected = isNetworkAvailable();
                     if (!isConnected) {
                         System.out.println("Check Internet Connection");
-                        Toast.makeText(getApplicationContext(), "Please check Internet conncetion", Toast.LENGTH_LONG).show(); //Popup message for user
+                        Toast.makeText(getApplicationContext(), "Please check Internet connection", Toast.LENGTH_LONG).show(); //Popup message for user
                         return;
                     }
 
@@ -368,10 +371,16 @@ public class EditBookFragment extends AppCompatActivity {
                                 JSONArray authors = volumeInfo.getJSONArray("authors");
                                 if (authors.length() == 1) {
                                     editAuthor = authors.getString(0);
-                                } else { //if there are multiple authors
-                                    editAuthor = authors.getString(0) + "," + authors.getString(1);
+                                } else {
+                                    //if there are multiple authors
+                                    int i = 0;
+                                    while(i < authors.length()){
+                                        editAuthor = editAuthor + authors.getString(i) + ", ";
+                                        i++;
+                                    }
+                                    editAuthor = editAuthor.substring(0, editAuthor.length() - 2);
                                 }
-                                System.out.println("author: " + author);
+                                System.out.println("author: " + editAuthor);
                                 author.setText(editAuthor);
 
                             } catch (Exception e) { //the book info in database does not contain a title or author
