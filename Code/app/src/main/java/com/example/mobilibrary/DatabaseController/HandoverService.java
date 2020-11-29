@@ -42,8 +42,8 @@ public class HandoverService {
         Map<String, Object> updates = new HashMap<>();
         //Add the user whose request has been allowed to borrow the book
         updates.put("BorrowedBy", lendRequest.getRequester());
-        updates.put("Status", "borrowed");
         batch.update(bookDoc, updates);
+        batch.update(bookDoc, "Status", "borrowed");
         return batch.commit();
     }
 
@@ -57,8 +57,8 @@ public class HandoverService {
         //remove AcceptedTo field as book has been borrowed
         updates.put("AcceptedTo", FieldValue.delete());
         updates.put("LatLang", FieldValue.delete());
-        updates.put("Status", "borrowed");
         batch.update(bookDoc, updates);
+        batch.update(bookDoc, "Status", "borrowed");
         return batch.commit();
     }
 
@@ -72,8 +72,8 @@ public class HandoverService {
         // Borrower field is deleted as book is back with owner
         updates.put("BorrowedBy", FieldValue.delete());
         updates.put("LatLang", FieldValue.delete());
-        updates.put("Status", "available");
         batch.update(bookDoc, updates);
+        batch.update(bookDoc, "Status", "available");
         return batch.commit();
     }
 
@@ -82,11 +82,9 @@ public class HandoverService {
 
         DocumentReference bookDoc = db.collection("Books")
                 .document(returnRequest.getBookID());
-
-        Map<String, Object> updates = new HashMap<>();
-        updates.put("Status", "available");
+        
         // change status to indicate handover
-        batch.update(bookDoc, updates);
+        batch.update(bookDoc, "Status", "available");
         return batch.commit();
     }
 }

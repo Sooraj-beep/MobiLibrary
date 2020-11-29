@@ -655,7 +655,7 @@ public class BookDetailsFragment extends AppCompatActivity {
                                             if (task.isSuccessful()) {
                                                 if (task.getResult().get("BorrowedBy") != null) {
                                                     // take book back
-                                                    HandoverService.receiveBook(request)
+                                                    handoverService.receiveBook(request)
                                                             .addOnCompleteListener((task1 -> {
                                                                 viewBook.setStatus("available");
                                                                 status.setText(viewBook.getStatus());
@@ -669,7 +669,7 @@ public class BookDetailsFragment extends AppCompatActivity {
                                                 } else if (task.getResult().get("AcceptedTo") != null) {
                                                     // lend book out
                                                     aRequest request2 = new aRequest(task.getResult().getString("AcceptedTo"), bookFSID);
-                                                    HandoverService.lendBook(request2)
+                                                    handoverService.lendBook(request2)
                                                             .addOnCompleteListener((task1 -> {
                                                                 viewBook.setStatus("borrowed");
                                                                 status.setText(viewBook.getStatus());
@@ -695,7 +695,7 @@ public class BookDetailsFragment extends AppCompatActivity {
                                                         // book has been accepted but not yet confirmed by borrower
                                                         if (task.getResult().getString("AcceptedTo").equals(userName)) {
                                                             // borrow book
-                                                            HandoverService.borrowBook(request)
+                                                            handoverService.borrowBook(request)
                                                                     .addOnCompleteListener((task1 -> {
                                                                         viewBook.setStatus("borrowed");
                                                                         status.setText(viewBook.getStatus());
@@ -711,7 +711,7 @@ public class BookDetailsFragment extends AppCompatActivity {
                                                         // book is borrowed and needs to be returned
                                                         if (task.getResult().getString("BorrowedBy").equals(userName)) {
                                                             // return book
-                                                            HandoverService.returnBook(request)
+                                                            handoverService.returnBook(request)
                                                                     .addOnCompleteListener((task2 -> {
                                                                         if (task2.isSuccessful()) {
                                                                             viewBook.setStatus("available");
