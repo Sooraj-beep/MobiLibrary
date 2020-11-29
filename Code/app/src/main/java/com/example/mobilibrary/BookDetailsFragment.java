@@ -104,8 +104,6 @@ public class BookDetailsFragment extends AppCompatActivity {
     private Button returnButton;
     private Button receiveButton;
 
-    private boolean checkTitle = false;
-    private boolean checkAuthor = false;
     private boolean checkISBN = false;
     private String userName;
     private String bookFSID;
@@ -227,13 +225,13 @@ public class BookDetailsFragment extends AppCompatActivity {
                                 if (task.getResult().get("BorrowedBy") != null) {
                                     if (task.getResult().get("AcceptedTo") != null) {
                                         // book has been accepted but not yet confirmed by borrower
-                                        if (task.getResult().getString("AcceptedTo") == userName) {
+                                        if (task.getResult().getString("AcceptedTo").equals(userName)) {
                                             // show button to borrower only
                                             borrowButton.setVisibility(View.VISIBLE);
                                         }
                                     } else {
                                         // book is borrowed and needs to be returned
-                                        if (task.getResult().getString("BorrowedBy") == userName) {
+                                        if (task.getResult().getString("BorrowedBy").equals(userName)) {
                                             // show button to borrower only
                                             returnButton.setVisibility(View.VISIBLE);
                                         }
@@ -645,23 +643,9 @@ public class BookDetailsFragment extends AppCompatActivity {
                         checkISBN = true;
                     }
 
-                    //Check if connected to internet
-                    boolean isConnected = isNetworkAvailable();
-                    if (!isConnected) {
-                        System.out.println("Check Internet Connection");
-                        Toast.makeText(getApplicationContext(), "Please check Internet connection", Toast.LENGTH_LONG).show(); //Popup message for user
-                        return;
-                    }
-
-                    final String url = "https://www.googleapis.com/books/v1/volumes?q=isbn:"; //base url
-                    Uri uri = Uri.parse(url + isbn);
-                    Uri.Builder builder = uri.buildUpon();  // build url with ISBN
-
-                    parseJson(builder.toString()); //get results from webpage
-
                     // if all information matches the book, change book status to returned
-                    if (checkISBN && checkTitle && checkAuthor) {
-                        aRequest request = new aRequest(getUsername(), viewBook.getFirestoreID());
+                    if (checkISBN) {
+                        aRequest request = new aRequest(userName, bookFSID);
                         if (userName.equals(owner.getText().toString())) {
                             // determine status of book based on whether there is a borrower yet or not
                             db.collection("Books").document(bookFSID).get()
@@ -675,6 +659,7 @@ public class BookDetailsFragment extends AppCompatActivity {
                                                     viewBook.setStatus("available");
                                                 } else if (task.getResult().get("AcceptedTo") != null) {
                                                     // lend book out
+                                                    request = new aRequest(task.getResult().getString("AcceptedTo"), bookFSID);
                                                     HandoverService.lendBook(request);
                                                     viewBook.setStatus("borrowed");
                                                 }
@@ -722,82 +707,6 @@ public class BookDetailsFragment extends AppCompatActivity {
                 }
             }
         }
-    }
-
-
-    /**
-     * Given a webpage built from the ISBN, find the book's information and set match information for the book
-     * from the information obtained from the ISBN
-     * @param key webpage url built from the ISBN
-     */
-    private void parseJson(String key) {
-        final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, key.toString(), null,
-                new Response.Listener<JSONObject>() { //volley stuff
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        String matchTitle = "";
-                        String matchAuthor = "";
-
-                        try {
-                            System.out.println("RESPPONSSEEE: " + response);
-
-                            JSONArray items = response.getJSONArray("items");
-                            JSONObject item = items.getJSONObject(0);
-                            JSONObject volumeInfo = item.getJSONObject("volumeInfo");
-
-                            try {
-                                matchTitle = volumeInfo.getString("title");
-                                System.out.println("title: " + matchTitle);
-                                if (title.getText().toString().equals(matchTitle)) {
-                                    checkTitle = true;
-                                }
-
-                                JSONArray authors = volumeInfo.getJSONArray("authors");
-                                if (authors.length() == 1) {
-                                    matchAuthor = authors.getString(0);
-                                } else { //if there are multiple authors
-                                    int i = 0;
-                                    while(i < authors.length()){
-                                        matchAuthor = matchAuthor + authors.getString(i) + ", ";
-                                        i++;
-                                    }
-                                    matchAuthor = matchAuthor.substring(0, matchAuthor.length() - 2);
-                                }
-
-                                if (author.getText().toString().equals(matchAuthor)) {
-                                    checkAuthor = true;
-                                }
-
-                            } catch (Exception e) { //the book info in database does not contain a title or author
-                                if (matchTitle.equals("")) {
-                                    Toast.makeText(getApplicationContext(), "Could not obtain title information", Toast.LENGTH_SHORT).show(); //Popup message for user
-                                } else {
-                                    Toast.makeText(getApplicationContext(), "Could not obtain author information", Toast.LENGTH_SHORT).show(); //Popup message for user
-                                }
-                            }
-
-                        } catch (JSONException e) { //error trying to get database info
-                            Toast.makeText(getApplicationContext(), "Could not obtain book information", Toast.LENGTH_SHORT).show(); //Popup message for user
-                        }
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                error.printStackTrace();
-            }
-        });
-        mRequestQueue.add(request);
-    }
-
-
-    /**
-     * Check if connected to the internet
-     * @return boolean true if connected, false otherwise
-     */
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo info = connectivityManager.getActiveNetworkInfo();
-        return info != null && info.isConnected();
     }
 
 
