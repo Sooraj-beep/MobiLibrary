@@ -39,10 +39,10 @@ public class HandoverService {
         DocumentReference bookDoc = db.collection("Books")
                 .document(lendRequest.getBookID());
 
-        Map<String, Object> newData = new HashMap<>();
+        Map<String, Object> updates = new HashMap<>();
         //Add the user whose request has been allowed to borrow the book
-        newData.put("BorrowedBy", lendRequest.getRequester());
-        batch.update(bookDoc, newData);
+        updates.put("BorrowedBy", lendRequest.getRequester());
+        batch.update(bookDoc, updates);
         batch.update(bookDoc, "Status", "borrowed");
         return batch.commit();
     }
@@ -56,9 +56,8 @@ public class HandoverService {
         Map<String, Object> updates = new HashMap<>();
         //remove AcceptedTo field as book has been borrowed
         updates.put("AcceptedTo", FieldValue.delete());
+        updates.put("LatLang", FieldValue.delete());
         batch.update(bookDoc, updates);
-
-        // update book status to borrowed
         batch.update(bookDoc, "Status", "borrowed");
         return batch.commit();
     }
@@ -69,10 +68,11 @@ public class HandoverService {
         DocumentReference bookDoc = db.collection("Books")
                 .document(receiveRequest.getBookID());
 
-        Map<String, Object> newData = new HashMap<>();
+        Map<String, Object> updates = new HashMap<>();
         // Borrower field is deleted as book is back with owner
-        newData.put("BorrowedBy", FieldValue.delete());
-        batch.update(bookDoc, newData);
+        updates.put("BorrowedBy", FieldValue.delete());
+        updates.put("LatLang", FieldValue.delete());
+        batch.update(bookDoc, updates);
         batch.update(bookDoc, "Status", "available");
         return batch.commit();
     }
@@ -82,7 +82,7 @@ public class HandoverService {
 
         DocumentReference bookDoc = db.collection("Books")
                 .document(returnRequest.getBookID());
-
+        
         // change status to indicate handover
         batch.update(bookDoc, "Status", "available");
         return batch.commit();
