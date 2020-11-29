@@ -49,6 +49,7 @@ public class RequestService {
         DocumentReference bookDoc = db.collection("Books")
                 .document(request.getBookID());
 
+
         Map<String, Object> update = new HashMap<>();
         update.put("Status", "accepted");
         batch.update(bookDoc, update);
@@ -74,23 +75,22 @@ public class RequestService {
 
     public static Task<Void> decline(aRequest request, boolean declineAll) {
         WriteBatch batch = db.batch();
-        System.out.println("declineALL: " + declineAll);
+
         DocumentReference bookDoc = db.collection("Books")
                 .document(request.getBookID());
 
         DocumentReference requestDoc = db.collection("Requests")
                 .document(request.getID());
+        if (declineAll)
+            batch.update(bookDoc, "Status", "available");
 
-        if (declineAll) {
-            System.out.println("decline");
-            Map<String, Object> update = new HashMap<>();
-            update.put("Status", "available");
-            System.out.println("Changed status OK");
-            batch.update(bookDoc, update);
-        }
         batch.delete(requestDoc);
         return batch.commit();
 
     }
 }
+
+
+
+
 

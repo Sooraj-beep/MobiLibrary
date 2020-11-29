@@ -11,6 +11,7 @@ import androidx.test.rule.ActivityTestRule;
 
 import com.example.mobilibrary.Activity.LogIn;
 import com.example.mobilibrary.Activity.ProfileActivity;
+
 import com.example.mobilibrary.Activity.StartActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -55,6 +56,7 @@ public class requestTest {
     @Before
     public void setUp() throws Exception {
         solo = new Solo(InstrumentationRegistry.getInstrumentation(), rule.getActivity());
+
     }
     public void deleteBook() {
         solo.assertCurrentActivity("Wrong Activity!", BookDetailsFragment.class);
@@ -92,16 +94,17 @@ public class requestTest {
         solo.assertCurrentActivity("Wrong Activity!", StartActivity.class);
 
     }
+
     @Test
     public void checkRequestList() {
-        //add books for user 1
-        login(email_1, password_1);
-        solo.clickOnView(solo.getView(R.id.myBooks));
-        addBook(isbn_1);
-        solo.clickOnView(solo.getView(R.id.home));
-        logout();
-
-
+        solo.assertCurrentActivity("Wrong Activity!", StartActivity.class);
+        solo.clickOnButton("Log In");
+        solo.assertCurrentActivity("Wrong Activity!", LogIn.class);
+        solo.enterText((EditText) solo.getView(R.id.email_editText), email_2);
+        solo.enterText((EditText) solo.getView(R.id.password_editText), password_2);
+        solo.clickOnView(solo.getView(R.id.login_button));
+        //solo.waitForActivity(MainActivity.class);
+        solo.assertCurrentActivity("Wrong Activity!", MainActivity.class);
         solo.clickOnText("Great Pacific");
         solo.assertCurrentActivity("Wrong Activity!", BookDetailsFragment.class);
         solo.clickOnButton("Request");

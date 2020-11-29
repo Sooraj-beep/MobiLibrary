@@ -174,71 +174,70 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.MyViewHo
 //            }
 //        });
 
-                        holder.declineButton.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
+        holder.declineButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
-                                //send declined notification
-                                String requestor = mRequests.get(position).getRequester();
-                                String fireStoreID = mRequests.get(position).getBookID();
-                                final FirebaseFirestore db = FirebaseFirestore.getInstance();
-                                boolean declineAll = false;
-                                //
-                                //get book title and owner
-                                DocumentReference docRef = db.collection("Books").document(fireStoreID);
-                                docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                //send declined notification
+                String requestor = mRequests.get(position).getRequester();
+                String fireStoreID = mRequests.get(position).getBookID();
+                final FirebaseFirestore db = FirebaseFirestore.getInstance();
+                boolean declineAll = false;
+                //
+                //get book title and owner
+                DocumentReference docRef = db.collection("Books").document(fireStoreID);
+                docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        DocumentSnapshot document = task.getResult();
+                        String title = document.getString("Title");
+                        String notification = "Has declined your request for: " + title;
+                        String currUser = document.getString("Owner");
+
+                        HashMap<Object, String> hashMap = new HashMap<>();
+                        hashMap.put("otherUser", requestor);
+                        hashMap.put("user", currUser);
+                        hashMap.put("notification", notification);
+                        hashMap.put("type", "2");
+                        hashMap.put("bookFSID", fireStoreID);
+
+                        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+                        db.collection("Users").document(requestor).collection("Notifications").add(hashMap);
+
+                        //delete the notification
+                        db.collection("Users").document(currUser).collection("Notifications")
+                                .whereEqualTo("notification", "Has requested to borrow your book: " + title)
+                                .whereEqualTo("user", requestor)
+                                .get()
+                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                     @Override
-                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                        DocumentSnapshot document = task.getResult();
-                                        String title = document.getString("Title");
-                                        String notification = "Has declined your request for: " + title;
-                                        String currUser = document.getString("Owner");
-
-                                        HashMap<Object, String> hashMap = new HashMap<>();
-                                        hashMap.put("otherUser", requestor);
-                                        hashMap.put("user", currUser);
-                                        hashMap.put("notification", notification);
-                                        hashMap.put("type", "2");
-                                        hashMap.put("bookFSID", fireStoreID);
-
-                                        final FirebaseFirestore db = FirebaseFirestore.getInstance();
-                                        db.collection("Users").document(requestor).collection("Notifications").add(hashMap);
-
-                                        //delete the notification
-                                        db.collection("Users").document(currUser).collection("Notifications")
-                                                .whereEqualTo("notification", "Has requested to borrow your book: " + title)
-                                                .whereEqualTo("user", requestor)
-                                                .get()
-                                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                                    @Override
-                                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                        for (QueryDocumentSnapshot doc : task.getResult()) {
-                                                            doc.getReference().delete();
-                                                        }
-                                                    }
-                                                });
-
-
+                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                        for (QueryDocumentSnapshot doc : task.getResult()) {
+                                            doc.getReference().delete();
+                                        }
                                     }
-
-
                                 });
-                                if (mRequests.size() == 1) {
-                                    declineAll = true;
-                                }
-                                RequestService.decline(mRequests.get(position), declineAll)
-                                        .addOnCompleteListener(task -> {
-                                            if (task.isSuccessful()) {
-                                                Toast.makeText(mContext, "Succesfully declined request", Toast.LENGTH_SHORT).show();
-                                                notifyDataSetChanged();
 
-                                            } else {
-                                                Toast.makeText(mContext, "Failed to decline the request", Toast.LENGTH_SHORT).show();
-                                            }
-                                        });
+
+                    }
+
+
+                });
+                if (mRequests.size() == 1){
+                    declineAll = true;
+                }
+                RequestService.decline(mRequests.get(position), declineAll)
+                        .addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(mContext, "Succesfully declined request", Toast.LENGTH_SHORT).show();
+                                notifyDataSetChanged();
+
+                            } else {
+                                Toast.makeText(mContext, "Failed to decline the request", Toast.LENGTH_SHORT).show();
                             }
                         });
-
+            }
+        });
 
     }
 
