@@ -106,6 +106,10 @@ public class BookDetailsFragment extends AppCompatActivity {
     private boolean checkAuthor = false;
     private boolean checkISBN = false;
 
+    private boolean lend = false;
+    private boolean borrow = false;
+    private boolean receive = false;
+
     /**
      * Creates the activity for viewing books and the requests on them, and the necessary logic to do so
      * @param SavedInstances The book to be viewed
@@ -376,10 +380,12 @@ public class BookDetailsFragment extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // open scanner to check for correct book
+                lend = true;
                 ScanButton(view);
 
                 // if all information matches the book, change book status to available
                 if (checkISBN && checkTitle && checkAuthor) {
+                    System.out.println("MATCHES");
                     aRequest request = new aRequest(getUsername(), viewBook.getFirestoreID());
                     HandoverService.lendBook(request);
                     viewBook.setStatus("borrowed");
@@ -431,7 +437,7 @@ public class BookDetailsFragment extends AppCompatActivity {
                 ScanButton(view);
 
                 // if all information matches the book, change book status to available
-                if (checkISBN && checkTitle && checkAuthor) {
+                /*if (checkISBN && checkTitle && checkAuthor) {
                     aRequest request = new aRequest(getUsername(), viewBook.getFirestoreID());
                     HandoverService.receiveBook(request);
                     viewBook.setStatus("available");
@@ -442,7 +448,7 @@ public class BookDetailsFragment extends AppCompatActivity {
                     editedIntent.putExtra("recieved book", viewBook);
                     setResult(2, editedIntent);
                     finish();
-                }
+                }*/
             }
         });
 
@@ -622,6 +628,7 @@ public class BookDetailsFragment extends AppCompatActivity {
     public void ScanButton(View view) {
         IntentIntegrator intentIntegrator = new IntentIntegrator(this);
         intentIntegrator.initiateScan();
+        System.out.println("FINISHED SCAN");
     }
 
 
@@ -655,6 +662,7 @@ public class BookDetailsFragment extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        System.out.println("IN ON ACTIVITY RESULT");
         if (requestCode == 1) {
             // let user know the book's owner received a return notification
             Toast.makeText(this, "Successfully sent return request to" + owner, Toast.LENGTH_SHORT).show();
@@ -678,6 +686,7 @@ public class BookDetailsFragment extends AppCompatActivity {
             }
         } else {
             // check scanned book's information against the book being viewed
+            System.out.println("*********************CHECKING SCANNED BOOKS INFO*********8\n\n\n\n\n\n");
             IntentResult intentResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
 
             if (intentResult != null) { //scanner got a result
@@ -688,15 +697,25 @@ public class BookDetailsFragment extends AppCompatActivity {
                     toast.show();
                 } else {
                     //got ISBN
+                    System.out.println("GOT ISBN");
                     //Use the ISBN to search through Google Books API to find the author, and title.
                     String isbn = intentResult.getContents();
+                    System.out.println("TEXT ISBN: " + ISBN.getText().toString());
+                    System.out.println("ISBN RECEIVEN" + isbn);
 
                     // determine if the ISBN is correct
-                    if (ISBN.getText().toString() == isbn) {
+                    if (ISBN.getText().toString().equals(isbn)) {
+                        System.out.println("ISBN IS TRUE");
                         checkISBN = true;
+
+
+                        return;
                     }
 
-                    //Check if connected to internet
+
+
+
+                    /*//Check if connected to internet
                     boolean isConnected = isNetworkAvailable();
                     if (!isConnected) {
                         System.out.println("Check Internet Connection");
@@ -708,7 +727,8 @@ public class BookDetailsFragment extends AppCompatActivity {
                     Uri uri = Uri.parse(url + isbn);
                     Uri.Builder builder = uri.buildUpon();  // build url with ISBN
 
-                    parseJson(builder.toString()); //get results from webpage
+
+                    parseJson(builder.toString()); //get results from webpage*/
                 }
             }
         }
@@ -738,7 +758,7 @@ public class BookDetailsFragment extends AppCompatActivity {
                             try {
                                 matchTitle = volumeInfo.getString("title");
                                 System.out.println("title: " + matchTitle);
-                                if (title.getText().toString() == matchTitle) {
+                                if (title.getText().toString().equals(matchTitle)) {
                                     checkTitle = true;
                                 }
 
@@ -754,9 +774,13 @@ public class BookDetailsFragment extends AppCompatActivity {
                                     matchAuthor = matchAuthor.substring(0, matchAuthor.length() - 2);
                                 }
 
-                                if (author.getText().toString() == matchAuthor) {
+                                if (author.getText().toString().equals(matchAuthor)) {
                                     checkAuthor = true;
                                 }
+
+
+
+
 
                             } catch (Exception e) { //the book info in database does not contain a title or author
                                 if (matchTitle == "") {
