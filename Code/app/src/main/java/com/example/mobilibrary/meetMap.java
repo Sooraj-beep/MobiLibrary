@@ -117,7 +117,7 @@ public class meetMap extends FragmentActivity implements OnMapReadyCallback {
                                     Intent viewBook = new Intent(meetMap.this, BookDetailsFragment.class);
                                     viewBook.putExtra("view book", clickedBook);
                                     meetMap.this.startActivity(viewBook);
-
+                                    finish();
                                 }
                             });
 
