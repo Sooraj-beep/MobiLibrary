@@ -121,8 +121,6 @@ public class SignUp extends AppCompatActivity {
                 Toast.makeText(SignUp.this, "Loading", Toast.LENGTH_SHORT).show();
                 databaseHelper.regCheck(username, password, fullname, email, phoneNo);
                 }
-
-
         });
 
     }
