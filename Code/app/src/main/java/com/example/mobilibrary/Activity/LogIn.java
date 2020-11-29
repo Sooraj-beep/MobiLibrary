@@ -21,7 +21,7 @@ import com.example.mobilibrary.MainActivity;
 import com.example.mobilibrary.R;;
 
 /**
- * @author Nyugen;
+ * @author Nguyen;
  * LogIn activity lets user log into the app with their unique email registered to Firebase Authentication
  * User can also choose to go to SignUp activity to create a new account.
  */

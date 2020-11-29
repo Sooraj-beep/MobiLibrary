@@ -1,5 +1,7 @@
 package com.example.mobilibrary.DatabaseController;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -32,7 +34,7 @@ public class RequestService {
 
     // call: RequestService.createRequest.addOnCompleteListener(task->{if task.issuccesfull(): print message else: print failed message)
     public Task<DocumentReference> createRequest(aRequest request) {
-    //public void createRequest(aRequest request) {
+        //public void createRequest(aRequest request) {
         System.out.println("In create Request");
         Map<String, Object> data = new HashMap<>();
         data.put("requester", request.getRequester());
@@ -41,19 +43,25 @@ public class RequestService {
 
     }
 
-    public static Task<Void> acceptRequest(aRequest request){
+    public void acceptRequest(aRequest request, OnSuccessListener<Void> successListener, OnFailureListener failureListener){
         WriteBatch batch = db.batch();
 
         DocumentReference bookDoc = db.collection("Books")
                 .document(request.getBookID());
+
+
+        Map<String, Object> update = new HashMap<>();
+        update.put("Status", "accepted");
+        batch.update(bookDoc, update);
 
         Map<String, Object> newData = new HashMap<>();
         //Add the user whose request has been accepted to the book
         newData.put("AcceptedTo", request.getRequester());
 
         batch.update(bookDoc, newData);
-        batch.update(bookDoc, "Status", "accepted");
-        return batch.commit();
+        batch.commit()
+                .addOnSuccessListener(successListener)
+                .addOnFailureListener(failureListener);
     }
 
     //delete all requests in firestore for a book after accepting
@@ -65,14 +73,22 @@ public class RequestService {
         return batch.commit();
     }
 
-    public static Task<Void> decline(String requestID){
-        return db.collection("Requests").document(requestID).delete();
+    public static Task<Void> decline(aRequest request, boolean declineAll) {
+        WriteBatch batch = db.batch();
+
+        DocumentReference bookDoc = db.collection("Books")
+                .document(request.getBookID());
+
+        DocumentReference requestDoc = db.collection("Requests")
+                .document(request.getID());
+        if (declineAll)
+            batch.update(bookDoc, "Status", "available");
+
+        batch.delete(requestDoc);
+        return batch.commit();
+
     }
-
-
 }
-
-
 
 
 
