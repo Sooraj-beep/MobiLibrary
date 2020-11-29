@@ -234,15 +234,5 @@ public class BookService {
         });
 
     }
-/*
-    public Task<List<Book>> getBooksbyIDs(List<String> bookIDs){
-        return db.collection("Books")
-                .whereIn(FieldPath.documentId(), bookIDs)
-                .get()
-                .continueWith(task -> {
-                    if
-                })
-    }
 
- */
 }

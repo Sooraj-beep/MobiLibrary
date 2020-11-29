@@ -381,4 +381,3 @@ public class AdapterNotification extends RecyclerView.Adapter<AdapterNotificatio
     }
 
 }
-
