@@ -669,17 +669,15 @@ public class BookDetailsFragment extends AppCompatActivity {
                                                 } else if (task.getResult().get("AcceptedTo") != null) {
                                                     // lend book out
                                                     aRequest request2 = new aRequest(task.getResult().getString("AcceptedTo"), bookFSID);
-                                                    handoverService.lendBook(request2)
-                                                            .addOnCompleteListener((task1 -> {
-                                                                viewBook.setStatus("borrowed");
-                                                                status.setText(viewBook.getStatus());
-                                                                Toast.makeText(getApplicationContext(), "Successful book handover!", Toast.LENGTH_SHORT).show();
+                                                    handoverService.lendBook(request2);
+                                                    viewBook.setStatus("borrowed");
+                                                    status.setText(viewBook.getStatus());
+                                                    Toast.makeText(getApplicationContext(), "Successful book handover!", Toast.LENGTH_SHORT).show();
 
-                                                                // return the book with its changed status
-                                                                Intent editedIntent = new Intent();
-                                                                editedIntent.putExtra("lent book", viewBook);
-                                                                finish();
-                                                            }));
+                                                    // return the book with its changed status
+                                                    Intent editedIntent = new Intent();
+                                                    editedIntent.putExtra("lent book", viewBook);
+                                                    finish();
                                                 }
                                             }
                                         }
