@@ -338,7 +338,7 @@ public class BookDetailsFragment extends AppCompatActivity {
                     public void onCallback(User user) {
                         // delete attached photograph, if it exists
                         StorageReference storageReference = FirebaseStorage.getInstance().getReference();
-                        storageReference.child("books/" + bookFSID) + ".jpg").delete()
+                        storageReference.child("books/" + bookFSID + ".jpg").delete()
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
@@ -424,8 +424,34 @@ public class BookDetailsFragment extends AppCompatActivity {
                                         // go to map intent
                                         Intent mapIntent = new Intent(context, requestMap.class);
                                         mapIntent.putExtra("bookID", viewBook.getFirestoreID());
-                                        mapIntent.putExtra("otherUser", bookOwner);
-                                        startActivityForResult(mapIntent, 1);
+                                        //get other user
+                                        CollectionReference requestsRef;
+                                        requestsRef = db.collection("Requests");
+                                        System.out.println("Got collection reference");
+                                        Query query = requestsRef.whereEqualTo("bookID", bookFSID);
+                                        query.get()
+                                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                        if (task.isSuccessful()) {
+                                                            //requestors.clear();
+                                                            //alreadyRequested[0] = false;
+                                                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                                                System.out.println("In query document snapshot: " + document.getData());
+                                                                //requestors.add(document.getData().toString());
+                                                                String bookRequester = document.getString("requester");
+                                                                mapIntent.putExtra("otherUser", bookRequester);
+                                                                startActivityForResult(mapIntent, 1);
+
+
+                                                            }
+                                                        }
+
+                                                    }
+                                                });
+
+                                        /*mapIntent.putExtra("otherUser", );
+                                        startActivityForResult(mapIntent, 1);*/
 
                                     } else {
                                         // open scanner to check for correct book

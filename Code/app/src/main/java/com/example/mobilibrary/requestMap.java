@@ -135,10 +135,10 @@ public class requestMap extends FragmentActivity implements OnMapReadyCallback{
                             DocumentSnapshot document = task.getResult();
                             String title = document.getString("Title");
                             String currUser = document.getString("Owner");
-
+                            String borrowedBy = document.getString("BorrowedBy");
                             String bookStatus = document.getString("Status");
                             assert bookStatus != null;
-                            if (bookStatus.equals("borrowed")) { //borrower has clicked return button and is choosing location to return the book
+                            if (borrowedBy != null) { //borrower has clicked return button and is choosing location to return the book
 
                                 //String acceptedTo = document.getString("AcceptedTo"); //book will have an accepted to field
                                 HashMap<Object, String> hashMap = new HashMap<>();

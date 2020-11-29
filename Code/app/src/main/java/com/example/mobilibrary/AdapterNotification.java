@@ -179,7 +179,7 @@ public class AdapterNotification extends RecyclerView.Adapter<AdapterNotificatio
                                     b.putDouble("latitude", dLatitude);
                                     b.putDouble("longitude", dLongitude);
                                     b.putString("bookFSID", notificationsList.get(position).getBookFSID());
-                                    b.putString("bookOwner", notificationsList.get(position).getOtherUser());
+                                    b.putString("bookOwner", notificationsList.get(position).getUser());
                                     b.putInt("type", type);
                                     mapIntent.putExtras(b);
                                     ((Activity) context).startActivityForResult(mapIntent,1);
@@ -278,7 +278,7 @@ public class AdapterNotification extends RecyclerView.Adapter<AdapterNotificatio
                                     b.putDouble("latitude", dLatitude);
                                     b.putDouble("longitude", dLongitude);
                                     b.putString("bookFSID", notificationsList.get(position).getBookFSID());
-                                    b.putString("bookOwner", notificationsList.get(position).getOtherUser());
+                                    b.putString("bookOwner", notificationsList.get(position).getUser());
                                     b.putInt("type", type);
                                     mapIntent.putExtras(b);
                                     ((Activity) context).startActivityForResult(mapIntent,1);
