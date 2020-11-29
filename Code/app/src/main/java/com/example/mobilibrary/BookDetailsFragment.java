@@ -645,7 +645,7 @@ public class BookDetailsFragment extends AppCompatActivity {
 
                     // if all information matches the book, change book status to returned
                     if (checkISBN) {
-                        aRequest request = new aRequest(userName, bookFSID);
+                        final aRequest request = new aRequest(userName, bookFSID);
                         if (userName.equals(owner.getText().toString())) {
                             // determine status of book based on whether there is a borrower yet or not
                             db.collection("Books").document(bookFSID).get()
@@ -668,8 +668,8 @@ public class BookDetailsFragment extends AppCompatActivity {
                                                             }));
                                                 } else if (task.getResult().get("AcceptedTo") != null) {
                                                     // lend book out
-                                                    request = new aRequest(task.getResult().getString("AcceptedTo"), bookFSID);
-                                                    HandoverService.lendBook(request)
+                                                    aRequest request2 = new aRequest(task.getResult().getString("AcceptedTo"), bookFSID);
+                                                    HandoverService.lendBook(request2)
                                                             .addOnCompleteListener((task1 -> {
                                                                 viewBook.setStatus("borrowed");
                                                                 status.setText(viewBook.getStatus());
