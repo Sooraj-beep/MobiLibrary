@@ -655,13 +655,33 @@ public class BookDetailsFragment extends AppCompatActivity {
                                             if (task.isSuccessful()) {
                                                 if (task.getResult().get("BorrowedBy") != null) {
                                                     // take book back
-                                                    HandoverService.receiveBook(request);
-                                                    viewBook.setStatus("available");
+                                                    HandoverService.receiveBook(request)
+                                                            .addOnCompleteListener((task1 -> {
+                                                                viewBook.setStatus("available");
+                                                                status.setText(viewBook.getStatus());
+                                                                Toast.makeText(getApplicationContext(), "Successful book handover!", Toast.LENGTH_SHORT).show();
+
+                                                                // return the book with its changed status
+                                                                Intent editedIntent = new Intent();
+                                                                editedIntent.putExtra("received book", viewBook);
+                                                                setResult(2, editedIntent);
+                                                                finish();
+                                                            }));
                                                 } else if (task.getResult().get("AcceptedTo") != null) {
                                                     // lend book out
                                                     request = new aRequest(task.getResult().getString("AcceptedTo"), bookFSID);
-                                                    HandoverService.lendBook(request);
-                                                    viewBook.setStatus("borrowed");
+                                                    HandoverService.lendBook(request)
+                                                            .addOnCompleteListener((task1 -> {
+                                                                viewBook.setStatus("borrowed");
+                                                                status.setText(viewBook.getStatus());
+                                                                Toast.makeText(getApplicationContext(), "Successful book handover!", Toast.LENGTH_SHORT).show();
+
+                                                                // return the book with its changed status
+                                                                Intent editedIntent = new Intent();
+                                                                editedIntent.putExtra("lent book", viewBook);
+                                                                setResult(2, editedIntent);
+                                                                finish();
+                                                            }));
                                                 }
                                             }
                                         }
@@ -677,15 +697,37 @@ public class BookDetailsFragment extends AppCompatActivity {
                                                         // book has been accepted but not yet confirmed by borrower
                                                         if (task.getResult().getString("AcceptedTo") == userName) {
                                                             // borrow book
-                                                            HandoverService.borrowBook(request);
-                                                            viewBook.setStatus("borrowed");
+                                                            HandoverService.borrowBook(request)
+                                                                    .addOnCompleteListener((task1 -> {
+                                                                        viewBook.setStatus("borrowed");
+                                                                        status.setText(viewBook.getStatus());
+                                                                        Toast.makeText(getApplicationContext(), "Successful book handover!", Toast.LENGTH_SHORT).show();
+
+                                                                        // return the book with its changed status
+                                                                        Intent editedIntent = new Intent();
+                                                                        editedIntent.putExtra("borrowed book", viewBook);
+                                                                        setResult(2, editedIntent);
+                                                                        finish();
+                                                                    }));
                                                         }
                                                     } else {
                                                         // book is borrowed and needs to be returned
                                                         if (task.getResult().getString("BorrowedBy") == userName) {
                                                             // return book
-                                                            HandoverService.returnBook(request);
-                                                            viewBook.setStatus("available");
+                                                            HandoverService.returnBook(request)
+                                                                    .addOnCompleteListener((task2 -> {
+                                                                        if (task2.isSuccessful()) {
+                                                                            viewBook.setStatus("available");
+                                                                            status.setText(viewBook.getStatus());
+                                                                            Toast.makeText(getApplicationContext(), "Successful book handover!", Toast.LENGTH_SHORT).show();
+
+                                                                            // return the book with its changed status
+                                                                            Intent editedIntent = new Intent();
+                                                                            editedIntent.putExtra("returned book", viewBook);
+                                                                            setResult(2, editedIntent);
+                                                                            finish();
+                                                                        }
+                                                                    }));
                                                         }
                                                     }
                                                 }
@@ -693,14 +735,6 @@ public class BookDetailsFragment extends AppCompatActivity {
                                         }
                                     });
                         }
-                        status.setText(viewBook.getStatus());
-                        Toast.makeText(getApplicationContext(), "Successful book handover!", Toast.LENGTH_SHORT).show();
-
-                        // return the book with its changed status
-                        Intent editedIntent = new Intent();
-                        editedIntent.putExtra("returned book", viewBook);
-                        setResult(2, editedIntent);
-                        finish();
                     } else {
                         Toast.makeText(getApplicationContext(), "Failed to handover book! Book details do not match book to exchange", Toast.LENGTH_LONG).show();
                     }
