@@ -70,7 +70,6 @@ public class ProfileActivity extends AppCompatActivity implements reAuthFragment
         confirmButton = findViewById(R.id.confirm_button);
         cancelButton = findViewById(R.id.cancel_button);
         signOutButton = findViewById(R.id.sign_out_button);
-        //editProfileImage = findViewById(R.id.edit_profile_image_button);
         context = getApplicationContext();
 
         // Set visibility
@@ -78,7 +77,6 @@ public class ProfileActivity extends AppCompatActivity implements reAuthFragment
         phoneText.setVisibility(View.INVISIBLE);
         toggleViews.add(editEmail);
         toggleViews.add(editPhone);
-        //toggleViews.add(editProfileImage);
         toggleViews.add(cancelButton);
         toggleViews.add(confirmButton);
         toggleViews.add(emailText);
@@ -258,10 +256,4 @@ public class ProfileActivity extends AppCompatActivity implements reAuthFragment
         editEmail.setText(profileUser.getEmail());
         editPhone.setText(profileUser.getPhoneNo());
     }
-
-    /*// TODO: Implement PFP Editing
-    public void editPFP() {
-
-    }*/
-
 }
