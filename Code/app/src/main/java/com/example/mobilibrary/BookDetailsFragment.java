@@ -47,6 +47,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -214,6 +215,7 @@ public class BookDetailsFragment extends AppCompatActivity {
             requestsBtn.setVisibility(View.GONE);
             reqView.setVisibility(View.GONE);
 
+            System.out.println("LOOKING AT OTHERS BOOK");
             // determine status of book based on whether there is a borrower yet or not
             db.collection("Books").document(bookFSID).get()
                     .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -236,7 +238,6 @@ public class BookDetailsFragment extends AppCompatActivity {
                                     }
                                 } else {
                                     //if book is available or has requests (and also make sure user hasn't requested it before) display request button
-
                                     //check is user has requested this book before
                                     if (viewBook.getStatus().equals("requested")) {
                                         //get all requesting users
@@ -261,6 +262,7 @@ public class BookDetailsFragment extends AppCompatActivity {
                                                                 //if requester is equal to user then show requested button and exit
                                                                 if (bookRequester.equals(getUsername())) {
                                                                     alreadyRequested[0] = true;
+                                                                    //requestButton.setVisibility(View.INVISIBLE);
                                                                     requestedButton.setVisibility(View.VISIBLE);
                                                                     return;
                                                                 }
@@ -378,6 +380,7 @@ public class BookDetailsFragment extends AppCompatActivity {
             public void onClick(View view) {
                 // open scanner to check for correct book
                 ScanButton(view);
+
             }
         });
 
@@ -390,6 +393,7 @@ public class BookDetailsFragment extends AppCompatActivity {
             public void onClick(View view) {
                 // open scanner to check for correct book
                 ScanButton(view);
+
             }
         });
 
@@ -402,6 +406,7 @@ public class BookDetailsFragment extends AppCompatActivity {
             public void onClick(View view) {
                 // open scanner to check for correct book
                 ScanButton(view);
+
             }
         });
 
@@ -422,12 +427,28 @@ public class BookDetailsFragment extends AppCompatActivity {
                                         // go to map intent
                                         Intent mapIntent = new Intent(context, requestMap.class);
                                         mapIntent.putExtra("bookID", viewBook.getFirestoreID());
-                                        mapIntent.putExtra("otherUser", bookOwner);
-                                        startActivityForResult(mapIntent, 1);
+                                        /*System.out.println("VIEWBOOK GET OWNER: " + viewBook.getOwner().getUsername());
+                                        mapIntent.putExtra("otherUser", viewBook.getOwner().getUsername());
+                                        startActivityForResult(mapIntent, 1);*/
+                                        //get other user
+                                        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+                                        DocumentReference docRef = db.collection("Books").document(viewBook.getFirestoreID());
+                                        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                DocumentSnapshot document = task.getResult();
+                                                String borrowedBy = document.getString("BorrowedBy");
+                                                System.out.println("OTHER USER: " + borrowedBy);
+                                                mapIntent.putExtra("otherUser", borrowedBy);
+                                                startActivityForResult(mapIntent, 1);
+                                            }
+                                        });
+
 
                                     } else {
                                         // open scanner to check for correct book
                                         ScanButton(view);
+
                                     }
                                 }
                             }

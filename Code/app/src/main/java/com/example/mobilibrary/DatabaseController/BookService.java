@@ -214,8 +214,20 @@ public class BookService {
         System.out.println("Book title clicked is: " + book.getTitle());
         //Map<String, Object> data = new HashMap<>();
         //data.put("Status", newStatus);
-
-        db.collection("Books").addSnapshotListener(new EventListener<QuerySnapshot>() {
+        db.collection("Books").document(book.getFirestoreID())
+                .update("Status", newStatus)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully updated!");
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.w(TAG,"Error updating document", e);
+            }
+        });
+        /*db.collection("Books").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
 
@@ -231,18 +243,8 @@ public class BookService {
                 }
 
             }
-        });
+        });*/
 
     }
-/*
-    public Task<List<Book>> getBooksbyIDs(List<String> bookIDs){
-        return db.collection("Books")
-                .whereIn(FieldPath.documentId(), bookIDs)
-                .get()
-                .continueWith(task -> {
-                    if
-                })
-    }
 
- */
 }
