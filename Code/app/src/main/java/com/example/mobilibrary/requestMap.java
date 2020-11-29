@@ -133,23 +133,36 @@ public class requestMap extends FragmentActivity implements OnMapReadyCallback{
                         @Override
                         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                             DocumentSnapshot document = task.getResult();
+                            System.out.println("AOUT TO CHECK DOC VALUES");
                             String title = document.getString("Title");
                             String currUser = document.getString("Owner");
                             String borrowedBy = document.getString("BorrowedBy");
                             String bookStatus = document.getString("Status");
                             assert bookStatus != null;
+                            System.out.println("CHECK IF BORROWED BY = NULL");
                             if (borrowedBy != null) { //borrower has clicked return button and is choosing location to return the book
-
+                                System.out.println("BORROWER HAS CLICKED RETURN AND IS CHOOSING LOCATION");
                                 //String acceptedTo = document.getString("AcceptedTo"); //book will have an accepted to field
                                 HashMap<Object, String> hashMap = new HashMap<>();
-                                hashMap.put("otherUser", otherUser);
-                                hashMap.put("user", currUser);
+                                hashMap.put("otherUser", currUser);
+                                hashMap.put("user", otherUser);
                                 hashMap.put("notification", "Is ready to return back your book: " + title);
                                 hashMap.put("type", "5");
                                 hashMap.put("bookFSID", bookID);
+                                System.out.println("OTHER USER: " + otherUser);
 
                                 final FirebaseFirestore db = FirebaseFirestore.getInstance();
-                                db.collection("Users").document(otherUser).collection("Notifications").add(hashMap);
+                                db.collection("Users").document(currUser).collection("Notifications").add(hashMap);
+
+                                //send notification to current user (#4), saying the location you have chosen has been sent
+                                HashMap<Object, String> userMap = new HashMap<>();
+                                userMap.put("otherUser", otherUser);
+                                userMap.put("user", currUser);
+                                userMap.put("notification", "Has received the location you have chosen to meet for: " + title);
+                                userMap.put("type", "4");
+                                userMap.put("bookFSID", bookID);
+
+                                db.collection("Users").document(otherUser).collection("Notifications").add(userMap);
 
 
                             } else { //owner is choosing location to lend book
@@ -164,16 +177,25 @@ public class requestMap extends FragmentActivity implements OnMapReadyCallback{
                                 final FirebaseFirestore db = FirebaseFirestore.getInstance();
                                 db.collection("Users").document(otherUser).collection("Notifications").add(hashMap);
 
+                                //send notification to current user (#4), saying the location you have chosen has been sent
+                                HashMap<Object, String> userMap = new HashMap<>();
+                                userMap.put("otherUser", currUser);
+                                userMap.put("user", otherUser);
+                                userMap.put("notification", "Has received the location you have chosen to meet for: " + title);
+                                userMap.put("type", "4");
+                                userMap.put("bookFSID", bookID);
+
+                                db.collection("Users").document(currUser).collection("Notifications").add(userMap);
                             }
                             //send notification to current user (#4), saying the location you have chosen has been sent
-                            HashMap<Object, String> userMap = new HashMap<>();
+                            /*HashMap<Object, String> userMap = new HashMap<>();
                             userMap.put("otherUser", currUser);
                             userMap.put("user", otherUser);
                             userMap.put("notification", "Has received the location you have chosen to meet for: " + title);
                             userMap.put("type", "4");
                             userMap.put("bookFSID", bookID);
 
-                            db.collection("Users").document(currUser).collection("Notifications").add(userMap);
+                            db.collection("Users").document(currUser).collection("Notifications").add(userMap);*/
 
                             //delete all the notifications that involve others who had requested that book
                             db.collection("Users").document(currUser).collection("Notifications")
