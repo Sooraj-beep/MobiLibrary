@@ -125,54 +125,6 @@ public class meetMap extends FragmentActivity implements OnMapReadyCallback {
 
                     });
 
-
-
-
-                    /*final FirebaseFirestore db = FirebaseFirestore.getInstance();
-                    DocumentReference docRef = db.collection("Books").document(bookDetails);
-                    docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            DocumentSnapshot document = task.getResult();
-                            String author = document.getString("Author");
-                            String ISBN = document.getString("ISBN");
-                            //User bookOwner = (User) document.get("User");
-                            String bookOwner = document.getString("User");
-                            String status = document.getString("Status");
-                            String title = document.getString("Title");
-                            String imageId = document.getString("imageId");
-
-                            initIntent(title, ISBN, author, status, imageId, bookOwner);
-                            //Book newBook = new Book(title,ISBN,author,status,imageId,bookOwner);
-                            //Intent viewBook = new Intent(meetMap.this, BookDetailsFragment.class);
-                            //viewBook.putExtra("view book", newBook);
-                            //(meetMap.this).startActivity(viewBook);
-                        }
-
-                        private void initIntent(String title, String isbn, String author, String status, String imageId, String bookOwner) {
-                            //get user object
-                            final FirebaseFirestore db = FirebaseFirestore.getInstance();
-                            DocumentReference docRef = db.collection("Users").document(bookOwner);
-                            docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                    DocumentSnapshot document = task.getResult();
-                                    String username = document.get("username").toString();
-                                    String email = document.get("email").toString();
-                                    String name = document.get("name").toString();
-                                    String phoneNo = document.get("phoneNo").toString();
-
-                                    User user = new User(username, email, name, phoneNo);
-                                    Book newBook = new Book(title,isbn,author,status,imageId,user);
-                                    Intent viewBook = new Intent(meetMap.this, BookDetailsFragment.class);
-                                    viewBook.putExtra("view book", newBook);
-                                    (meetMap.this).startActivity(viewBook);
-
-                                }
-                            });
-                        }
-
-                    });*/
                 } else {
                     finish();
                 }
@@ -191,7 +143,6 @@ public class meetMap extends FragmentActivity implements OnMapReadyCallback {
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        System.out.println("IN ONMAP LATLANG: " + bookLatLng);
         if (bookLatLng == null) {
             return;
         } else {
