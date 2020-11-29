@@ -47,12 +47,15 @@ public class HandoverService {
         return batch.commit();
     }
 
-    public static Task<Void> borrowBook(aRequest borrowRequest){
+    public static void borrowBook(aRequest borrowRequest){
         WriteBatch batch = db.batch();
 
         DocumentReference bookDoc = db.collection("Books")
                 .document(borrowRequest.getBookID());
-
+        bookDoc.update("AcceptedTo", FieldValue.delete());
+        bookDoc.update("Status", "borrowed");
+        return;
+        /*
         Map<String, Object> updates = new HashMap<>();
         //remove AcceptedTo field as book has been borrowed
         updates.put("AcceptedTo", FieldValue.delete());
@@ -60,7 +63,7 @@ public class HandoverService {
 
         // update book status to borrowed
         batch.update(bookDoc, "Status", "borrowed");
-        return batch.commit();
+        return batch.commit();*/
     }
 
     public static Task<Void> receiveBook(aRequest receiveRequest){
