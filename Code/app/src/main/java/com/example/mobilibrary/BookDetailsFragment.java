@@ -95,7 +95,6 @@ public class BookDetailsFragment extends AppCompatActivity {
     private RequestService requestService;
     private HandoverService handoverService;
     private Context context;
-    private RequestQueue mRequestQueue;
 
     private Button requestedButton;
     private Button requestButton;
@@ -156,7 +155,6 @@ public class BookDetailsFragment extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
 
         // set up permissions for scanning intent
-        mRequestQueue = Volley.newRequestQueue(this);
         ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.CAMERA},
                 PackageManager.PERMISSION_GRANTED); //Request permission to use Camera
 
@@ -338,7 +336,7 @@ public class BookDetailsFragment extends AppCompatActivity {
                     public void onCallback(User user) {
                         // delete attached photograph, if it exists
                         StorageReference storageReference = FirebaseStorage.getInstance().getReference();
-                        storageReference.child("books/" + bookFSID) + ".jpg").delete()
+                        storageReference.child("books/" + bookFSID + ".jpg").delete()
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
@@ -669,15 +667,17 @@ public class BookDetailsFragment extends AppCompatActivity {
                                                 } else if (task.getResult().get("AcceptedTo") != null) {
                                                     // lend book out
                                                     aRequest request2 = new aRequest(task.getResult().getString("AcceptedTo"), bookFSID);
-                                                    handoverService.lendBook(request2);
-                                                    viewBook.setStatus("borrowed");
-                                                    status.setText(viewBook.getStatus());
-                                                    Toast.makeText(getApplicationContext(), "Successful book handover!", Toast.LENGTH_SHORT).show();
+                                                    handoverService.lendBook(request2)
+                                                            .addOnCompleteListener((task1 -> {
+                                                                viewBook.setStatus("borrowed");
+                                                                status.setText(viewBook.getStatus());
+                                                                Toast.makeText(getApplicationContext(), "Successful book handover!", Toast.LENGTH_SHORT).show();
 
-                                                    // return the book with its changed status
-                                                    Intent editedIntent = new Intent();
-                                                    editedIntent.putExtra("lent book", viewBook);
-                                                    finish();
+                                                                // return the book with its changed status
+                                                                Intent editedIntent = new Intent();
+                                                                editedIntent.putExtra("lent book", viewBook);
+                                                                finish();
+                                                            }));
                                                 }
                                             }
                                         }

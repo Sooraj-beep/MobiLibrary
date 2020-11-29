@@ -40,27 +40,8 @@ public class HandoverService {
      * @param lendRequest a aRequest object that has the book's id, and name of the requester
      * @return
      */
-    public static void lendBook(aRequest lendRequest){
-        Map<String, Object> data = new HashMap<>();
-        data.put("BorrowedBy", lendRequest.getRequester());
-        data.put("Status", "borrowed");
-        // edit document
-        db.collection("Books").document(lendRequest.getBookID()).update(data)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Toast.makeText(context, "Successfully lent book!", Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.e(TAG,"Failed with: " +e.toString());
-                        Toast.makeText(context, "Book not lent!" , Toast.LENGTH_SHORT).show();
-                    }
-                });
-    }
-        /*WriteBatch batch = db.batch();
+    public static Task<Void> lendBook(aRequest lendRequest) {
+        WriteBatch batch = db.batch();
 
         DocumentReference bookDoc = db.collection("Books")
                 .document(lendRequest.getBookID());
@@ -70,7 +51,7 @@ public class HandoverService {
         updates.put("BorrowedBy", lendRequest.getRequester());
         batch.update(bookDoc, updates);
         batch.update(bookDoc, "Status", "borrowed");
-        return batch.commit();*/
+        return batch.commit();
     }
 
     public static Task<Void> borrowBook(aRequest borrowRequest){
