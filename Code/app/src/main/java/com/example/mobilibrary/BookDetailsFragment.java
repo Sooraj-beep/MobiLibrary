@@ -664,7 +664,6 @@ public class BookDetailsFragment extends AppCompatActivity {
                                                                 // return the book with its changed status
                                                                 Intent editedIntent = new Intent();
                                                                 editedIntent.putExtra("received book", viewBook);
-                                                                setResult(2, editedIntent);
                                                                 finish();
                                                             }));
                                                 } else if (task.getResult().get("AcceptedTo") != null) {
@@ -679,7 +678,6 @@ public class BookDetailsFragment extends AppCompatActivity {
                                                                 // return the book with its changed status
                                                                 Intent editedIntent = new Intent();
                                                                 editedIntent.putExtra("lent book", viewBook);
-                                                                setResult(2, editedIntent);
                                                                 finish();
                                                             }));
                                                 }
@@ -706,7 +704,6 @@ public class BookDetailsFragment extends AppCompatActivity {
                                                                         // return the book with its changed status
                                                                         Intent editedIntent = new Intent();
                                                                         editedIntent.putExtra("borrowed book", viewBook);
-                                                                        setResult(2, editedIntent);
                                                                         finish();
                                                                     }));
                                                         }
@@ -724,7 +721,6 @@ public class BookDetailsFragment extends AppCompatActivity {
                                                                             // return the book with its changed status
                                                                             Intent editedIntent = new Intent();
                                                                             editedIntent.putExtra("returned book", viewBook);
-                                                                            setResult(2, editedIntent);
                                                                             finish();
                                                                         }
                                                                     }));
