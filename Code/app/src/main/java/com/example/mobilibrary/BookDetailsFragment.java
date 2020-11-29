@@ -693,7 +693,7 @@ public class BookDetailsFragment extends AppCompatActivity {
                                                 if (task.getResult().get("BorrowedBy") != null) {
                                                     if (task.getResult().get("AcceptedTo") != null) {
                                                         // book has been accepted but not yet confirmed by borrower
-                                                        if (task.getResult().getString("AcceptedTo") == userName) {
+                                                        if (task.getResult().getString("AcceptedTo").equals(userName)) {
                                                             // borrow book
                                                             HandoverService.borrowBook(request)
                                                                     .addOnCompleteListener((task1 -> {
@@ -709,7 +709,7 @@ public class BookDetailsFragment extends AppCompatActivity {
                                                         }
                                                     } else {
                                                         // book is borrowed and needs to be returned
-                                                        if (task.getResult().getString("BorrowedBy") == userName) {
+                                                        if (task.getResult().getString("BorrowedBy").equals(userName)) {
                                                             // return book
                                                             HandoverService.returnBook(request)
                                                                     .addOnCompleteListener((task2 -> {
