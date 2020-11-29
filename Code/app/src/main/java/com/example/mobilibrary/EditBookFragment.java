@@ -399,7 +399,7 @@ public class EditBookFragment extends AppCompatActivity {
                                 author.setText(editAuthor);
 
                             } catch (Exception e) { //the book info in database does not contain a title or author
-                                if (editTitle == "") {
+                                if (editTitle.equals("")) {
                                     title.setText("");
                                     title.setError("Title not found");
                                 } else {

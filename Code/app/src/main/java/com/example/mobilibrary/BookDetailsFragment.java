@@ -81,6 +81,7 @@ public class BookDetailsFragment extends AppCompatActivity {
     private TextView author;
     private TextView owner;
     private TextView ISBN;
+    private TextView status;
     private TextView[] requestAssets;
     private ImageView photo;
 
@@ -92,6 +93,7 @@ public class BookDetailsFragment extends AppCompatActivity {
     private FirebaseFirestore db;
     private BookService bookService;
     private RequestService requestService;
+    private HandoverService handoverService;
     private Context context;
     private RequestQueue mRequestQueue;
 
@@ -105,6 +107,9 @@ public class BookDetailsFragment extends AppCompatActivity {
     private boolean checkTitle = false;
     private boolean checkAuthor = false;
     private boolean checkISBN = false;
+    private String userName;
+    private String bookFSID;
+    private Book viewBook;
 
     /**
      * Creates the activity for viewing books and the requests on them, and the necessary logic to do so
@@ -119,7 +124,7 @@ public class BookDetailsFragment extends AppCompatActivity {
         title =  findViewById(R.id.view_title);
         author = findViewById(R.id.view_author);
         owner = findViewById(R.id.view_owner);
-        TextView status = findViewById(R.id.view_status);
+        status = findViewById(R.id.view_status);
         ISBN = findViewById(R.id.view_isbn);
         FloatingActionButton backButton = findViewById(R.id.back_to_books_button);
         ImageButton editButton = findViewById(R.id.edit_button);
@@ -148,7 +153,7 @@ public class BookDetailsFragment extends AppCompatActivity {
         // set up firestore instance
         bookService = BookService.getInstance();
         requestService = RequestService.getInstance();
-        HandoverService handoverService = HandoverService.getInstance();
+        handoverService = HandoverService.getInstance();
         context = getApplicationContext();
         db = FirebaseFirestore.getInstance();
 
@@ -161,7 +166,8 @@ public class BookDetailsFragment extends AppCompatActivity {
         if (getIntent() == null) {
             finish();
         }
-        final Book viewBook = (Book) getIntent().getSerializableExtra("view book");
+        viewBook = (Book) getIntent().getSerializableExtra("view book");
+        bookFSID = viewBook.getFirestoreID();
 
         // fill fields with correct information from the passed book
         title.setText(viewBook.getTitle());
@@ -170,11 +176,11 @@ public class BookDetailsFragment extends AppCompatActivity {
         ISBN.setText(viewBook.getISBN());
         status.setText(viewBook.getStatus());
 
-        convertImage(viewBook.getFirestoreID());
+        convertImage(bookFSID);
 
         //get current user name and book owners name, check if they match
         CurrentUser currentUser = CurrentUser.getInstance();
-        String userName = currentUser.getCurrentUser().getUsername();
+        userName = currentUser.getCurrentUser().getUsername();
         String bookOwner = viewBook.getOwner().getUsername();
         System.out.println(userName);
         System.out.println(bookOwner);
@@ -188,7 +194,7 @@ public class BookDetailsFragment extends AppCompatActivity {
             requestsBtn.setEnabled(true);
 
             // determine status of book based on whether there is a borrower yet or not
-            db.collection("Books").document(viewBook.getFirestoreID()).get()
+            db.collection("Books").document(bookFSID).get()
                     .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -213,7 +219,7 @@ public class BookDetailsFragment extends AppCompatActivity {
             reqView.setVisibility(View.GONE);
 
             // determine status of book based on whether there is a borrower yet or not
-            db.collection("Books").document(viewBook.getFirestoreID()).get()
+            db.collection("Books").document(bookFSID).get()
                     .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -244,7 +250,7 @@ public class BookDetailsFragment extends AppCompatActivity {
                                         //CollectionReference requestsRef = db.collection("Requests");
                                         requestsRef = db.collection("Requests");
                                         System.out.println("Got collection reference");
-                                        Query query = requestsRef.whereEqualTo("bookID", viewBook.getFirestoreID());
+                                        Query query = requestsRef.whereEqualTo("bookID", bookFSID);
                                         query.get()
                                                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                                     @Override
@@ -317,7 +323,7 @@ public class BookDetailsFragment extends AppCompatActivity {
             public void onClick(View view) {
                 //delete all requests for the book on firestore
                 final FirebaseFirestore db = FirebaseFirestore.getInstance();
-                db.collection("Requests").whereEqualTo("bookID", viewBook.getFirestoreID())
+                db.collection("Requests").whereEqualTo("bookID", bookFSID)
                         .get()
                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                             @Override
@@ -334,7 +340,7 @@ public class BookDetailsFragment extends AppCompatActivity {
                     public void onCallback(User user) {
                         // delete attached photograph, if it exists
                         StorageReference storageReference = FirebaseStorage.getInstance().getReference();
-                        storageReference.child("books/" + viewBook.getFirestoreID() + ".jpg").delete()
+                        storageReference.child("books/" + bookFSID) + ".jpg").delete()
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
@@ -376,23 +382,6 @@ public class BookDetailsFragment extends AppCompatActivity {
             public void onClick(View view) {
                 // open scanner to check for correct book
                 ScanButton(view);
-
-                // if all information matches the book, change book status to available
-                if (checkISBN && checkTitle && checkAuthor) {
-                    aRequest request = new aRequest(getUsername(), viewBook.getFirestoreID());
-                    HandoverService.lendBook(request);
-                    viewBook.setStatus("borrowed");
-                    status.setText(viewBook.getStatus());
-                    Toast.makeText(getApplicationContext(), "Successfully lent book!", Toast.LENGTH_LONG)
-
-                    // return the book with its changed status
-                    Intent editedIntent = new Intent();
-                    editedIntent.putExtra("loaned book", viewBook);
-                    setResult(2, editedIntent);
-                    finish();
-                } else {
-                    Toast.makeText(getApplicationContext(), "Failed to lend book!", Toast.LENGTH_LONG)
-                }
             }
         });
 
@@ -405,23 +394,6 @@ public class BookDetailsFragment extends AppCompatActivity {
             public void onClick(View view) {
                 // open scanner to check for correct book
                 ScanButton(view);
-
-                // if all information matches the book, change book status to available
-                if (checkISBN && checkTitle && checkAuthor) {
-                    aRequest request = new aRequest(getUsername(), viewBook.getFirestoreID());
-                    HandoverService.borrowBook(request);
-                    viewBook.setStatus("borrowed");
-                    status.setText(viewBook.getStatus());
-                    Toast.makeText(getApplicationContext(), "Successfully borrowed book!", Toast.LENGTH_LONG)
-
-                    // return the book with its changed status
-                    Intent editedIntent = new Intent();
-                    editedIntent.putExtra("borrowed book", viewBook);
-                    setResult(2, editedIntent);
-                    finish();
-                } else {
-                    Toast.makeText(getApplicationContext(), "Failed to borrow book!", Toast.LENGTH_LONG)
-                }
             }
         });
 
@@ -434,23 +406,6 @@ public class BookDetailsFragment extends AppCompatActivity {
             public void onClick(View view) {
                 // open scanner to check for correct book
                 ScanButton(view);
-
-                // if all information matches the book, change book status to available
-                if (checkISBN && checkTitle && checkAuthor) {
-                    aRequest request = new aRequest(getUsername(), viewBook.getFirestoreID());
-                    HandoverService.receiveBook(request);
-                    viewBook.setStatus("available");
-                    status.setText(viewBook.getStatus());
-                    Toast.makeText(getApplicationContext(), "Successfully recieved book!", Toast.LENGTH_LONG)
-
-                    // return the book with its changed status
-                    Intent editedIntent = new Intent();
-                    editedIntent.putExtra("recieved book", viewBook);
-                    setResult(2, editedIntent);
-                    finish();
-                } else {
-                    Toast.makeText(getApplicationContext(), "Failed to receive book!", Toast.LENGTH_LONG)
-                }
             }
         });
 
@@ -477,23 +432,6 @@ public class BookDetailsFragment extends AppCompatActivity {
                                     } else {
                                         // open scanner to check for correct book
                                         ScanButton(view);
-
-                                        // if all information matches the book, change book status to returned
-                                        if (checkISBN && checkTitle && checkAuthor) {
-                                            aRequest request = new aRequest(getUsername(), viewBook.getFirestoreID());
-                                            HandoverService.returnBook(request);
-                                            viewBook.setStatus("available");
-                                            status.setText(viewBook.getStatus());
-                                            Toast.makeText(getApplicationContext(), "Successfully returned book!", Toast.LENGTH_LONG)
-
-                                            // return the book with its changed status
-                                            Intent editedIntent = new Intent();
-                                            editedIntent.putExtra("returned book", viewBook);
-                                            setResult(2, editedIntent);
-                                            finish();
-                                        } else {
-                                            Toast.makeText(getApplicationContext(), "Failed to return book!", Toast.LENGTH_LONG)
-                                        }
                                     }
                                 }
                             }
@@ -703,7 +641,7 @@ public class BookDetailsFragment extends AppCompatActivity {
                     String isbn = intentResult.getContents();
 
                     // determine if the ISBN is correct
-                    if (ISBN.getText().toString() == isbn) {
+                    if (ISBN.getText().toString().equals(isbn)) {
                         checkISBN = true;
                     }
 
@@ -720,6 +658,67 @@ public class BookDetailsFragment extends AppCompatActivity {
                     Uri.Builder builder = uri.buildUpon();  // build url with ISBN
 
                     parseJson(builder.toString()); //get results from webpage
+
+                    // if all information matches the book, change book status to returned
+                    if (checkISBN && checkTitle && checkAuthor) {
+                        aRequest request = new aRequest(getUsername(), viewBook.getFirestoreID());
+                        if (userName.equals(owner.getText().toString())) {
+                            // determine status of book based on whether there is a borrower yet or not
+                            db.collection("Books").document(bookFSID).get()
+                                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                            if (task.isSuccessful()) {
+                                                if (task.getResult().get("BorrowedBy") != null) {
+                                                    // take book back
+                                                    HandoverService.receiveBook(request);
+                                                    viewBook.setStatus("available");
+                                                } else if (task.getResult().get("AcceptedTo") != null) {
+                                                    // lend book out
+                                                    HandoverService.lendBook(request);
+                                                    viewBook.setStatus("borrowed");
+                                                }
+                                            }
+                                        }
+                                    });
+                        } else {
+                            db.collection("Books").document(bookFSID).get()
+                                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                            if (task.isSuccessful()) {
+                                                if (task.getResult().get("BorrowedBy") != null) {
+                                                    if (task.getResult().get("AcceptedTo") != null) {
+                                                        // book has been accepted but not yet confirmed by borrower
+                                                        if (task.getResult().getString("AcceptedTo") == userName) {
+                                                            // borrow book
+                                                            HandoverService.borrowBook(request);
+                                                            viewBook.setStatus("borrowed");
+                                                        }
+                                                    } else {
+                                                        // book is borrowed and needs to be returned
+                                                        if (task.getResult().getString("BorrowedBy") == userName) {
+                                                            // return book
+                                                            HandoverService.returnBook(request);
+                                                            viewBook.setStatus("available");
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    });
+                        }
+                        status.setText(viewBook.getStatus());
+                        Toast.makeText(getApplicationContext(), "Successful book handover!", Toast.LENGTH_SHORT).show();
+
+                        // return the book with its changed status
+                        Intent editedIntent = new Intent();
+                        editedIntent.putExtra("returned book", viewBook);
+                        setResult(2, editedIntent);
+                        finish();
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Failed to handover book! Book details do not match book to exchange", Toast.LENGTH_LONG).show();
+                    }
                 }
             }
         }
@@ -749,7 +748,7 @@ public class BookDetailsFragment extends AppCompatActivity {
                             try {
                                 matchTitle = volumeInfo.getString("title");
                                 System.out.println("title: " + matchTitle);
-                                if (title.getText().toString() == matchTitle) {
+                                if (title.getText().toString().equals(matchTitle)) {
                                     checkTitle = true;
                                 }
 
@@ -765,12 +764,12 @@ public class BookDetailsFragment extends AppCompatActivity {
                                     matchAuthor = matchAuthor.substring(0, matchAuthor.length() - 2);
                                 }
 
-                                if (author.getText().toString() == matchAuthor) {
+                                if (author.getText().toString().equals(matchAuthor)) {
                                     checkAuthor = true;
                                 }
 
                             } catch (Exception e) { //the book info in database does not contain a title or author
-                                if (matchTitle == "") {
+                                if (matchTitle.equals("")) {
                                     Toast.makeText(getApplicationContext(), "Could not obtain title information", Toast.LENGTH_SHORT).show(); //Popup message for user
                                 } else {
                                     Toast.makeText(getApplicationContext(), "Could not obtain author information", Toast.LENGTH_SHORT).show(); //Popup message for user
