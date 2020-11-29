@@ -144,6 +144,8 @@ public class MyBooksFragment extends Fragment {
                     bookList.removeAll(bookList);
                     if (value != null) {
                         for (final QueryDocumentSnapshot doc : value) {
+                            System.out.println(doc.getId());
+                            System.out.println(doc.getString("Title"));
                             String bookId = doc.getId();
                             String bookTitle = Objects.requireNonNull(doc.get("Title")).toString();
                             String bookAuthor = Objects.requireNonNull(doc.get("Author")).toString();
