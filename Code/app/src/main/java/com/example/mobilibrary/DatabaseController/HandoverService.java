@@ -1,5 +1,12 @@
 package com.example.mobilibrary.DatabaseController;
 
+import android.util.Log;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
@@ -33,7 +40,7 @@ public class HandoverService {
      * @param lendRequest a aRequest object that has the book's id, and name of the requester
      * @return
      */
-    public static Task<Void> lendBook(aRequest lendRequest){
+    public static Task<Void> lendBook(aRequest lendRequest) {
         WriteBatch batch = db.batch();
 
         DocumentReference bookDoc = db.collection("Books")
@@ -82,7 +89,7 @@ public class HandoverService {
 
         DocumentReference bookDoc = db.collection("Books")
                 .document(returnRequest.getBookID());
-        
+
         // change status to indicate handover
         batch.update(bookDoc, "Status", "available");
         return batch.commit();

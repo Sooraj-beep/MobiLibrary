@@ -96,7 +96,6 @@ public class BookDetailsFragment extends AppCompatActivity {
     private RequestService requestService;
     private HandoverService handoverService;
     private Context context;
-    private RequestQueue mRequestQueue;
 
     private Button requestedButton;
     private Button requestButton;
@@ -157,7 +156,6 @@ public class BookDetailsFragment extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
 
         // set up permissions for scanning intent
-        mRequestQueue = Volley.newRequestQueue(this);
         ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.CAMERA},
                 PackageManager.PERMISSION_GRANTED); //Request permission to use Camera
 
@@ -258,26 +256,27 @@ public class BookDetailsFragment extends AppCompatActivity {
                                                             requestors.clear();
                                                             alreadyRequested[0] = false;
                                                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                                                System.out.println("In query document snapshot: " + document.getData());
+                                                                System.out.println("In query document snapshot: " + document.getData().toString());
                                                                 requestors.add(document.getData().toString());
                                                                 String bookRequester = document.getString("requester");
                                                                 //if requester is equal to user then show requested button and exit
+                                                                System.out.println(alreadyRequested[0]);
                                                                 if (bookRequester.equals(getUsername())) {
                                                                     alreadyRequested[0] = true;
+                                                                    System.out.println(alreadyRequested[0]);
                                                                     //requestButton.setVisibility(View.INVISIBLE);
                                                                     requestedButton.setVisibility(View.VISIBLE);
-                                                                    return;
                                                                 }
 
+                                                            }
+
+                                                            if (!alreadyRequested[0]) {
+                                                                requestButton.setVisibility(View.VISIBLE);
                                                             }
                                                         }
 
                                                     }
                                                 });
-
-                                        if (alreadyRequested[0] == false) {
-                                            requestButton.setVisibility(View.VISIBLE);
-                                        }
 
                                     } else {
                                         requestButton.setVisibility(View.VISIBLE);
