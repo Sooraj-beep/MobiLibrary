@@ -12,7 +12,7 @@ public class BookTest {
      */
     private Book mockBook() {
         User mockOwner = new User("username", "email@example.com", "First Last", "123-123-1234");
-        Book mockBook = new Book(null,"Song of the Lioness", "123456789","Tamora Pierce", "available", null, mockOwner);
+        Book mockBook = new Book(null,"Song of the Lioness", "1234567890123","Tamora Pierce", "available", null, mockOwner);
         return mockBook;
     }
 

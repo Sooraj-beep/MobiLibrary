@@ -13,7 +13,7 @@ import com.example.mobilibrary.DatabaseController.DatabaseHelper;
 import com.example.mobilibrary.R;
 
 /**
- * @author Nyugen;
+ * @author Nguyen;
  * SignUp activity allows new user to create new account
  * User can go back to LogIn screen by clicking on the back button on toolbar
  */
@@ -121,8 +121,6 @@ public class SignUp extends AppCompatActivity {
                 Toast.makeText(SignUp.this, "Loading", Toast.LENGTH_SHORT).show();
                 databaseHelper.regCheck(username, password, fullname, email, phoneNo);
                 }
-
-
         });
 
     }
