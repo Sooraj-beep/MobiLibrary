@@ -9,7 +9,6 @@ import java.io.Serializable;
  */
 public class Book implements Serializable {
     private String firestoreID;
-    private static int nextID = 0;
     private String title;
     private String ISBN;
     private String author;
@@ -25,7 +24,6 @@ public class Book implements Serializable {
         this.status = status;
         this.imageId = image;
         this.owner = user;
-        nextID++;
     }
 
     public Book(String firestoreID, String title, String ISBN, String author, String status, String imageId, User user){
