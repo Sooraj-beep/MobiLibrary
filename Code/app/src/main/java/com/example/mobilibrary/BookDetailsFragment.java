@@ -427,9 +427,6 @@ public class BookDetailsFragment extends AppCompatActivity {
                                         // go to map intent
                                         Intent mapIntent = new Intent(context, requestMap.class);
                                         mapIntent.putExtra("bookID", viewBook.getFirestoreID());
-                                        /*System.out.println("VIEWBOOK GET OWNER: " + viewBook.getOwner().getUsername());
-                                        mapIntent.putExtra("otherUser", viewBook.getOwner().getUsername());
-                                        startActivityForResult(mapIntent, 1);*/
                                         //get other user
                                         final FirebaseFirestore db = FirebaseFirestore.getInstance();
                                         DocumentReference docRef = db.collection("Books").document(viewBook.getFirestoreID());
@@ -496,7 +493,6 @@ public class BookDetailsFragment extends AppCompatActivity {
                 for (TextView asset : requestAssets) {
                     asset.setVisibility(View.GONE);
                 }
-                //reqView.setVisibility(View.VISIBLE);
 
                 db = FirebaseFirestore.getInstance();
                 System.out.println("viewBook.firstoreID: "+ viewBook.getFirestoreID());
@@ -509,7 +505,6 @@ public class BookDetailsFragment extends AppCompatActivity {
                                 if (value != null) {
                                     requestList.clear();
                                     for (QueryDocumentSnapshot doc : value) {
-                                        //Log.d("SOORAJ","Request: " + Objects.requireNonNull(doc.get("bookID")).toString() );
                                         aRequest request = new aRequest(doc.getId(), doc.getString("requester"), doc.getString("bookID"));
                                         requestList.add(request);
                                     }
@@ -524,10 +519,7 @@ public class BookDetailsFragment extends AppCompatActivity {
                 reqView = (RecyclerView) findViewById(R.id.reqList);
                 reqView.addItemDecoration(new DividerItemDecoration(context, DividerItemDecoration.VERTICAL));
                 reqView.setVisibility(View.VISIBLE);
-
-
-                //reqAdapter =  new ArrayAdapter<String>(this,R.layout.req_custom_list, R.id.textView, reqDataList);
-
+                
             }
         });
 
