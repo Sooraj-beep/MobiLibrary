@@ -30,7 +30,6 @@ import java.util.Objects;
 
 
 /**
- * @author Nguyen, Sooraj, Kimberly;
  * My Books fragment that is navigated to using notification bar. Contains a dropdown that organizes the User's books into status:
  * Owned, Requested, Accepted, and Borrowed. The user is able to see book title, author, isbn, and status.
  * The user is also able to add and edit their books opened from this Fragment

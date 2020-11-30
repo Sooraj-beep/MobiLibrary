@@ -1,7 +1,6 @@
 package com.example.mobilibrary;
 
 /**
- * @author Chloe;
  * Used as the model for how the notifications will appear (who it's from and
  * what notification it corresponds to ex. requested)
  */

@@ -3,7 +3,6 @@ package com.example.mobilibrary.DatabaseController;
 import java.io.Serializable;
 
 /**
- * @author Nguyen ;
  * This is a class for Request objects.
  */
 

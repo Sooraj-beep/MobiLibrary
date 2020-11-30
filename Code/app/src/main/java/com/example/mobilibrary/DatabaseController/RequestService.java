@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author Nguyen ;
  * Class to work with all requests in Firestore.
  */
 

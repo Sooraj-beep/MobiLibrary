@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 /**
- * @author Nguyen, Jill;
  * This is a custom book adapter to display all the books grabbed from Firestore,
  * based on certain criteria (which comes from the activity it is used in) for
  * current user booklist.

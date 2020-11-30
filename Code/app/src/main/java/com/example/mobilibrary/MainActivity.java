@@ -12,7 +12,6 @@ import com.example.mobilibrary.DatabaseController.User;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 /**
- * @author Chloe;
  * Initializes the navigation bar when the app is run, and sets the Homepage Fragment as the main page
  */
 

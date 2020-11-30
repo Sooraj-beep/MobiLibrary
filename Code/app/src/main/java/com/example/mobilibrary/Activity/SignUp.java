@@ -13,7 +13,6 @@ import com.example.mobilibrary.DatabaseController.DatabaseHelper;
 import com.example.mobilibrary.R;
 
 /**
- * @author Nguyen;
  * SignUp activity allows new user to create new account
  * User can go back to LogIn screen by clicking on the back button on toolbar
  */

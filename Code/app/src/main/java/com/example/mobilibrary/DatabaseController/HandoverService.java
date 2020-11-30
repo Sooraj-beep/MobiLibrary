@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author Natalia
  * Class handles updating handover in Firestore
  */
 public class HandoverService {
