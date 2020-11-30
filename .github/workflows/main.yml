@@ -37,8 +37,7 @@ jobs:
         run: chmod +x ./Code/gradlew
 
       - name: Build the app
-        run: ./gradlew build
-        working-directory: Code
+        run: ./Code/gradlew build
         
   #Run instrumental tests     
   test:
