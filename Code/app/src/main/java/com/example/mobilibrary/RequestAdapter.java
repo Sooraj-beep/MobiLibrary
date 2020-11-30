@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author Nguyen, Jill;
  * This is a request adapter to display all the requests grabbed from Firestore,
  * to the selected book .
  */

@@ -3,7 +3,6 @@ package com.example.mobilibrary;
 import com.example.mobilibrary.DatabaseController.User;
 
 /**
- * @author Nguyen;
  * Singleton for current logged in user.
  */
 

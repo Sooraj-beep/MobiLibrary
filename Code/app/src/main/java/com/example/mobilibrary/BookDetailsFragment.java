@@ -72,7 +72,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * @author Natalia, Nguyen;
  * This class takes in a book and displays its details (Title, Author, Owner, ISBN and Status),
  * requests currently on the book, and, if available, the book's photograph.
  * Additionally, this class can toggle between displaying the book details and the list of requests on the book

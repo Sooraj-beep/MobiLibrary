@@ -20,7 +20,6 @@ import com.example.mobilibrary.DatabaseController.DatabaseHelper;
 import com.example.mobilibrary.DatabaseController.User;
 
 /**
- * @author Jill;
  * This fragment, extending DialogFragment, pops up when the user tries to edit their own profile.
  * In order to change anything in FirebaseUser, the user must be recently authenticated, so this
  * ensures all users can properly edit their own profile. The dialog pops up when the user clicks

@@ -37,7 +37,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import static android.content.ContentValues.TAG;
 
 /**
- * @author ;
  * This class is to display all the notifications a user has.
  */
 
@@ -78,6 +77,16 @@ public class AdapterNotification extends RecyclerView.Adapter<AdapterNotificatio
         ModelNotification model = notificationsList.get(position);
         holder.userName.setText(model.getUser());
         holder.notification.setText(model.getNotification());
+
+        holder.userName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, ProfileActivity.class);
+                intent.putExtra("profile",
+                        holder.userName.getText().toString());
+                context.startActivity(intent);
+            }
+        });
 
         //get type, change views depending on the type
         Integer type = Integer.parseInt(model.getType());

@@ -27,7 +27,6 @@ import java.util.Collections;
 import java.util.Objects;
 
 /**
- * @author Chloe;
  * Notifications fragment that is navigated to using the navigation bar. Shows the user's notifications they will receive when interacting
  * with other users. Clicking on a notification will lead to another activity depending on the kind of notification:
  * 1) Another user has requested your book -> lead to book details

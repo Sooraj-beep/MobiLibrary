@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author Jill;
  * This class displays a user's profile (username, email, and phone number), and if the viewer is also the currently
  * logged in user, allows editing of the email and phone number (with re-authentication).
  */
@@ -109,8 +108,8 @@ public class ProfileActivity extends AppCompatActivity implements reAuthFragment
             @Override
             public void onCallback(User user) {
                 profileUser = user;
-                toggleViews.add(editButton);
-                toggleViews.add(signOutButton);
+                editButton.setVisibility(View.VISIBLE);
+                signOutButton.setVisibility(View.VISIBLE);
                 checkIfOwnProfile();
             }
         });
@@ -135,7 +134,7 @@ public class ProfileActivity extends AppCompatActivity implements reAuthFragment
                 });
             }
         } else {
-            Log.d("USERNAME", "Username not found!");
+            Log.d("checkIfOwnProfile", "Username not found!");
         }
     }
 
@@ -167,12 +166,8 @@ public class ProfileActivity extends AppCompatActivity implements reAuthFragment
                 // User must correctly re-authenticate before editing their account
                 new reAuthFragment().show(getSupportFragmentManager(), "RE-AUTHENTICATION");
 
-                /*editProfileImage.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                    }
-                });*/
+                editButton.setVisibility(View.INVISIBLE);
+                signOutButton.setVisibility(View.INVISIBLE);
 
                 // User cancels edit
                 cancelButton.setOnClickListener(new View.OnClickListener() {

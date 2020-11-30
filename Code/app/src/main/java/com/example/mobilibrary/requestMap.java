@@ -35,7 +35,6 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author Kimberly;
  * Can search map to find a location (to meet for request or return) when owner accepts book
  * or borrower wants to return book. Confirm will save location in Firestore and return to
  * previous screen
