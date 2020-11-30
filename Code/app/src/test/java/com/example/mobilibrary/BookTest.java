@@ -12,7 +12,7 @@ public class BookTest {
      */
     private Book mockBook() {
         User mockOwner = new User("username", "email@example.com", "First Last", "123-123-1234");
-        Book mockBook = new Book("Song of the Lioness", "123456789","Tamora Pierce", "available", null, mockOwner);
+        Book mockBook = new Book(null, "Song of the Lioness", "123456789","Tamora Pierce", "available", null, mockOwner);
         return mockBook;
     }
 
@@ -44,29 +44,6 @@ public class BookTest {
         assertEquals(mockOwner.getEmail(), mockBook.getOwner().getEmail());
         assertEquals(mockOwner.getName(), mockBook.getOwner().getName());
         assertEquals(mockOwner.getPhoneNo(), mockBook.getOwner().getPhoneNo());
-    }
-
-    /**
-     * Tests if two books that have the same ISBN are reported the same book even if they are different instances
-     * of the book class. Test passes if the compareTo() function reports 0
-     */
-    @Test
-    void compareToTestSame(){
-        Book mockBook1 = mockBook();
-        Book mockBook2 = mockBook1;
-        assertEquals(0, mockBook1.compareTo(mockBook2));
-    }
-
-    /**
-     * Tests if two books with different ISBN are not reported as the same book. Test passes if the compareTo()
-     * function reports 1
-     */
-    @Test
-    void compareToTestDifferent(){
-        Book mockBook1 = mockBook();
-        Book mockBook2 = mockBook();
-
-        assertEquals(1, mockBook1.compareTo(mockBook2));
     }
 
     @Test
