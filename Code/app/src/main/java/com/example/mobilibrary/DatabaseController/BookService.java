@@ -32,7 +32,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author Nguyen, Kimberly;
+ * @author Nguyen, Kimberly, Natalia;
  * This class interacts with the database to get books on the cloud
  * and do all the database related tasks for the books
  */
