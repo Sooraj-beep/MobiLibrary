@@ -64,7 +64,6 @@ public class AddBookFragment extends AppCompatActivity implements Serializable {
     private CurrentUser currentUser = CurrentUser.getInstance();
 
     private RequestQueue mRequestQueue;
-    private FirebaseFirestore db;
     private BookService bookService;
     private Context context;
 

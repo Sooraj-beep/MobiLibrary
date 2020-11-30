@@ -64,17 +64,14 @@ public class NotificationsFragment extends Fragment {
      */
     private void getAllNotifications() {
 
-        System.out.println("in getallnotifications:");
         notificationsList = new ArrayList<>();
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
-        System.out.println("Got instance");
         db.collection("Users").document(getUsername()).collection("Notifications")
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                         notificationsList.clear();
                         for (final QueryDocumentSnapshot doc : value) {
-                            System.out.println("Getting values");
 
                             String otherUser = Objects.requireNonNull(doc.get("otherUser")).toString();
                             String user = Objects.requireNonNull(doc.get("user")).toString();
@@ -83,17 +80,9 @@ public class NotificationsFragment extends Fragment {
                             String bookFSID = Objects.requireNonNull(doc.get("bookFSID").toString());
 
                             //check if the book still exists (if owner deleted the book)
-                            System.out.println("About to check if notification exists");
                             ifBookExists(bookFSID, otherUser, user, notification, type);
 
                         }
-                        //adaptor
-                        /*System.out.println(notificationsList.toString());
-                        Collections.reverse(notificationsList); //Latest notification on top
-
-                        adapterNotification = new AdapterNotification(getContext(), notificationsList);
-                        //set to recycler view
-                        notificationsRv.setAdapter(adapterNotification);*/
 
                     }
 
@@ -106,7 +95,6 @@ public class NotificationsFragment extends Fragment {
                             @Override
                             public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
                                 if (value.exists()) {
-                                    System.out.println("Book exists!");
                                     //make modelnotification and add to notificationsList
                                     ModelNotification model = new ModelNotification(otherUser, user, notification, type, bookFSID);
                                     notificationsList.add(model);
@@ -117,7 +105,6 @@ public class NotificationsFragment extends Fragment {
                                     notificationsRv.setAdapter(adapterNotification);
 
                                 }else {
-                                    System.out.println("Book does not exist anymore");
                                     deleteNotification(bookFSID, otherUser);
                                 }
                             }

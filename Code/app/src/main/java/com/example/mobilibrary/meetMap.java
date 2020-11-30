@@ -36,7 +36,6 @@ public class meetMap extends FragmentActivity implements OnMapReadyCallback {
     private LatLng bookLatLng;
 
     private String TAG = "bookMap";
-    private FirebaseFirestore db;
     private String bookDetails = null;
     private String bookOwner = null;
     private int type;
