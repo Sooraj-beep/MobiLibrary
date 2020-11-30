@@ -12,7 +12,7 @@ public class BookTest {
      */
     private Book mockBook() {
         User mockOwner = new User("username", "email@example.com", "First Last", "123-123-1234");
-        Book mockBook = new Book(null, "Song of the Lioness", "123456789","Tamora Pierce", "available", null, mockOwner);
+        Book mockBook = new Book(null,"Song of the Lioness", "1234567890123","Tamora Pierce", "available", null, mockOwner);
         return mockBook;
     }
 
@@ -21,7 +21,7 @@ public class BookTest {
      * is reported the same as all fields of the User reported by getUser() function.
      */
     @Test
-    void getUserTest(){
+    void getOwnerTest(){
         User mockOwner = new User("username", "email@example.com", "First Last", "123-123-1234");
         Book mockBook = mockBook();
         User guessOwner = mockBook.getOwner();
@@ -36,7 +36,7 @@ public class BookTest {
      * the book is the same as the new user set as the book's new owner
      */
     @Test
-    void setUserTest(){
+    void setOwnerTest(){
         Book mockBook = mockBook();
         User mockOwner = new User("username1", "email_1@example.com", "First Middle Last", "123-123-1235");
         mockBook.setOwner(mockOwner);
@@ -47,13 +47,13 @@ public class BookTest {
     }
 
     @Test
-    void testStatus() {
+    void getStatusTest() {
         Book book = mockBook();
         assertEquals("available",book.getStatus());
     }
 
     @Test
-    void testChangeStatus() {
+    void setStatusTest() {
         Book book = mockBook();
         book.setStatus("borrowed");
         assertEquals("borrowed",book.getStatus());
