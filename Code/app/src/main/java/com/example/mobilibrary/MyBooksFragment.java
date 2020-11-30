@@ -16,7 +16,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mobilibrary.DatabaseController.DatabaseHelper;
-import com.example.mobilibrary.DatabaseController.RequestService;
 import com.example.mobilibrary.DatabaseController.User;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -73,8 +72,6 @@ public class MyBooksFragment extends Fragment {
         ArrayAdapter<String> SpinAdapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, states);
         SpinAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         statesSpin.setAdapter(SpinAdapter);
-
-        RequestService requestService = RequestService.getInstance();
 
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
