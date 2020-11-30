@@ -98,16 +98,16 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.MyViewHo
             @Override
             public void onClick(View v) {
 
-                requestService.acceptRequest(mRequests.get(position), new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Toast.makeText(mContext, "Successfully accepted request from" + mRequests.get(position).getRequester(), Toast.LENGTH_SHORT).show();
+                requestService.acceptRequest(mRequests.get(position))
+                        .addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(mContext, "Successfully accepted request!", Toast.LENGTH_SHORT).show();
 
                                 //go to map activity
                                 Intent mapIntent = new Intent(mContext, requestMap.class);
                                 mapIntent.putExtra("bookID", mRequests.get(position).getBookID());
                                 mapIntent.putExtra("otherUser", mRequests.get(position).getRequester());
-                                ((Activity) mContext).startActivityForResult(mapIntent, 1);
+                                ((Activity) mContext).startActivityForResult(mapIntent,1);
 
                                 //delete rest of requests
                                 if (mRequests.size() > 0) {
@@ -118,61 +118,23 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.MyViewHo
                                     requestService.deleteAll(deletedIDs).addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void aVoid) {
-                                            Log.e("BookDetailsFragment", "Successfully deletes al requests");
+                                            Log.e("BookDetailsFragment", "Successfully deleted all requests");
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.e("BookDatailsFragment", "Failed to delete requests: " + e.toString());
                                         }
                                     });
                                 }
+                                notifyDataSetChanged();
+                            } else {
+                                Toast.makeText(mContext, "Failed to accept the request", Toast.LENGTH_SHORT).show();
                             }
-                        }, new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                System.out.println("Failed to accept request");
-                                 Log.e("BookDatailsFragment", "Failed to delete requests: " + e.toString());
-                            }
+
                         });
             }
         });
-
-//                    }
-//                })
-//
-//
-//                        .addOnCompleteListener(task -> {
-//                            if (task.isSuccessful()) {
-//                                Toast.makeText(mContext, "Successfully accepted request from" + mRequests.get(position).getRequester(), Toast.LENGTH_SHORT).show();
-//
-//                                //go to map activity
-//                                Intent mapIntent = new Intent(mContext, requestMap.class);
-//                                mapIntent.putExtra("bookID", mRequests.get(position).getBookID());
-//                                mapIntent.putExtra("otherUser", mRequests.get(position).getRequester());
-//                                ((Activity) mContext).startActivityForResult(mapIntent,1);
-//
-//                                //delete rest of requests
-//                                if (mRequests.size() > 0) {
-//                                    List<String> deletedIDs = new ArrayList<>();
-//                                    for (int i = 0; i < mRequests.size(); i++) {
-//                                        deletedIDs.add(mRequests.get(i).getID());
-//                                    }
-//                                    requestService.deleteAll(deletedIDs).addOnSuccessListener(new OnSuccessListener<Void>() {
-//                                        @Override
-//                                        public void onSuccess(Void aVoid) {
-//                                            Log.e("BookDetailsFragment", "Successfully deletes al requests");
-//                                        }
-//                                    }).addOnFailureListener(new OnFailureListener() {
-//                                        @Override
-//                                        public void onFailure(@NonNull Exception e) {
-//                                            Log.e("BookDatailsFragment", "Failed to delete requests: " + e.toString());
-//                                        }
-//                                    });
-//                                }
-//                                notifyDataSetChanged();
-//                            } else {
-//                                Toast.makeText(mContext, "Failed to accept the request", Toast.LENGTH_SHORT).show();
-//                            }
-//
-//                        });
-//            }
-//        });
 
         holder.declineButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -229,7 +191,7 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.MyViewHo
                 RequestService.decline(mRequests.get(position), declineAll)
                         .addOnCompleteListener(task -> {
                             if (task.isSuccessful()) {
-                                Toast.makeText(mContext, "Succesfully declined request", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(mContext, "Successfully declined request", Toast.LENGTH_SHORT).show();
                                 notifyDataSetChanged();
 
                             } else {

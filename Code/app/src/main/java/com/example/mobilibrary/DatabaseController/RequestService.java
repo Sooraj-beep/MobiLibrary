@@ -49,24 +49,20 @@ public class RequestService {
 
     }
 
-    public void acceptRequest(aRequest request, OnSuccessListener<Void> successListener, OnFailureListener failureListener){
-        final DocumentReference bookDoc = db.collection("Books")
+    public static Task<Void> acceptRequest(aRequest request){
+        WriteBatch batch = db.batch();
+
+        DocumentReference bookDoc = db.collection("Books")
                 .document(request.getBookID());
 
-        db.runTransaction(new Transaction.Function<Void>() {
-            @Nullable
-            @Override
-            public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
-                transaction.update(bookDoc, "Status", "accepted");
-                Map<String, Object> newData = new HashMap<>();
-                newData.put("AcceptedTo", request.getRequester());
-                transaction.update(bookDoc, newData);
+        batch.update(bookDoc, "Status", "accepted");
 
-                return null;
-            }
-        }).addOnSuccessListener(successListener)
-                .addOnFailureListener(failureListener);
+        Map<String, Object> newData = new HashMap<>();
+        //Add the user whose request has been accepted to the book
+        newData.put("AcceptedTo", request.getRequester());
 
+        batch.update(bookDoc, newData);
+        return batch.commit();
     }
 
     //delete all requests in firestore for a book after accepting
