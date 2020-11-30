@@ -12,11 +12,15 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.android.volley.Request;
 import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.mobilibrary.Activity.LogIn;
 import com.robotium.solo.Solo;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
@@ -48,25 +52,11 @@ public class EditBookTest {
     public void setUp() throws Exception {
         // establish an instrument
         solo = new Solo(InstrumentationRegistry.getInstrumentation(), rule.getActivity());
+    }
 
-        // go to MyBooks and switch to addBookFragment
-        solo.enterText((EditText) solo.getView(R.id.email_editText), "nrhassan@ualberta.ca");
-        solo.enterText((EditText) solo.getView(R.id.password_editText), "PassWord15");
-        solo.clickOnView(solo.getView(R.id.login_button));
-        solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
-        solo.clickOnMenuItem("My Books");
-
-        // establish a book to work on
-        solo.clickOnView(solo.getView(R.id.addButton));
-        solo.enterText((EditText) solo.getView(R.id.book_title), "Song of the Lioness");
-        solo.enterText((EditText) solo.getView(R.id.book_author), "Tamora Pierce");
-        solo.enterText((EditText) solo.getView(R.id.book_isbn), "1234567890123");
-        solo.clickOnButton("Confirm");
-
-        // view book's details
-        solo.clickOnText("Song of the Lioness");
-        solo.assertCurrentActivity("Wrong Activity", BookDetailsFragment.class);
-
+    @Test
+    public void start() throws Exception {
+        Activity activity = rule.getActivity();
     }
 
     /**
@@ -75,6 +65,29 @@ public class EditBookTest {
      */
     @Test
     public void checkActivityActivation() {
+        // go to MyBooks and switch to bookDetailsFragment
+        solo.enterText((EditText) solo.getView(R.id.email_editText), "nataliahh@testemail.com");
+        solo.enterText((EditText) solo.getView(R.id.password_editText), "PassWord");
+        solo.clickOnView(solo.getView(R.id.login_button));
+        solo.waitForActivity(MainActivity.class);
+        solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
+        solo.clickOnMenuItem("My Books");
+        solo.waitForText("My Books");
+
+        // establish a book to work on
+        solo.clickOnView(solo.getView(R.id.addButton));
+        solo.assertCurrentActivity("Wrong Activity", AddBookFragment.class);
+        solo.enterText((EditText) solo.getView(R.id.book_title), "Song of the Lioness");
+        solo.enterText((EditText) solo.getView(R.id.book_author), "Tamora Pierce");
+        solo.enterText((EditText) solo.getView(R.id.book_isbn), "1234567890123");
+        solo.clickOnButton("Confirm");
+
+        // check that the book was added
+        solo.waitForText("Song of the Lioness");
+        solo.waitForText("Tamora Pierce");
+
+        // view book's details
+        solo.clickOnText("Song of the Lioness");
         solo.assertCurrentActivity("Wrong Activity", BookDetailsFragment.class);
         solo.clickOnView(solo.getView(R.id.edit_button));
         solo.assertCurrentActivity("Wrong Activity", EditBookFragment.class);
@@ -86,6 +99,17 @@ public class EditBookTest {
      */
     @Test
     public void backButtonTest() {
+        // go to MyBooks and switch to bookDetailsFragment
+        solo.enterText((EditText) solo.getView(R.id.email_editText), "nataliahh@testemail.com");
+        solo.enterText((EditText) solo.getView(R.id.password_editText), "PassWord");
+        solo.clickOnView(solo.getView(R.id.login_button));
+        solo.waitForActivity(MainActivity.class);
+        solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
+        solo.clickOnMenuItem("My Books");
+        solo.waitForText("My Books");
+
+        // open book details fragment on the established book and go to edit book fragment after
+        solo.clickOnText("Song of the Lioness");
         solo.assertCurrentActivity("Wrong Activity", BookDetailsFragment.class);
         solo.clickOnView(solo.getView(R.id.edit_button));
         solo.assertCurrentActivity("Wrong Activity", EditBookFragment.class);
@@ -100,13 +124,9 @@ public class EditBookTest {
         solo.clickOnView(solo.getView(R.id.back_to_books_button));
 
         // confirm that nothing has changed
-        Fragment books = solo.getCurrentActivity().getFragmentManager().findFragmentById(R.id.myBooks);
-        final ListView bookView = (ListView) solo.getView(R.id.book_list);
-        assertEquals(1, bookView.getCount());
-        Book book = (Book) bookView.getItemAtPosition(0);
-        assertEquals("Song of the Lioness", book.getTitle());
-        assertEquals("Tamora Pierce", book.getAuthor());
-        assertEquals("1234567890123", book.getISBN());
+        solo.waitForText("Song of the Lioness", 1, 2000);
+        solo.waitForText("Tamora Pierce", 1, 2000);
+        solo.waitForText("1234567890123", 1, 2000);
     }
 
     /**
@@ -115,14 +135,25 @@ public class EditBookTest {
      */
     @Test
     public void editPositiveTest() {
+        // go to MyBooks and switch to bookDetailsFragment
+        solo.enterText((EditText) solo.getView(R.id.email_editText), "nataliahh@testemail.com");
+        solo.enterText((EditText) solo.getView(R.id.password_editText), "PassWord");
+        solo.clickOnView(solo.getView(R.id.login_button));
+        solo.waitForActivity(MainActivity.class);
+        solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
+        solo.clickOnMenuItem("My Books");
+        solo.waitForText("My Books");
+
+        // open book details fragment on the established book and go to edit book fragment after
+        solo.clickOnText("Song of the Lioness");
         solo.assertCurrentActivity("Wrong Activity", BookDetailsFragment.class);
         solo.clickOnView(solo.getView(R.id.edit_button));
         solo.assertCurrentActivity("Wrong Activity", EditBookFragment.class);
 
-        // changing a field and leave
-        solo.assertCurrentActivity("Wrong Activity", EditBookFragment.class);
+        // change fields and leave
         solo.clearEditText((EditText) solo.getView(R.id.edit_title));
         solo.enterText((EditText) solo.getView(R.id.edit_title), "Circle of Magic");
+        solo.clearEditText((EditText) solo.getView(R.id.edit_isbn));
         solo.enterText((EditText) solo.getView(R.id.edit_isbn), "1234567890124");
         solo.clickOnButton("Confirm");
         solo.assertCurrentActivity("Wrong Activity", BookDetailsFragment.class);
@@ -134,13 +165,9 @@ public class EditBookTest {
         solo.clickOnView(solo.getView(R.id.back_to_books_button));
 
         // confirm fields changed in bookList
-        Fragment books = solo.getCurrentActivity().getFragmentManager().findFragmentById(R.id.myBooks);
-        final ListView bookView = (ListView) solo.getView(R.id.book_list);
-        Book book = (Book) bookView.getItemAtPosition(0);
-        assertNotEquals("Song of the Lioness", book.getTitle());
-        assertEquals("Circle of Magic", book.getTitle());
-        assertEquals("Tamora Pierce", book.getAuthor());
-        assertEquals("1234567890123", book.getISBN());
+        solo.waitForText("Circle of Magic", 1, 2000);
+        solo.waitForText("Tamora Pierce", 1, 2000);
+        solo.waitForText("1234567890124", 1, 2000);
     }
 
     /**
@@ -149,28 +176,35 @@ public class EditBookTest {
      */
     @Test
     public void editNeutralTest() {
+        // go to MyBooks and switch to bookDetailsFragment
+        solo.enterText((EditText) solo.getView(R.id.email_editText), "nataliahh@testemail.com");
+        solo.enterText((EditText) solo.getView(R.id.password_editText), "PassWord");
+        solo.clickOnView(solo.getView(R.id.login_button));
+        solo.waitForActivity(MainActivity.class);
+        solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
+        solo.clickOnMenuItem("My Books");
+        solo.waitForText("My Books");
+
+        // open book details fragment on the established book and go to edit book fragment after
+        solo.clickOnText("Song of the Lioness");
         solo.assertCurrentActivity("Wrong Activity", BookDetailsFragment.class);
         solo.clickOnView(solo.getView(R.id.edit_button));
         solo.assertCurrentActivity("Wrong Activity", EditBookFragment.class);
 
         // leave without changing anything
-        solo.assertCurrentActivity("Wrong Activity", EditBookFragment.class);
         solo.clickOnButton("Confirm");
         solo.assertCurrentActivity("Wrong Activity", BookDetailsFragment.class);
 
         // confirm nothing has changed in bookDetail
         solo.waitForText("Song of the Lioness", 1, 2000);
         solo.waitForText("Tamora Pierce", 1, 2000);
-        solo.waitForText("1234567890124", 1, 2000);
+        solo.waitForText("1234567890123", 1, 2000);
         solo.clickOnView(solo.getView(R.id.back_to_books_button));
 
         // confirm that nothing has changed in myBooks
-        Fragment books2 = solo.getCurrentActivity().getFragmentManager().findFragmentById(R.id.myBooks);
-        final ListView bookView = (ListView) solo.getView(R.id.book_list);
-        Book book = (Book) bookView.getItemAtPosition(0);
-        assertEquals("Song of the Lioness", book.getTitle());
-        assertEquals("Tamora Pierce", book.getAuthor());
-        assertEquals("1234567890123", book.getISBN());
+        solo.waitForText("Song of the Lioness", 1, 2000);
+        solo.waitForText("Tamora Pierce", 1, 2000);
+        solo.waitForText("1234567890123", 1, 2000);
     }
 
     /**
@@ -179,12 +213,22 @@ public class EditBookTest {
      */
     @Test
     public void editNegativeTest() {
+        // go to MyBooks and switch to bookDetailsFragment
+        solo.enterText((EditText) solo.getView(R.id.email_editText), "nataliahh@testemail.com");
+        solo.enterText((EditText) solo.getView(R.id.password_editText), "PassWord");
+        solo.clickOnView(solo.getView(R.id.login_button));
+        solo.waitForActivity(MainActivity.class);
+        solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
+        solo.clickOnMenuItem("My Books");
+        solo.waitForText("My Books");
+
+        // open book details fragment on the established book and go to edit book fragment after
+        solo.clickOnText("Song of the Lioness");
         solo.assertCurrentActivity("Wrong Activity", BookDetailsFragment.class);
         solo.clickOnView(solo.getView(R.id.edit_button));
         solo.assertCurrentActivity("Wrong Activity", EditBookFragment.class);
 
         // leave with empty required fields
-        solo.assertCurrentActivity("Wrong Activity", EditBookFragment.class);
         solo.clearEditText((EditText) solo.getView(R.id.edit_title));
         solo.clearEditText((EditText) solo.getView(R.id.edit_author));
         solo.clearEditText((EditText) solo.getView(R.id.edit_isbn));
@@ -195,6 +239,54 @@ public class EditBookTest {
         assertTrue(solo.searchText("Required: Book Title!"));
         assertTrue(solo.searchText("Required: Book Author!"));
         assertTrue(solo.searchText("Required: Book ISBN!"));
+    }
+
+    /**
+     * Tests Jparse function
+     */
+    @Test
+    public void fetchBookData() {
+        //Asserts that when given an isbn, it fetches the correct corresponding title and author
+        String base = "https://www.googleapis.com/books/v1/volumes?q=isbn:9780545010221";
+        String isbn = "9781911223139";
+        Uri uri = Uri.parse(base + isbn);
+        Uri.Builder builder = uri.buildUpon();
+        String key = builder.toString();
+
+        final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, key.toString(), null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        String title = "";
+                        String author = "";
+                        try {
+
+                            JSONArray items = response.getJSONArray("items");
+                            JSONObject item = items.getJSONObject(0);
+                            JSONObject volumeInfo = item.getJSONObject("volumeInfo");
+
+                            try {
+                                title = volumeInfo.getString("title");
+                                assertTrue(title == "Best Murder in Show");
+
+                                JSONArray authors = volumeInfo.getJSONArray("authors");
+                                assertTrue(author == "Debbie Young");
+
+                            } catch (Exception e) {
+
+                            }
+
+                        } catch (JSONException e) { //error trying to get database info
+                            e.printStackTrace();
+
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+            }
+        });
     }
 
     @After
