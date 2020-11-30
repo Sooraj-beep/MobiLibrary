@@ -37,7 +37,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import static android.content.ContentValues.TAG;
 
 /**
- * @author ;
  * This class is to display all the notifications a user has.
  */
 
@@ -79,9 +78,20 @@ public class AdapterNotification extends RecyclerView.Adapter<AdapterNotificatio
         holder.userName.setText(model.getUser());
         holder.notification.setText(model.getNotification());
 
+        holder.userName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, ProfileActivity.class);
+                intent.putExtra("profile",
+                        holder.userName.getText().toString());
+                context.startActivity(intent);
+            }
+        });
+
         //get type, change views depending on the type
         Integer type = Integer.parseInt(model.getType());
         if (type == 1) {
+            holder.arrow.setVisibility(View.VISIBLE);
             holder.notifications.setOnClickListener(new View.OnClickListener() { //if this notification is clicked, will lead to owners own book details
                 @Override
                 public void onClick(View v) {
@@ -118,7 +128,6 @@ public class AdapterNotification extends RecyclerView.Adapter<AdapterNotificatio
                                     String isbn = Objects.requireNonNull(document.get("ISBN")).toString();
                                     String author = Objects.requireNonNull(document.get("Author")).toString();
                                     String status = Objects.requireNonNull(document.get("Status")).toString();
-                                    //String image = Objects.requireNonNull(document.get("imageID")).toString();
                                     String image;
                                     try {
                                         image = Objects.requireNonNull(document.get("imageID")).toString();
@@ -149,13 +158,13 @@ public class AdapterNotification extends RecyclerView.Adapter<AdapterNotificatio
         }
         if (type == 3) { //meetmap confirm leads to bookdetails, need bookfsid
             holder.notifications.setCardBackgroundColor(Color.parseColor("#57e65c")); //green border
+            holder.arrow.setVisibility(View.VISIBLE);
             holder.notifications.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     //get the latitude and longitude of the book
                     final FirebaseFirestore db = FirebaseFirestore.getInstance();
                     DocumentReference docRef = db.collection("Books").document(notificationsList.get(position).getBookFSID());
-                    System.out.println("Got doc ref");
                     docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -163,11 +172,8 @@ public class AdapterNotification extends RecyclerView.Adapter<AdapterNotificatio
                                 DocumentSnapshot document = task.getResult();
                                 System.out.println(document);
                                 if (document.exists()) {
-                                    System.out.println("About to get latlang");
-                                    //bookLatLng = (LatLng) document.getData().get("LatLang");
 
                                     HashMap<String, Object> newData = (HashMap<String, Object>) document.getData().get("LatLang");
-                                    System.out.println("NEW DATA: " + newData);
                                     Object latitude = newData.get("latitude");
                                     Object longitude = newData.get("longitude");
                                     Double dLatitude = new Double(latitude.toString());
@@ -201,13 +207,13 @@ public class AdapterNotification extends RecyclerView.Adapter<AdapterNotificatio
 
         }
         if (type == 4) { //meet map confirm leads back to notifications
+            holder.arrow.setVisibility(View.VISIBLE);
             holder.notifications.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     //leads to a map with the location of the book
                     final FirebaseFirestore db = FirebaseFirestore.getInstance();
                     DocumentReference docRef = db.collection("Books").document(notificationsList.get(position).getBookFSID());
-                    System.out.println("Got doc ref");
                     docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -215,11 +221,8 @@ public class AdapterNotification extends RecyclerView.Adapter<AdapterNotificatio
                                 DocumentSnapshot document = task.getResult();
                                 System.out.println(document);
                                 if (document.exists()) {
-                                    System.out.println("About to get latlang");
-                                    //bookLatLng = (LatLng) document.getData().get("LatLang");
 
                                     HashMap<String, Object> newData = (HashMap<String, Object>) document.getData().get("LatLang");
-                                    System.out.println("NEW DATA: " + newData);
                                     Object latitude = newData.get("latitude");
                                     Object longitude = newData.get("longitude");
                                     Double dLatitude = new Double(latitude.toString());
@@ -247,6 +250,7 @@ public class AdapterNotification extends RecyclerView.Adapter<AdapterNotificatio
 
         }
         if (type == 5) { //meetmap confirm leads to bookdetails, need bookfsid
+            holder.arrow.setVisibility(View.VISIBLE);
             holder.notifications.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -254,7 +258,6 @@ public class AdapterNotification extends RecyclerView.Adapter<AdapterNotificatio
                     //get the latitude and longitude of the book
                     final FirebaseFirestore db = FirebaseFirestore.getInstance();
                     DocumentReference docRef = db.collection("Books").document(notificationsList.get(position).getBookFSID());
-                    System.out.println("Got doc ref");
                     docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -262,11 +265,8 @@ public class AdapterNotification extends RecyclerView.Adapter<AdapterNotificatio
                                 DocumentSnapshot document = task.getResult();
                                 System.out.println(document);
                                 if (document.exists()) {
-                                    System.out.println("About to get latlang");
-                                    //bookLatLng = (LatLng) document.getData().get("LatLang");
 
                                     HashMap<String, Object> newData = (HashMap<String, Object>) document.getData().get("LatLang");
-                                    System.out.println("NEW DATA: " + newData);
                                     Object latitude = newData.get("latitude");
                                     Object longitude = newData.get("longitude");
                                     Double dLatitude = new Double(latitude.toString());
@@ -358,7 +358,7 @@ public class AdapterNotification extends RecyclerView.Adapter<AdapterNotificatio
     }
 
     /**
-     * Create viewholder classes for each type of notificiation
+     * Create viewholder classes for notification
      */
     class HolderNotification extends RecyclerView.ViewHolder {
 

@@ -25,7 +25,6 @@ import java.util.Objects;
 
 
 /**
- * @author Kimberly;
  * When book is borrowed (or being returned), both the other and the borrower will be able to
  * see location of meeting spot. Confirm button will return to previous screen
  */

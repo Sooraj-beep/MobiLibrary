@@ -58,7 +58,6 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 
 /**
- * @author Natalia, Chloe, Kimberly;
  * This class takes in a book and edits it Title, Author, ISBN and photograph. The first three
  * Can also delete and edit book image.
  * can be done manually or via scanning the book's ISBN

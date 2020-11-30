@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/notifications_border"
     android:layout_width="match_parent"
     android:layout_height="120dp"
@@ -18,67 +19,74 @@
         app:cardBackgroundColor="@color/colorPrimaryDark"
         app:cardCornerRadius="20dp">
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout"
             android:layout_width="match_parent"
-            android:layout_height="110dp"
-            android:orientation="horizontal">
-
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_margin="15dp"
+            android:layout_marginVertical="15dp">
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/profile_pic"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:layout_gravity="center"
-                android:layout_margin="10dp"
                 android:clickable="true"
                 android:src="@drawable/pfp"
-                app:civ_border_overlay="false" />
+                app:civ_border_overlay="false"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-            <LinearLayout
-                android:layout_width="235dp"
-                android:layout_height="80dp"
-                android:layout_gravity="center"
-                android:layout_marginVertical="15dp"
-                android:orientation="vertical">
+            <TextView
+                android:id="@+id/notifications_username"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="15dp"
+                android:layout_marginBottom="1dp"
+                android:fontFamily="@font/quicksand_medium"
+                android:paddingTop="5dp"
+                android:text="Username"
+                android:textColor="@color/colorText"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@+id/notifications_text"
+                app:layout_constraintStart_toEndOf="@+id/profile_pic"
+                app:layout_constraintTop_toTopOf="parent" />
 
-                <TextView
-                    android:id="@+id/notifications_username"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/quicksand_medium"
-                    android:paddingTop="5dp"
-                    android:paddingBottom="2dp"
-                    android:text="Username"
-                    android:textColor="@color/colorText"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/notifications_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:ellipsize="end"
-                    android:fontFamily="@font/quicksand_medium"
-                    android:text="Notification"
-                    android:textColor="@color/colorText"
-                    android:textSize="15sp" />
-
-            </LinearLayout>
+            <TextView
+                android:id="@+id/notifications_text"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginHorizontal="15dp"
+                android:ellipsize="end"
+                android:fontFamily="@font/quicksand_medium"
+                android:maxLines="3"
+                android:text="Notification"
+                android:textColor="@color/colorText"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/arrow"
+                app:layout_constraintStart_toEndOf="@+id/profile_pic"
+                app:layout_constraintTop_toBottomOf="@+id/notifications_username" />
 
             <TextView
                 android:id="@+id/arrow"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginHorizontal="15dp"
-                android:paddingBottom="10dp"
                 android:fontFamily="@font/quicksand_medium"
                 android:gravity="right|center_vertical"
+                android:paddingBottom="10dp"
                 android:text=">"
                 android:textColor="@color/colorPrimary"
-                android:textSize="45sp" />
+                android:textSize="45sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>
 

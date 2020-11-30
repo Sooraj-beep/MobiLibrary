@@ -16,7 +16,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mobilibrary.DatabaseController.DatabaseHelper;
-import com.example.mobilibrary.DatabaseController.RequestService;
 import com.example.mobilibrary.DatabaseController.User;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -31,7 +30,6 @@ import java.util.Objects;
 
 
 /**
- * @author Nguyen, Sooraj, Kimberly;
  * My Books fragment that is navigated to using notification bar. Contains a dropdown that organizes the User's books into status:
  * Owned, Requested, Accepted, and Borrowed. The user is able to see book title, author, isbn, and status.
  * The user is also able to add and edit their books opened from this Fragment
@@ -73,8 +71,6 @@ public class MyBooksFragment extends Fragment {
         ArrayAdapter<String> SpinAdapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, states);
         SpinAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         statesSpin.setAdapter(SpinAdapter);
-
-        RequestService requestService = RequestService.getInstance();
 
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override

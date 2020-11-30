@@ -29,7 +29,6 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
 
 /**
- * @author Nguyen, Jill;
  * This class handles the database related tasks that are requested from other activities.
  */
 

@@ -5,7 +5,6 @@ import com.example.mobilibrary.DatabaseController.User;
 import java.io.Serializable;
 
 /**
- * @author Sooraj;
  * Class for Book objects.
  */
 public class Book implements Serializable {

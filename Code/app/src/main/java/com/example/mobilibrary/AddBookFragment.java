@@ -53,7 +53,6 @@ import java.io.Serializable;
 import static android.provider.MediaStore.ACTION_IMAGE_CAPTURE;
 
 /**
- * @author Kimberly, Chloe;
  * Creating a new Book object and uploading it to Firestore, attributing it to the current user.
  */
 public class AddBookFragment extends AppCompatActivity implements Serializable {
