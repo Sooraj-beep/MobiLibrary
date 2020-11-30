@@ -99,6 +99,16 @@ public class BookDetailsTest {
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
         solo.clickOnMenuItem("My Books");
         solo.waitForText("My Books");
+
+        // establish a book to work on
+        solo.clickOnView(solo.getView(R.id.addButton));
+        solo.assertCurrentActivity("Wrong Activity", AddBookFragment.class);
+        solo.enterText((EditText) solo.getView(R.id.book_title), "Song of the Lioness");
+        solo.enterText((EditText) solo.getView(R.id.book_author), "Tamora Pierce");
+        solo.enterText((EditText) solo.getView(R.id.book_isbn), "1234567890123");
+        solo.clickOnButton("Confirm");
+
+        // go to bookDetails
         solo.clickOnText("Song of the Lioness");
         solo.assertCurrentActivity("Wrong Activity", BookDetailsFragment.class);
 
@@ -125,6 +135,16 @@ public class BookDetailsTest {
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
         solo.clickOnMenuItem("My Books");
         solo.waitForText("My Books");
+
+        // establish a book to work on
+        solo.clickOnView(solo.getView(R.id.addButton));
+        solo.assertCurrentActivity("Wrong Activity", AddBookFragment.class);
+        solo.enterText((EditText) solo.getView(R.id.book_title), "Song of the Lioness");
+        solo.enterText((EditText) solo.getView(R.id.book_author), "Tamora Pierce");
+        solo.enterText((EditText) solo.getView(R.id.book_isbn), "1234567890123");
+        solo.clickOnButton("Confirm");
+
+        // go to bookDetails
         solo.clickOnText("Song of the Lioness");
         solo.assertCurrentActivity("Wrong Activity", BookDetailsFragment.class);
 
@@ -148,6 +168,16 @@ public class BookDetailsTest {
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
         solo.clickOnMenuItem("My Books");
         solo.waitForText("My Books");
+
+        // establish a book to work on
+        solo.clickOnView(solo.getView(R.id.addButton));
+        solo.assertCurrentActivity("Wrong Activity", AddBookFragment.class);
+        solo.enterText((EditText) solo.getView(R.id.book_title), "Song of the Lioness");
+        solo.enterText((EditText) solo.getView(R.id.book_author), "Tamora Pierce");
+        solo.enterText((EditText) solo.getView(R.id.book_isbn), "1234567890123");
+        solo.clickOnButton("Confirm");
+
+        // go to bookDetails
         solo.clickOnText("Song of the Lioness");
         solo.assertCurrentActivity("Wrong Activity", BookDetailsFragment.class);
 

@@ -108,6 +108,14 @@ public class EditBookTest {
         solo.clickOnMenuItem("My Books");
         solo.waitForText("My Books");
 
+        // establish a book to work on
+        solo.clickOnView(solo.getView(R.id.addButton));
+        solo.assertCurrentActivity("Wrong Activity", AddBookFragment.class);
+        solo.enterText((EditText) solo.getView(R.id.book_title), "Song of the Lioness");
+        solo.enterText((EditText) solo.getView(R.id.book_author), "Tamora Pierce");
+        solo.enterText((EditText) solo.getView(R.id.book_isbn), "1234567890123");
+        solo.clickOnButton("Confirm");
+
         // open book details fragment on the established book and go to edit book fragment after
         solo.clickOnText("Song of the Lioness");
         solo.assertCurrentActivity("Wrong Activity", BookDetailsFragment.class);
@@ -143,6 +151,14 @@ public class EditBookTest {
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
         solo.clickOnMenuItem("My Books");
         solo.waitForText("My Books");
+
+        // establish a book to work on
+        solo.clickOnView(solo.getView(R.id.addButton));
+        solo.assertCurrentActivity("Wrong Activity", AddBookFragment.class);
+        solo.enterText((EditText) solo.getView(R.id.book_title), "Song of the Lioness");
+        solo.enterText((EditText) solo.getView(R.id.book_author), "Tamora Pierce");
+        solo.enterText((EditText) solo.getView(R.id.book_isbn), "1234567890123");
+        solo.clickOnButton("Confirm");
 
         // open book details fragment on the established book and go to edit book fragment after
         solo.clickOnText("Song of the Lioness");
@@ -185,6 +201,14 @@ public class EditBookTest {
         solo.clickOnMenuItem("My Books");
         solo.waitForText("My Books");
 
+        // establish a book to work on
+        solo.clickOnView(solo.getView(R.id.addButton));
+        solo.assertCurrentActivity("Wrong Activity", AddBookFragment.class);
+        solo.enterText((EditText) solo.getView(R.id.book_title), "Song of the Lioness");
+        solo.enterText((EditText) solo.getView(R.id.book_author), "Tamora Pierce");
+        solo.enterText((EditText) solo.getView(R.id.book_isbn), "1234567890123");
+        solo.clickOnButton("Confirm");
+
         // open book details fragment on the established book and go to edit book fragment after
         solo.clickOnText("Song of the Lioness");
         solo.assertCurrentActivity("Wrong Activity", BookDetailsFragment.class);
@@ -221,6 +245,14 @@ public class EditBookTest {
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
         solo.clickOnMenuItem("My Books");
         solo.waitForText("My Books");
+
+        // establish a book to work on
+        solo.clickOnView(solo.getView(R.id.addButton));
+        solo.assertCurrentActivity("Wrong Activity", AddBookFragment.class);
+        solo.enterText((EditText) solo.getView(R.id.book_title), "Song of the Lioness");
+        solo.enterText((EditText) solo.getView(R.id.book_author), "Tamora Pierce");
+        solo.enterText((EditText) solo.getView(R.id.book_isbn), "1234567890123");
+        solo.clickOnButton("Confirm");
 
         // open book details fragment on the established book and go to edit book fragment after
         solo.clickOnText("Song of the Lioness");
