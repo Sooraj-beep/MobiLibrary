@@ -4,8 +4,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
@@ -14,15 +12,7 @@ import com.example.mobilibrary.Activity.LogIn;
 import com.example.mobilibrary.Activity.ProfileActivity;
 
 import com.example.mobilibrary.Activity.StartActivity;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FieldValue;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QuerySnapshot;
+
 import com.robotium.solo.Solo;
 
 import org.junit.After;
@@ -30,8 +20,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.junit.Assert.assertTrue;
 
@@ -44,7 +32,6 @@ public class requestTest {
     private final String email_3 = "user3@gmail.com";
     private final String password_3 = "password3";
     private final String isbn_1 = "9781607066842";
-    private final String isbn_2 = "9780199535811";
     private RecyclerView requestLV;
     private Button accept;
     private Button decline;
@@ -111,6 +98,11 @@ public class requestTest {
 
     }
 
+    /**
+     * Checks that borrower can make a request for a book,
+     * owner can see list of requests for his book and accept
+     * one request.
+     */
     @Test
     public void checkAcceptRequest() {
         //check request book, request list, accepting request
@@ -155,7 +147,11 @@ public class requestTest {
         solo.clickOnView(solo.getView(R.id.detailsBtn));
         deleteBook();
     }
-
+    /**
+     * Checks that borrower can make a request for a book,
+     * owner can see list of requests for his book and decline
+     * request.
+     */
     @Test
     public void checkDeclineRequest() {
         //check request book, request list, deleting request

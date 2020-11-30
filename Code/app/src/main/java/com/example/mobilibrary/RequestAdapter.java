@@ -58,7 +58,7 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.MyViewHo
 
     /**
      * Create new views (invoked by the layout manager)
-     * @param parent ViewGrou[
+     * @param parent ViewGroup
      * @param viewType Int type
      * @return
      */
