@@ -1,8 +1,9 @@
-# MobiLibrary (Forked from https://github.com/CMPUT301F20T33/MobiLibrary)
+# MobiLibrary 
+(Forked from https://github.com/CMPUT301F20T33/MobiLibrary)
 
 ## Instructions on running
 
-Clone this repo and use either use an android emulator to run the app. Follow this guide on how to setup an emulator if you don't already have one: https://docs.expo.io/workflow/android-studio-emulator/
+Clone this repo and use an android emulator to run the app. Follow this guide on how to setup an emulator if you don't already have one: https://docs.expo.io/workflow/android-studio-emulator/
 
 
 ## Description
