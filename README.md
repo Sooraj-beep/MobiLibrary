@@ -26,4 +26,4 @@ MobiLibrary is a book lending/borrowing app built for a software design principl
 
 ## Media
 
-https://www.youtube.com/watch?v=pi8QgAKc-FE
+https://www.youtube.com/watch?v=pi8QgAKc-FE (Demo)
