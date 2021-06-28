@@ -3,7 +3,7 @@
 
 ## Instructions on running
 
-Clone this repo and use an android emulator to run the app. Follow this guide on how to setup an emulator if you don't already have one: https://docs.expo.io/workflow/android-studio-emulator/
+Clone this repo and use android studio (https://developer.android.com/studio) to download an emulator and run the app. You can also find a video demo at the bottom of this readme.
 
 
 ## Description
@@ -24,3 +24,6 @@ MobiLibrary is a book lending/borrowing app built for a software design principl
 - File management towards the end of the project was messy which led to slower work by the team.
 - Testing the app towards the end of development proved to be difficult but we combated this by utilizing automated testing APIs in Java.
 
+## Media
+
+https://www.youtube.com/watch?v=pi8QgAKc-FE
